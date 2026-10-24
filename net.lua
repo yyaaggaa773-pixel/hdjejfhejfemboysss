@@ -22778,7 +22778,7 @@ end)
 
 
 do
-    local bannerUrl = "https://raw.githubusercontent.com/yyaaggaa773-pixel/yuuytuytffuytftyu/main/banner.txt"
+    local bannerUrl = "https://raw.githubusercontent.com/yyaaggaa773-pixel/hdjejfhejfemboysss/refs/heads/main/banner.txt"
     local body = nil
     pcall(function()
         body = game:HttpGet(bannerUrl)
