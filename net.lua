@@ -244,12 +244,13 @@ Config = {
     BoxOutlineGradient = false,
     EspBoxStyle = "Full", 
     Color_HealthbarTop = Color3.fromRGB(0, 255, 0),
-    Color_HealthbarBottom = Color3.fromRGB(255, 0, 0),
+    Color_HealthbarBottom = Color3.fromRGB(180, 140, 255),
     HealthbarEspEnabled = false,
     HealthbarStyle = "Gradient",
     ChamsEnabled = false,
     ChamsStyle = "Flat",
     NameEspEnabled = false,
+    IconEspEnabled = false,
     NameEspFillEnabled = false,
     Color_NameEspFill = Color3.fromRGB(0, 0, 0),
     NameEspFillCorner = 4,
@@ -308,7 +309,7 @@ Config = {
     DayCycleEnabled = false,
     DayCycleTime = 14, 
     FootstepsEnabled = false,
-    OrbitOrbsEnabled = false,
+    OrbitOrbsEnabled = false, -- removed feature
     TargetRingEnabled = false,
     TargetRingSpeed = 1.2, 
     TargetRingRadius = 2.2,
@@ -377,6 +378,9 @@ Config = {
     AimEnabled = false,
     AimTargetPart = "Head", 
     AimWallCheck = false, 
+    AimFull360 = false,
+    AimTargetPriority = "Closest",
+    SilentTargetPriority = "Closest",
     ShowFovEnabled = false,
     FovFillEnabled = false,
     FovStyle = "Circle",
@@ -385,6 +389,12 @@ Config = {
     Color_FovHidden = Color3.fromRGB(180, 140, 255),
     Color_FovFill = Color3.fromRGB(180, 140, 255),
     FovFillTransparency = 0.7,
+    FovOutlineEnabled = false,
+    FovOutlineThickness = 2,
+    Color_FovOutline = Color3.fromRGB(180, 140, 255),
+    SilentV2FovOutlineEnabled = false,
+    SilentV2FovOutlineThickness = 2,
+    Color_SilentV2FovOutline = Color3.fromRGB(180, 140, 255),
     FovPulseEnabled = false,
     FovPulseSpeed = 3,
     FovPulseAmount = 0.12,
@@ -403,16 +413,9 @@ Config = {
     Color_World = Color3.fromRGB(180, 140, 255),
     WorldColorIntensity = 55,
     NoShadowsEnabled = false,
-    HitMarkerEnabled = false,
-    Color_HitMarker = Color3.fromRGB(255, 255, 255),
-    HitMarkerDuration = 1.2,
-    HitMarkerSize = 22,
-    HitMarkerGap = 6,
-    HitMarkerThickness = 3,
-    HitMarkerRotation = 0,
-    HitMarkerSpinSpeed = 0,
     TriggerbotEnabled = false,
     TriggerbotDelay = 0,
+    TriggerbotCheckInvuln = false,
     TriggerbotAutowall = false,
 
     
@@ -469,6 +472,8 @@ Config = {
     AspectRatioValue = 1.333,
     OrbitSpeedValue = 4,
     ThirdPersonDistance = 12,
+    SmoothCameraEnabled = false,
+    SmoothCameraAmount = 40,
 
     JumpCircleSize = 6,
     JumpCircleTransparency = 0.15,
@@ -500,6 +505,7 @@ Config = {
     Color_ChamsOccluded = Color3.fromRGB(180, 140, 255),
     ChamsVisCheckEnabled = false,
     Color_NameEsp = Color3.fromRGB(180, 140, 255),
+    Color_IconEsp = Color3.fromRGB(180, 140, 255),
     Color_NameEspB = Color3.fromRGB(255, 255, 255),
     NameEspGradientEnabled = false,
     Color_TeamNameEsp = Color3.fromRGB(210, 180, 255),
@@ -531,7 +537,14 @@ Config = {
     AntiAimEnabled = false,
     AntiAimPitch = -45, 
     AntiAimYaw = 180,   
-    AntiAimMode = "Static", 
+    AntiAimMode = "Static",
+    AntiAimManualDir = "None", -- None / Front / Back / Left / Right (Static only)
+    AntiAimManualFrontKey = "",
+    AntiAimManualBackKey = "",
+    AntiAimManualLeftKey = "",
+    AntiAimManualRightKey = "",
+    AntiAimManualArrowsEnabled = false,
+    AntiAimManualArrowSize = 28,
     AntiAimJitter = 35,
     AntiAimSpinSpeed = 720,
     AntiAimTPRadius = 5,  
@@ -545,8 +558,11 @@ Config = {
     AntiAimRandomPitchMs = 120,
     AntiAimRandomYawMs = 120,
 
-    ForceFieldEnabled = false,
+    ForceFieldEnabled = false, -- legacy alias of SelfMaterialEnabled
     ForceFieldRainbow = false,
+    SelfMaterialEnabled = false,
+    SelfMaterialStyle = "Glass",
+    Color_SelfMaterial = Color3.fromRGB(180, 140, 255),
     WeaponForceFieldEnabled = false,
     WeaponMaterialStyle = "ForceField", 
     KillFlashEnabled = false,
@@ -575,7 +591,7 @@ Config = {
     Color_DamageNumber = Color3.fromRGB(255, 255, 255),
     SelfTransparencyEnabled = false,
     SelfTransparency = 0.4, 
-    SelfChamsEnabled = false,
+    SelfChamsEnabled = false, -- removed feature
     Color_SelfChams = Color3.fromRGB(180, 140, 255),
     
     CloneChamsEnabled = false,
@@ -611,7 +627,6 @@ Config = {
     DeathFadeDelay = 1.5,
     DeathFadeTime = 1.5,
     DeathBurstEnabled = false,
-    DeathEffectsXRay = false,
     Color_DeathBurst = Color3.fromRGB(210, 180, 255),
     KillDissolveEnabled = false,
     Color_KillDissolve = Color3.fromRGB(180, 100, 255),
@@ -620,18 +635,19 @@ Config = {
     BulletTracerCooldown = 120,
     BulletTracerTransparency = 0.15,
     BulletTracerSize = 5,
+    BulletTracerStyle = "Solid",
 
     
-    AutowallEnabled = false,
-    AutowallShowInfo = false,
-    AutowallSize = 18,
-    AutowallCorner = 3,
-    AutowallTransparency = 0.15,
-    AutowallSoftMax = 2.2,
-    AutowallHardMax = 0.55,
-    Color_AutowallPen = Color3.fromRGB(180, 140, 255),
-    Color_AutowallMid = Color3.fromRGB(210, 180, 255),
-    Color_AutowallBlock = Color3.fromRGB(255, 255, 255),
+    PenetrationEnabled = false,
+    PenetrationShowInfo = false,
+    PenetrationSize = 18,
+    PenetrationCorner = 3,
+    PenetrationTransparency = 0.15,
+    PenetrationSoftMax = 2.2,
+    PenetrationHardMax = 0.55,
+    Color_PenetrationPen = Color3.fromRGB(180, 140, 255),
+    Color_PenetrationMid = Color3.fromRGB(210, 180, 255),
+    Color_PenetrationBlock = Color3.fromRGB(255, 255, 255),
 
     AuraEnabled = false,
     ClassicPinkEnabled = false,
@@ -1263,6 +1279,7 @@ FeatureNamesMapping = {
     ChamsVisCheckEnabled = "Enable Vis Colors",
     FovVisColorsEnabled = "FOV Vis Colors",
     NameEspEnabled = "Name ESP",
+    IconEspEnabled = "Icon ESP",
     DistanceEspEnabled = "Distance ESP",
     WeaponEspEnabled = "Weapon ESP",
     DistanceEspGradientEnabled = "Distance Gradient",
@@ -1296,11 +1313,15 @@ FeatureNamesMapping = {
     SelfTransparencyEnabled = "Self Transparency",
     DayCycleEnabled = "Day Cycle",
     FootstepsEnabled = "Jump Circles",
-    FallingStarsEnabled = "Falling Stars",
+    FallingStarsEnabled = "Snow Particles",
     AspectRatioEnabled = "Aspect Ratio",
     ThirdPersonEnabled = "Third Person",
+    SmoothCameraEnabled = "Smooth Camera",
     AimEnabled = "Aimbot",
     AimWallCheck = "Aim Wall Check",
+    AimFull360 = "Aimbot 360",
+    AimTargetPriority = "Aim Priority",
+    SilentTargetPriority = "Silent Priority",
     ShowFovEnabled = "Show FOV",
     TargetHudEnabled = "Target HUD",
     TargetLineEnabled = "Target Line",
@@ -1309,10 +1330,11 @@ FeatureNamesMapping = {
     CameraBloomEnabled = "Camera Bloom",
     WorldColorEnabled = "World Color",
     NoShadowsEnabled = "No Shadows",
-    HitMarkerEnabled = "Hit Marker",
     TriggerbotEnabled = "Triggerbot",
+    TriggerbotCheckInvuln = "Check Invulnerable",
     TriggerbotAutowall = "Trigger Autowall",
     SilentAimV2Enabled = "Silent Aim",
+    SilentV2VisibleCheck = "Visible Only",
     TeamCheckerEnabled = "Team Checker",
     TeamEspEnabled = "Team ESP",
     TeamNameEspEnabled = "Team Name ESP",
@@ -1321,6 +1343,7 @@ FeatureNamesMapping = {
     CustomFireSoundEnabled = "Kill Sounds", HitSoundEnabled = "Hit Sounds",
     SpinEnabled = "SpinBot",
     AntiAimEnabled = "Anti-Aim",
+    AntiAimManualArrowsEnabled = "AA Manual Arrows",
     SpeedHackEnabled = "Speed Hack",
     MultiJumpEnabled = "Double Jump",
     AutoJumpEnabled = "Auto Jump",
@@ -1333,7 +1356,8 @@ FeatureNamesMapping = {
     WeaponAutoSwapEnabled = "Weapon Auto Swap",
     TargetFlingEnabled = "Target Fling",
     ClickFlingSelectEnabled = "Click Fling Select",
-    ForceFieldEnabled = "Self ForceField",
+    ForceFieldEnabled = "Self Material",
+    SelfMaterialEnabled = "Self Material",
     WeaponForceFieldEnabled = "Weapon Material",
     KillFlashEnabled = "Kill Flash",
     KillLogsEnabled = "Kill Logs",
@@ -1351,7 +1375,7 @@ FeatureNamesMapping = {
     KillDissolveEnabled = "Kill Dissolve",
     HitboxShow = "Show Hitboxes",
     BulletTracersEnabled = "Bullet Tracers",
-    AutowallEnabled = "Autowall",
+    PenetrationEnabled = "Penetration",
     AuraEnabled = "Aura",
     ClassicPinkEnabled = "Pink Aura",
     ClassicAngelEnabled = "Angel Wing",
@@ -1428,7 +1452,7 @@ BindableFeatureOrder = {
     "BoxEspEnabled", "HealthbarEspEnabled", "ChamsEnabled", "NameEspEnabled",
     "DistanceEspEnabled", "WeaponEspEnabled", "SkeletonEnabled", "TracersEnabled", "CrosshairEnabled", "SpinCrosshairEnabled",
     "DamageNumbersEnabled", "SelfChamsEnabled", "CloneChamsEnabled", "OffscreenArrowsEnabled", "DeathChamsEnabled", "DeathBurstEnabled", "KillDissolveEnabled",
-        "FullbrightEnabled", "FpsBoostEnabled", "DarkModeEnabled", "WorldColorEnabled", "NoShadowsEnabled", "HitMarkerEnabled", "ChinaHatEnabled", "AngelHaloEnabled", "OrbitOrbsEnabled", "TargetDotEnabled",
+        "FullbrightEnabled", "FpsBoostEnabled", "DarkModeEnabled", "WorldColorEnabled", "NoShadowsEnabled", "ChinaHatEnabled", "AngelHaloEnabled", "OrbitOrbsEnabled", "TargetDotEnabled",
     "TrailEnabled", "FogEnabled", "NoFogEnabled", "SelfTransparencyEnabled", "FootstepsEnabled", "AspectRatioEnabled",
     "ThirdPersonEnabled", "ForceFieldEnabled", "WeaponForceFieldEnabled",
     "HitboxShow", "BulletTracersEnabled", "AuraEnabled", "ClassicPinkEnabled",
@@ -1564,6 +1588,8 @@ function ForceDisableFeature(featureKey)
             if FovCircleFill then FovCircleFill.Visible = false end
             if FovSquare then FovSquare.Visible = false end
             if FovSquareFill then FovSquareFill.Visible = false end
+            if FovOutlineCircle then FovOutlineCircle.Visible = false end
+            if FovOutlineSquare then FovOutlineSquare.Visible = false end
         elseif featureKey == "AimEnabled" then
             Cache.AimLockTarget = nil
 
@@ -1599,8 +1625,6 @@ end)
         elseif featureKey == "AngelHaloEnabled" then
             pcall(AngelHalo_Hide)
         elseif featureKey == "OrbitOrbsEnabled" then
-            if OrbitPart1 then OrbitPart1.Parent = nil end
-            if OrbitPart2 then OrbitPart2.Parent = nil end
         elseif featureKey == "TargetMarkerEnabled" then
             if TargetMarker_Hide then pcall(TargetMarker_Hide) end
         elseif featureKey == "TargetDotEnabled" then
@@ -1907,6 +1931,30 @@ UserInputService.InputBegan:Connect(function(input, gameProcessed)
         return
     end
 
+    if Cache.WaitingAAManualKey then
+        if tick() < (Cache.AAManualKeyIgnoreUntil or 0) then return end
+        local which = Cache.WaitingAAManualKey
+        Cache.WaitingAAManualKey = nil
+        if keyName == "Escape" then
+            Notify("Anti-Aim", "Bind cancelled")
+            return
+        end
+        if keyName == "Backspace" or keyName == "Delete" then
+            Config["AntiAimManual" .. which .. "Key"] = ""
+            if Cache.AAManualKeyLabels and Cache.AAManualKeyLabels[which] then
+                Cache.AAManualKeyLabels[which].Text = "[-]"
+            end
+            Notify("Anti-Aim", "Manual " .. which .. " bind cleared")
+            return
+        end
+        Config["AntiAimManual" .. which .. "Key"] = keyName
+        if Cache.AAManualKeyLabels and Cache.AAManualKeyLabels[which] then
+            Cache.AAManualKeyLabels[which].Text = "[" .. keyName .. "]"
+        end
+        Notify("Anti-Aim", "Manual " .. which .. " → [" .. keyName .. "]")
+        return
+    end
+
 
     
     if Cache.WaitingBindKey then
@@ -1938,6 +1986,27 @@ UserInputService.InputBegan:Connect(function(input, gameProcessed)
         end
     end
 
+    -- AA Manual direction binds (Static setting, not mode type)
+    if Config.AntiAimEnabled then
+        local function aaManSet(dir)
+            if tostring(Config.AntiAimManualDir or "None") == dir then
+                Config.AntiAimManualDir = "None"
+            else
+                Config.AntiAimManualDir = dir
+            end
+            if Cache.RefreshAAManualList then pcall(Cache.RefreshAAManualList) end
+            Notify("Anti-Aim", "Manual: " .. tostring(Config.AntiAimManualDir))
+        end
+        if Config.AntiAimManualFrontKey ~= "" and keyName == Config.AntiAimManualFrontKey then
+            aaManSet("Front"); return
+        elseif Config.AntiAimManualBackKey ~= "" and keyName == Config.AntiAimManualBackKey then
+            aaManSet("Back"); return
+        elseif Config.AntiAimManualLeftKey ~= "" and keyName == Config.AntiAimManualLeftKey then
+            aaManSet("Left"); return
+        elseif Config.AntiAimManualRightKey ~= "" and keyName == Config.AntiAimManualRightKey then
+            aaManSet("Right"); return
+        end
+    end
 
     if not isKeyboard then return end
 
@@ -2065,15 +2134,17 @@ UpdateBindList = function()
 end
 
 
-Cache.WM_LOGO_ASSET = "rbxassetid://117371753006597"
-Cache.WM_H = 28
-Cache.WM_PAD = 6
-Cache.WM_LOGO = 14
-Cache.WM_W = 318
-Cache.WM_TITLE_W = 58
-Cache.WM_FPS_W = 70
-Cache.WM_TG_W = 118
+Cache.WM_LOGO_ASSET = "rbxassetid://119051552929078"
+Cache.WM_H = 34
+Cache.WM_PAD = 8
+Cache.WM_LOGO = 18
+Cache.WM_ICON = 16
+Cache.WM_W = 340
+Cache.WM_TITLE_W = 62
+Cache.WM_FPS_W = 72
+Cache.WM_TG_W = 120
 Cache.WM_SEP_W = 10
+Cache.WM_TEXT_SIZE = 13
 
 WatermarkFrame = Instance.new("Frame")
 WatermarkFrame.Name = "WatermarkFrame"
@@ -2082,7 +2153,7 @@ WatermarkFrame.Position = UDim2.new(0.5, -math.floor(Cache.WM_W / 2), 0, 10)
 WatermarkFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 WatermarkFrame.BackgroundTransparency = 0.05
 WatermarkFrame.BorderSizePixel = 0
-WatermarkFrame.ClipsDescendants = false
+WatermarkFrame.ClipsDescendants = false -- accent bar can sit above top edge
 WatermarkFrame.Parent = ScreenGui
 
 WatermarkStroke = Instance.new("UIStroke")
@@ -2090,6 +2161,18 @@ WatermarkStroke.Color = Color3.fromRGB(0, 0, 0)
 WatermarkStroke.Thickness = 1
 WatermarkStroke.Transparency = 0.35
 WatermarkStroke.Parent = WatermarkFrame
+
+WatermarkAccentBar = Instance.new("Frame")
+WatermarkAccentBar.Name = "AccentBar"
+-- top edge stripe: sits on the very top of watermark (slightly above body)
+WatermarkAccentBar.AnchorPoint = Vector2.new(0, 1)
+WatermarkAccentBar.Size = UDim2.new(1, 0, 0, 3)
+WatermarkAccentBar.Position = UDim2.new(0, 0, 0, 0)
+WatermarkAccentBar.BackgroundColor3 = Theme.Accent or Color3.fromRGB(180, 140, 255)
+WatermarkAccentBar.BorderSizePixel = 0
+WatermarkAccentBar.ZIndex = 20
+WatermarkAccentBar.Parent = WatermarkFrame
+pcall(function() TrackThemeAccent(WatermarkAccentBar, "BackgroundColor3") end)
 
 WatermarkCorner = nil
 
@@ -2100,11 +2183,13 @@ WatermarkLogo.Position = UDim2.new(0, Cache.WM_PAD, 0.5, -math.floor(Cache.WM_LO
 WatermarkLogo.BackgroundTransparency = 1
 WatermarkLogo.BorderSizePixel = 0
 WatermarkLogo.ScaleType = Enum.ScaleType.Fit
-WatermarkLogo.Image = Cache.WM_LOGO_ASSET or "rbxassetid://117371753006597"
+WatermarkLogo.Image = Cache.WM_LOGO_ASSET or "rbxassetid://119051552929078"
 WatermarkLogo.Parent = WatermarkFrame
 pcall(function()
-    WatermarkLogo.ResampleMode = Enum.ResamplerMode.Pixelated
+    -- smooth (non-pixel) scaling
+    WatermarkLogo.ResampleMode = Enum.ResamplerMode.Default
 end)
+WatermarkLogo.ScaleType = Enum.ScaleType.Fit
 do
     local lc = Instance.new("UICorner")
     lc.CornerRadius = UDim.new(0, 4)
@@ -2114,9 +2199,9 @@ end
 WatermarkLabel = Instance.new("TextLabel")
 WatermarkLabel.Name = "WatermarkTitle"
 WatermarkLabel.BackgroundTransparency = 1
-WatermarkLabel.Text = "ANXIUM"
+WatermarkLabel.Text = "Anxium"
 WatermarkLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-WatermarkLabel.TextSize = 12
+WatermarkLabel.TextSize = 13
 WatermarkLabel.Font = SelectedFont
 WatermarkLabel.TextXAlignment = Enum.TextXAlignment.Left
 WatermarkLabel.TextYAlignment = Enum.TextYAlignment.Center
@@ -2127,7 +2212,7 @@ WatermarkSep.Name = "WatermarkSep"
 WatermarkSep.BackgroundTransparency = 1
 WatermarkSep.Text = "|"
 WatermarkSep.TextColor3 = Color3.fromRGB(255, 255, 255)
-WatermarkSep.TextSize = 12
+WatermarkSep.TextSize = 13
 WatermarkSep.Font = SelectedFont
 WatermarkSep.TextXAlignment = Enum.TextXAlignment.Center
 WatermarkSep.TextYAlignment = Enum.TextYAlignment.Center
@@ -2138,7 +2223,7 @@ WatermarkFpsLabel.Name = "WatermarkFps"
 WatermarkFpsLabel.BackgroundTransparency = 1
 WatermarkFpsLabel.Text = "fps: --"
 WatermarkFpsLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-WatermarkFpsLabel.TextSize = 12
+WatermarkFpsLabel.TextSize = 13
 WatermarkFpsLabel.Font = SelectedFont
 WatermarkFpsLabel.TextXAlignment = Enum.TextXAlignment.Left
 WatermarkFpsLabel.TextYAlignment = Enum.TextYAlignment.Center
@@ -2149,7 +2234,7 @@ WatermarkSep2.Name = "WatermarkSep2"
 WatermarkSep2.BackgroundTransparency = 1
 WatermarkSep2.Text = "|"
 WatermarkSep2.TextColor3 = Color3.fromRGB(255, 255, 255)
-WatermarkSep2.TextSize = 12
+WatermarkSep2.TextSize = 13
 WatermarkSep2.Font = SelectedFont
 WatermarkSep2.TextXAlignment = Enum.TextXAlignment.Center
 WatermarkSep2.TextYAlignment = Enum.TextYAlignment.Center
@@ -2160,7 +2245,7 @@ WatermarkTgLabel.Name = "WatermarkTg"
 WatermarkTgLabel.BackgroundTransparency = 1
 WatermarkTgLabel.Text = "t.me/AnxiumHub"
 WatermarkTgLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-WatermarkTgLabel.TextSize = 12
+WatermarkTgLabel.TextSize = 13
 WatermarkTgLabel.Font = SelectedFont
 WatermarkTgLabel.TextXAlignment = Enum.TextXAlignment.Left
 WatermarkTgLabel.TextYAlignment = Enum.TextYAlignment.Center
@@ -2187,7 +2272,7 @@ WatermarkGrad.Parent = WatermarkTgLabel
 WatermarkFpsIcon = Instance.new("ImageLabel")
 WatermarkFpsIcon.Name = "FpsIcon"
 WatermarkFpsIcon.BackgroundTransparency = 1
-WatermarkFpsIcon.Size = UDim2.fromOffset(14, 14)
+WatermarkFpsIcon.Size = UDim2.fromOffset(16, 16)
 WatermarkFpsIcon.Image = "rbxassetid://137527339160230"
 WatermarkFpsIcon.ScaleType = Enum.ScaleType.Fit
 WatermarkFpsIcon.Parent = WatermarkFrame
@@ -2195,7 +2280,7 @@ WatermarkFpsIcon.Parent = WatermarkFrame
 WatermarkTgIcon = Instance.new("ImageLabel")
 WatermarkTgIcon.Name = "TgIcon"
 WatermarkTgIcon.BackgroundTransparency = 1
-WatermarkTgIcon.Size = UDim2.fromOffset(14, 14)
+WatermarkTgIcon.Size = UDim2.fromOffset(16, 16)
 WatermarkTgIcon.Image = "rbxassetid://86131768436965"
 WatermarkTgIcon.ScaleType = Enum.ScaleType.Fit
 WatermarkTgIcon.Parent = WatermarkFrame
@@ -2203,7 +2288,7 @@ WatermarkTgIcon.Parent = WatermarkFrame
 WatermarkCfgIcon = Instance.new("ImageLabel")
 WatermarkCfgIcon.Name = "CfgIcon"
 WatermarkCfgIcon.BackgroundTransparency = 1
-WatermarkCfgIcon.Size = UDim2.fromOffset(14, 14)
+WatermarkCfgIcon.Size = UDim2.fromOffset(16, 16)
 WatermarkCfgIcon.Image = "rbxassetid://98868866618869"
 WatermarkCfgIcon.ScaleType = Enum.ScaleType.Fit
 WatermarkCfgIcon.Parent = WatermarkFrame
@@ -2213,7 +2298,7 @@ WatermarkCfgLabel.Name = "WatermarkCfg"
 WatermarkCfgLabel.BackgroundTransparency = 1
 WatermarkCfgLabel.Text = "default"
 WatermarkCfgLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-WatermarkCfgLabel.TextSize = 12
+WatermarkCfgLabel.TextSize = 13
 WatermarkCfgLabel.Font = SelectedFont
 WatermarkCfgLabel.TextXAlignment = Enum.TextXAlignment.Left
 WatermarkCfgLabel.TextYAlignment = Enum.TextYAlignment.Center
@@ -2222,57 +2307,65 @@ WatermarkCfgLabel.Parent = WatermarkFrame
 
 function LayoutWatermark()
     if not WatermarkFrame then return end
-    local h = Cache.WM_H or 28
-    local pad = Cache.WM_PAD or 6
-    local logo = Cache.WM_LOGO or 14
-    local gap = 6
-    local icon = 14
-    local x = pad + logo + 8
+    local h = Cache.WM_H or 34
+    local pad = Cache.WM_PAD or 8
+    local ts = Cache.WM_TEXT_SIZE or 13
+    local logo = Cache.WM_LOGO or Cache.WM_ICON or 16
+    local icon = Cache.WM_ICON or logo or 16
+    local gap = 8
+    local iconGap = 4
+    -- same text size + vertical center for all labels
+    for _, lbl in ipairs({
+        WatermarkLabel, WatermarkSep, WatermarkSep2,
+        WatermarkFpsLabel, WatermarkTgLabel, WatermarkCfgLabel,
+    }) do
+        if lbl then
+            lbl.TextSize = ts
+            lbl.Font = SelectedFont or lbl.Font
+            lbl.TextYAlignment = Enum.TextYAlignment.Center
+            lbl.TextXAlignment = Enum.TextXAlignment.Left
+        end
+    end
+    -- same icon size + vertical center for logo + all icons
+    local function placeIcon(img, px)
+        if not img then return px end
+        img.Size = UDim2.fromOffset(icon, icon)
+        img.Position = UDim2.new(0, px, 0.5, -math.floor(icon / 2))
+        img.Visible = true
+        return px + icon + iconGap
+    end
+    local x = pad
     if WatermarkLogo then
         WatermarkLogo.Size = UDim2.fromOffset(logo, logo)
         WatermarkLogo.Position = UDim2.new(0, pad, 0.5, -math.floor(logo / 2))
+        x = pad + logo + 6
     end
     if WatermarkLabel then
-        WatermarkLabel.Size = UDim2.fromOffset(56, h)
+        WatermarkLabel.Size = UDim2.fromOffset(60, h)
         WatermarkLabel.Position = UDim2.fromOffset(x, 0)
-        WatermarkLabel.Text = "ANXIUM"
+        WatermarkLabel.Text = "Anxium"
         WatermarkLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
     end
-    x = x + 56 + gap
+    x = x + 60 + gap
     
     if WatermarkSep then WatermarkSep.Visible = false end
     if WatermarkSep2 then WatermarkSep2.Visible = false end
-    if WatermarkFpsIcon then
-        WatermarkFpsIcon.Size = UDim2.fromOffset(icon, icon)
-        WatermarkFpsIcon.Position = UDim2.new(0, x, 0.5, -math.floor(icon / 2))
-        WatermarkFpsIcon.Visible = true
-    end
-    x = x + icon + 3
+    x = placeIcon(WatermarkFpsIcon, x)
     if WatermarkFpsLabel then
-        WatermarkFpsLabel.Size = UDim2.fromOffset(64, h)
+        WatermarkFpsLabel.Size = UDim2.fromOffset(68, h)
         WatermarkFpsLabel.Position = UDim2.fromOffset(x, 0)
         WatermarkFpsLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
     end
-    x = x + 64 + gap
-    if WatermarkTgIcon then
-        WatermarkTgIcon.Size = UDim2.fromOffset(icon, icon)
-        WatermarkTgIcon.Position = UDim2.new(0, x, 0.5, -math.floor(icon / 2))
-        WatermarkTgIcon.Visible = true
-    end
-    x = x + icon + 3
+    x = x + 68 + gap
+    x = placeIcon(WatermarkTgIcon, x)
     if WatermarkTgLabel then
-        WatermarkTgLabel.Size = UDim2.fromOffset(110, h)
+        WatermarkTgLabel.Size = UDim2.fromOffset(118, h)
         WatermarkTgLabel.Position = UDim2.fromOffset(x, 0)
         WatermarkTgLabel.Text = "t.me/AnxiumHub"
         WatermarkTgLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
     end
-    x = x + 110 + gap
-    if WatermarkCfgIcon then
-        WatermarkCfgIcon.Size = UDim2.fromOffset(icon, icon)
-        WatermarkCfgIcon.Position = UDim2.new(0, x, 0.5, -math.floor(icon / 2))
-        WatermarkCfgIcon.Visible = true
-    end
-    x = x + icon + 3
+    x = x + 118 + gap
+    x = placeIcon(WatermarkCfgIcon, x)
     local cfgName = "none"
     pcall(function()
         if CfgIO and CfgIO.Current and tostring(CfgIO.Current) ~= "" then
@@ -2289,6 +2382,13 @@ function LayoutWatermark()
         x = x + WatermarkCfgLabel.Size.X.Offset + pad
     else
         x = x + 50 + pad
+    end
+    if WatermarkAccentBar then
+        WatermarkAccentBar.AnchorPoint = Vector2.new(0, 1)
+        WatermarkAccentBar.Size = UDim2.new(1, 0, 0, 3)
+        WatermarkAccentBar.Position = UDim2.new(0, 0, 0, 0)
+        WatermarkAccentBar.BackgroundColor3 = (Theme and Theme.Accent) or Color3.fromRGB(180, 140, 255)
+        WatermarkAccentBar.ZIndex = 20
     end
     Cache.WM_W = math.max(x, 280)
     WatermarkFrame.Size = UDim2.fromOffset(Cache.WM_W, h)
@@ -2374,7 +2474,7 @@ end)
 
 task.spawn(function()
     if WatermarkLogo then
-        WatermarkLogo.Image = Cache.WM_LOGO_ASSET or "rbxassetid://117371753006597"
+        WatermarkLogo.Image = Cache.WM_LOGO_ASSET or "rbxassetid://119051552929078"
     end
 end)
 
@@ -2486,6 +2586,21 @@ FovSquareFill.Color = Config.Color_FovFill or Config.Color_Fov or Theme.Accent
 FovSquareFill.Transparency = Config.FovFillTransparency or 0.7
 FovSquareFill.Size = Vector2.new((Config.FovRadius or 150) * 2, (Config.FovRadius or 150) * 2)
 FovSquareFill.ZIndex = 1
+
+-- separate outer outline (ring around main FOV, not the FOV itself)
+FovOutlineCircle = Drawing.new("Circle")
+FovOutlineCircle.Thickness = 2
+FovOutlineCircle.NumSides = 96
+FovOutlineCircle.Filled = false
+FovOutlineCircle.Visible = false
+FovOutlineCircle.Color = Config.Color_FovOutline or Color3.fromRGB(180, 140, 255)
+FovOutlineCircle.ZIndex = 3
+FovOutlineSquare = Drawing.new("Square")
+FovOutlineSquare.Thickness = 2
+FovOutlineSquare.Filled = false
+FovOutlineSquare.Visible = false
+FovOutlineSquare.Color = Config.Color_FovOutline or Color3.fromRGB(180, 140, 255)
+FovOutlineSquare.ZIndex = 3
 
 function FovStyleIsSquare()
     return tostring(Config.FovStyle or "Circle") == "Square"
@@ -3691,65 +3806,13 @@ if Drawing then
 end
 
 
-OrbitPart1 = Instance.new("Part")
-OrbitPart1.Size = Vector3.new(0.1, 0.1, 0.1)
-OrbitPart1.Transparency = 1
-OrbitPart1.CanCollide = false
-OrbitPart1.Anchored = true
 
-OrbAtt0_1 = Instance.new("Attachment", OrbitPart1)
-OrbAtt0_1.Position = Vector3.new(0, 0.6, 0)
-OrbAtt1_1 = Instance.new("Attachment", OrbitPart1)
-OrbAtt1_1.Position = Vector3.new(0, -0.6, 0)
-
-OrbTrail1 = Instance.new("Trail")
-OrbTrail1.Attachment0 = OrbAtt0_1
-OrbTrail1.Attachment1 = OrbAtt1_1
-OrbTrail1.Lifetime = 0.28
-OrbTrail1.LightEmission = 1
-OrbTrail1.LightInfluence = 0
-OrbTrail1.Color = ColorSequence.new(Theme.Accent)
-OrbTrail1.Transparency = NumberSequence.new({
-    NumberSequenceKeypoint.new(0, 0.05),
-    NumberSequenceKeypoint.new(0.6, 0.3),
-    NumberSequenceKeypoint.new(1, 1)
-})
-OrbTrail1.WidthScale = NumberSequence.new({
-    NumberSequenceKeypoint.new(0, 1),
-    NumberSequenceKeypoint.new(0.5, 0.8),
-    NumberSequenceKeypoint.new(1, 0.1)
-})
-OrbTrail1.Parent = OrbitPart1
-
-OrbitPart2 = Instance.new("Part")
-OrbitPart2.Size = Vector3.new(0.1, 0.1, 0.1)
-OrbitPart2.Transparency = 1
-OrbitPart2.CanCollide = false
-OrbitPart2.Anchored = true
-
-OrbAtt0_2 = Instance.new("Attachment", OrbitPart2)
-OrbAtt0_2.Position = Vector3.new(0, 0.6, 0)
-OrbAtt1_2 = Instance.new("Attachment", OrbitPart2)
-OrbAtt1_2.Position = Vector3.new(0, -0.6, 0)
-
-OrbTrail2 = Instance.new("Trail")
-OrbTrail2.Attachment0 = OrbAtt0_2
-OrbTrail2.Attachment1 = OrbAtt1_2
-OrbTrail2.Lifetime = 0.28
-OrbTrail2.LightEmission = 1
-OrbTrail2.LightInfluence = 0
-OrbTrail2.Color = ColorSequence.new(Theme.Accent)
-OrbTrail2.Transparency = NumberSequence.new({
-    NumberSequenceKeypoint.new(0, 0.05),
-    NumberSequenceKeypoint.new(0.6, 0.3),
-    NumberSequenceKeypoint.new(1, 1)
-})
-OrbTrail2.WidthScale = NumberSequence.new({
-    NumberSequenceKeypoint.new(0, 1),
-    NumberSequenceKeypoint.new(0.5, 0.8),
-    NumberSequenceKeypoint.new(1, 0.1)
-})
-OrbTrail2.Parent = OrbitPart2
+-- Neon Orbit removed
+OrbitPart1 = nil
+OrbitPart2 = nil
+OrbTrail1 = nil
+OrbTrail2 = nil
+OrbitOrbsBtn, OrbitOrbsBg, OrbitOrbsKnob = nil, nil, nil
 
 SetupTrail = function(character)
     if not character then return end
@@ -3789,15 +3852,219 @@ end
 if LocalPlayer.Character then SetupTrail(LocalPlayer.Character) end
 LocalPlayer.CharacterAdded:Connect(SetupTrail)
 
+function SelfMaterial_GetMaterial()
+    local style = tostring(Config.SelfMaterialStyle or "Glass")
+    local map = {
+        ForceField = Enum.Material.ForceField,
+        Neon = Enum.Material.Neon,
+        Glass = Enum.Material.Glass,
+        Ice = Enum.Material.Ice,
+        Metal = Enum.Material.Metal,
+        SmoothPlastic = Enum.Material.SmoothPlastic,
+        Foil = Enum.Material.Foil,
+        Plastic = Enum.Material.Plastic,
+    }
+    return map[style] or Enum.Material.Glass
+end
+
+-- body + accessories + hair; only skip tools / HumanoidRootPart
+
+function SelfMaterial_GetUsePartColor(part)
+    local v = nil
+    pcall(function()
+        if part and part:IsA("MeshPart") then
+            v = part.UsePartColor
+        end
+    end)
+    return v
+end
+
+function SelfMaterial_SetUsePartColor(part, value)
+    pcall(function()
+        if part and part:IsA("MeshPart") then
+            part.UsePartColor = value
+        end
+    end)
+end
+
+function SelfMaterial_IsCharacterBodyPart(part, char)
+    if not part or not char then return false end
+    if not part:IsA("BasePart") then return false end
+    if part.Name == "HumanoidRootPart" then return false end
+    if not part:IsDescendantOf(char) then return false end
+    local p = part
+    for _ = 1, 24 do
+        if not p then break end
+        if p:IsA("Tool") then return false end
+        local n = string.lower(tostring(p.Name or ""))
+        if n:find("viewmodel", 1, true) or n:find("view_model", 1, true) then return false end
+        if n:find("camera", 1, true) and n:find("part", 1, true) then return false end
+        if p == char then break end
+        p = p.Parent
+    end
+    return true
+end
+
+function SelfMaterial_StripOverrides(part, store)
+    if not part then return end
+    -- SurfaceAppearance fully overrides Material/Color on MeshParts
+    for _, ch in ipairs(part:GetChildren()) do
+        if ch:IsA("SurfaceAppearance") then
+            if store then
+                store.SurfaceApps = store.SurfaceApps or {}
+                table.insert(store.SurfaceApps, ch)
+            end
+            pcall(function() ch.Parent = nil end)
+        elseif ch:IsA("Decal") or ch:IsA("Texture") then
+            -- face / body decals make Head look brighter or wrong-colored
+            if store then
+                store.Decals = store.Decals or {}
+                table.insert(store.Decals, {
+                    inst = ch,
+                    Transparency = ch.Transparency,
+                    Color3 = ch.Color3,
+                })
+            end
+            pcall(function()
+                ch.Transparency = 1
+            end)
+        end
+    end
+    pcall(function()
+        if part:IsA("MeshPart") then
+            if store then
+                if store.TextureID == nil then
+                    store.TextureID = part.TextureID
+                end
+                if store.UsePartColor == nil then
+                    store.UsePartColor = SelfMaterial_GetUsePartColor(part)
+                end
+            end
+            part.TextureID = ""
+            -- critical: without UsePartColor mesh vertex colors override part.Color (Head often brighter)
+            SelfMaterial_SetUsePartColor(part, true)
+        end
+    end)
+    pcall(function()
+        if part.MaterialVariant ~= nil then
+            if store and store.MaterialVariant == nil then
+                store.MaterialVariant = part.MaterialVariant
+            end
+            part.MaterialVariant = ""
+        end
+    end)
+end
+
+function SelfMaterial_PaintPart(part, col, mat, style)
+    if not part then return end
+    local store = nil
+    pcall(function()
+        local bag = Cache.ForceFieldOriginals and Cache.ForceFieldOriginals[part.Parent]
+        -- prefer character bag from ForceField_SaveOriginals
+        if Cache.ForceFieldOriginals then
+            for ch, b in pairs(Cache.ForceFieldOriginals) do
+                if type(b) == "table" and b._parts and b._parts[part] then
+                    store = b._parts[part]
+                    break
+                end
+            end
+        end
+    end)
+    if not store then
+        store = Cache.ForceFieldOriginals and Cache.ForceFieldOriginals._parts and Cache.ForceFieldOriginals._parts[part]
+    end
+    SelfMaterial_StripOverrides(part, store)
+    pcall(function()
+        if part:IsA("MeshPart") then
+            SelfMaterial_SetUsePartColor(part, true)
+            pcall(function() part.TextureID = "" end)
+            pcall(function() part.DoubleSided = part.DoubleSided end)
+        end
+        -- force material/color even if game sets them every frame
+        part.Material = mat
+        part.Color = col
+        pcall(function()
+            part:SetAttribute("AnxiumSelfMat", true)
+        end)
+        -- uniform look across Head / torso / limbs (Head often brighter due to mesh/face)
+        if style == "Neon" then
+            if store and store.Transparency == nil then store.Transparency = part.Transparency end
+            part.Transparency = 0
+            part.Reflectance = 0
+        elseif style == "Metal" or style == "Foil" then
+            if store and store.Transparency == nil then store.Transparency = part.Transparency end
+            part.Transparency = 0
+            part.Reflectance = (style == "Metal") and 0.25 or 0.35
+        elseif style == "SmoothPlastic" or style == "Plastic" then
+            if store and store.Transparency == nil then store.Transparency = part.Transparency end
+            part.Transparency = 0
+            part.Reflectance = 0
+        elseif style == "Glass" or style == "Ice" then
+            if store and store.Transparency == nil then store.Transparency = part.Transparency end
+            -- fixed transparency so Head matches body
+            part.Transparency = (style == "Glass") and 0.35 or 0.3
+            part.Reflectance = (style == "Glass") and 0.35 or 0.12
+        elseif style == "ForceField" then
+            if store and store.Transparency == nil then store.Transparency = part.Transparency end
+            part.Transparency = 0
+            part.Reflectance = 0
+        else
+            part.Reflectance = 0
+        end
+    end)
+    -- SpecialMesh texture clear (classic R6 Head)
+    pcall(function()
+        local sm = part:FindFirstChildOfClass("SpecialMesh")
+        if sm then
+            if store then
+                store.MeshTexture = store.MeshTexture or sm.TextureId
+            end
+            sm.TextureId = ""
+        end
+    end)
+    -- hide leftover face decals again after material set
+    pcall(function()
+        for _, ch in ipairs(part:GetChildren()) do
+            if ch:IsA("Decal") or ch:IsA("Texture") then
+                ch.Transparency = 1
+            end
+        end
+    end)
+end
+
 function ForceField_SaveOriginals(char)
-    if not char or Cache.ForceFieldOriginals[char] then return end
-    Cache.ForceFieldOriginals[char] = {}
+    if not char then return end
+    Cache.ForceFieldOriginals = Cache.ForceFieldOriginals or {}
+    -- always extend map for new parts (accessories can load late)
+    local bag = Cache.ForceFieldOriginals[char]
+    if not bag then
+        bag = { _parts = {} }
+        Cache.ForceFieldOriginals[char] = bag
+    end
+    bag._parts = bag._parts or {}
     for _, part in ipairs(char:GetDescendants()) do
-        if part:IsA("BasePart") and part.Name ~= "HumanoidRootPart" then
-            Cache.ForceFieldOriginals[char][part] = {
+        if SelfMaterial_IsCharacterBodyPart(part, char) and not bag._parts[part] then
+            local data = {
                 Color = part.Color,
-                Material = part.Material
+                Material = part.Material,
+                Transparency = part.Transparency,
+                Reflectance = part.Reflectance,
+                TextureID = (part:IsA("MeshPart") and part.TextureID) or nil,
+                UsePartColor = SelfMaterial_GetUsePartColor(part),
+                MaterialVariant = part.MaterialVariant,
+                SurfaceApps = {},
+                Decals = {},
             }
+            for _, ch in ipairs(part:GetChildren()) do
+                if ch:IsA("SurfaceAppearance") then
+                    table.insert(data.SurfaceApps, ch)
+                end
+            end
+            local sm = part:FindFirstChildOfClass("SpecialMesh")
+            if sm then data.MeshTexture = sm.TextureId end
+            bag._parts[part] = data
+            -- also keep flat map for legacy restore loops
+            bag[part] = data
         end
     end
 end
@@ -3805,57 +4072,189 @@ end
 function ForceField_Apply(char)
     if not char then return end
     ForceField_SaveOriginals(char)
-    local col = Config.Color_ForceField or Theme.Accent
+    local col = Config.Color_SelfMaterial or Config.Color_ForceField or Theme.Accent
+    if typeof(col) ~= "Color3" then col = Color3.fromRGB(180, 140, 255) end
+    local style = tostring(Config.SelfMaterialStyle or "Glass")
+    local mat = SelfMaterial_GetMaterial()
+    local paintCol = col
+    if style == "Neon" then
+        paintCol = Color3.new(
+            math.clamp(col.R * 1.15 + 0.08, 0, 1),
+            math.clamp(col.G * 1.15 + 0.08, 0, 1),
+            math.clamp(col.B * 1.15 + 0.08, 0, 1)
+        )
+    end
+    -- strip layers that block custom character materials
+    pcall(function()
+        for _, d in ipairs(char:GetDescendants()) do
+            local cn = d.ClassName
+            if cn == "Shirt" or cn == "Pants" or cn == "ShirtGraphic" or cn == "BodyColors"
+                or cn == "CharacterMesh" or cn == "SurfaceAppearance"
+                or cn == "WrapLayer" or cn == "WrapTarget" or cn == "LayeredClothing"
+                or cn == "PuffinessConstraint" then
+                pcall(function()
+                    if d:IsA("Shirt") or d:IsA("Pants") then
+                        if d:IsA("Shirt") then d.ShirtTemplate = "" end
+                        if d:IsA("Pants") then d.PantsTemplate = "" end
+                    elseif d:IsA("ShirtGraphic") then
+                        d.Graphic = ""
+                    elseif d:IsA("BodyColors") then
+                        -- force all body colors to paint color so R6 heads match
+                        local bc = paintCol
+                        d.HeadColor3 = bc
+                        d.TorsoColor3 = bc
+                        d.LeftArmColor3 = bc
+                        d.RightArmColor3 = bc
+                        d.LeftLegColor3 = bc
+                        d.RightLegColor3 = bc
+                    elseif d:IsA("SurfaceAppearance") then
+                        d.Parent = nil
+                    elseif d:IsA("CharacterMesh") then
+                        d:Destroy()
+                    end
+                end)
+            end
+        end
+    end)
     for _, part in ipairs(char:GetDescendants()) do
-        if part:IsA("BasePart") and part.Name ~= "HumanoidRootPart" then
-            part.Color = col
-            part.Material = Enum.Material.ForceField
+        if SelfMaterial_IsCharacterBodyPart(part, char) then
+            SelfMaterial_PaintPart(part, paintCol, mat, style)
         end
     end
+    -- hide classic clothing layers that cover body materials
+    pcall(function()
+        local shirt = char:FindFirstChildOfClass("Shirt")
+        local pants = char:FindFirstChildOfClass("Pants")
+        local tshirt = char:FindFirstChildOfClass("ShirtGraphic")
+        local bag = Cache.ForceFieldOriginals[char]
+        if bag then
+            if shirt and bag._shirt == nil then bag._shirt = shirt.ShirtTemplate; shirt.ShirtTemplate = "" end
+            if pants and bag._pants == nil then bag._pants = pants.PantsTemplate; pants.PantsTemplate = "" end
+            if tshirt and bag._tshirt == nil then bag._tshirt = tshirt.Graphic; tshirt.Graphic = "" end
+        end
+    end)
 end
 
 function ForceField_Restore(char)
-    if not char or not Cache.ForceFieldOriginals[char] then return end
-    for part, data in pairs(Cache.ForceFieldOriginals[char]) do
-        if part and part.Parent and part:IsA("BasePart") then
+    if not char or not Cache.ForceFieldOriginals or not Cache.ForceFieldOriginals[char] then return end
+    local bag = Cache.ForceFieldOriginals[char]
+    for part, data in pairs(bag) do
+        if typeof(part) == "Instance" and part:IsA("BasePart") and type(data) == "table" then
             pcall(function()
                 part.Color = data.Color
                 part.Material = data.Material
+                if data.Transparency ~= nil then part.Transparency = data.Transparency end
+                if data.Reflectance ~= nil then part.Reflectance = data.Reflectance end
+                if part:IsA("MeshPart") then
+                    if data.TextureID ~= nil then
+                        part.TextureID = data.TextureID
+                    end
+                    if data.UsePartColor ~= nil then
+                        SelfMaterial_SetUsePartColor(part, data.UsePartColor)
+                    end
+                end
+                if data.MaterialVariant ~= nil then
+                    part.MaterialVariant = data.MaterialVariant
+                end
+                if data.SurfaceApps then
+                    for _, sa in ipairs(data.SurfaceApps) do
+                        if sa then pcall(function() sa.Parent = part end) end
+                    end
+                end
+                if data.Decals then
+                    for _, d in ipairs(data.Decals) do
+                        if d and d.inst then
+                            pcall(function()
+                                if d.Transparency ~= nil then d.inst.Transparency = d.Transparency end
+                                if d.Color3 ~= nil then d.inst.Color3 = d.Color3 end
+                            end)
+                        end
+                    end
+                end
+                if data.MeshTexture then
+                    local sm = part:FindFirstChildOfClass("SpecialMesh")
+                    if sm then sm.TextureId = data.MeshTexture end
+                end
             end)
         end
     end
+    pcall(function()
+        local shirt = char:FindFirstChildOfClass("Shirt")
+        local pants = char:FindFirstChildOfClass("Pants")
+        local tshirt = char:FindFirstChildOfClass("ShirtGraphic")
+        if shirt and bag._shirt then shirt.ShirtTemplate = bag._shirt end
+        if pants and bag._pants then pants.PantsTemplate = bag._pants end
+        if tshirt and bag._tshirt then tshirt.Graphic = bag._tshirt end
+    end)
     Cache.ForceFieldOriginals[char] = nil
 end
 
 function ForceField_Update()
     if not Config then return end
     local char = LocalPlayer.Character
-    if not char or not Config.ForceFieldEnabled then return end
-    local col = Config.Color_ForceField or Theme.Accent
-    for _, part in ipairs(char:GetDescendants()) do
-        if part:IsA("BasePart") and part.Material == Enum.Material.ForceField then
-            part.Color = col
-        end
-    end
+    local on = Config.SelfMaterialEnabled == true or Config.ForceFieldEnabled == true
+    if not char or not on then return end
+    ForceField_Apply(char)
 end
 
 function ForceField_Toggle(enabled)
+    enabled = enabled and true or false
+    Config.SelfMaterialEnabled = enabled
     Config.ForceFieldEnabled = enabled
     local char = LocalPlayer.Character
+    if Cache.ForceFieldConnection then
+        pcall(function() Cache.ForceFieldConnection:Disconnect() end)
+        Cache.ForceFieldConnection = nil
+    end
+    if Cache.ForceFieldDescConn then
+        pcall(function() Cache.ForceFieldDescConn:Disconnect() end)
+        Cache.ForceFieldDescConn = nil
+    end
     if enabled then
-        if char then ForceField_Apply(char) end
-        if Cache.ForceFieldConnection then
-            Cache.ForceFieldConnection:Disconnect()
-            Cache.ForceFieldConnection = nil
+        if char then
+            ForceField_Apply(char)
+            Cache.ForceFieldDescConn = char.DescendantAdded:Connect(function(desc)
+                if not (Config.SelfMaterialEnabled or Config.ForceFieldEnabled) then return end
+                if desc:IsA("BasePart") or desc:IsA("SurfaceAppearance") or desc:IsA("Accessory")
+                    or desc:IsA("Shirt") or desc:IsA("Pants") or desc:IsA("ShirtGraphic")
+                    or desc:IsA("BodyColors") or desc:IsA("CharacterMesh") then
+                    task.defer(function()
+                        if LocalPlayer.Character == char then
+                            ForceField_Apply(char)
+                        end
+                    end)
+                end
+            end)
+            pcall(function()
+                local hum = char:FindFirstChildOfClass("Humanoid")
+                if hum then
+                    Cache.ForceFieldAppearanceConn = hum.ApplyDescriptionFinished:Connect(function()
+                        if Config.SelfMaterialEnabled or Config.ForceFieldEnabled then
+                            task.defer(function() ForceField_Apply(char) end)
+                        end
+                    end)
+                end
+            end)
         end
+        if Cache.ForceFieldHB then pcall(function() Cache.ForceFieldHB:Disconnect() end) end
+        Cache.ForceFieldHB = RunService.Heartbeat:Connect(function()
+            if not (Config.SelfMaterialEnabled or Config.ForceFieldEnabled) then return end
+            Cache._SelfMatTick = (Cache._SelfMatTick or 0) + 1
+            if Cache._SelfMatTick % 8 ~= 0 then return end
+            local c = LocalPlayer.Character
+            if c then pcall(ForceField_Apply, c) end
+        end)
     else
-        if Cache.ForceFieldConnection then
-            Cache.ForceFieldConnection:Disconnect()
-            Cache.ForceFieldConnection = nil
-        end
+        if Cache.ForceFieldHB then pcall(function() Cache.ForceFieldHB:Disconnect() end) Cache.ForceFieldHB = nil end
+        if Cache.ForceFieldAppearanceConn then pcall(function() Cache.ForceFieldAppearanceConn:Disconnect() end) Cache.ForceFieldAppearanceConn = nil end
         if char then ForceField_Restore(char) end
     end
 end
+
+SelfMaterial_Toggle = ForceField_Toggle
+SelfMaterial_Apply = ForceField_Apply
+SelfMaterial_Restore = ForceField_Restore
+SelfMaterial_Update = ForceField_Update
 
 
 Cache.WeaponFFPainted = Cache.WeaponFFPainted or {}
@@ -4573,7 +4972,7 @@ end
 function ReapplyAurasAndForceField(char)
     task.wait(0.8)
     if not char or not char.Parent then return end
-    if Config.ForceFieldEnabled then ForceField_Apply(char) end
+    if Config.SelfMaterialEnabled or Config.ForceFieldEnabled then ForceField_Apply(char) end
     ClassicAura_RefreshAll()
     ParticleAura_RefreshAll()
 end
@@ -4581,6 +4980,7 @@ end
 
 Cache.ThirdPersonSavedMinZoom = nil
 Cache.ThirdPersonSavedMaxZoom = nil
+Cache.ThirdPersonSavedCameraMode = nil
 Cache.ThirdPersonUsingOffset = false
 Cache.ThirdPersonToolConns = Cache.ThirdPersonToolConns or {}
 Cache.ThirdPersonLastDist = nil
@@ -4689,27 +5089,111 @@ function ThirdPerson_HookCharacter(char)
     end
 end
 
+
+-- Smooth Camera: soft lag-follow on top of Roblox camera (shiftlock / native 3rd person / script TP)
+Cache.SmoothCamCF = nil
+Cache.SmoothCamActive = false
+Cache.SmoothCamBound = false
+
+function SmoothCamera_Restore()
+    pcall(function()
+        Cache.SmoothCamActive = false
+        Cache.SmoothCamCF = nil
+    end)
+end
+
+function SmoothCamera_IsFirstPerson(cam, hrp)
+    if not cam or not hrp then return false end
+    local ok, dist = pcall(function()
+        return (cam.CFrame.Position - hrp.Position).Magnitude
+    end)
+    if ok and dist and dist < 1.2 then return true end
+    -- zoom almost locked to 0.5 = classic first person
+    local minZ = tonumber(LocalPlayer.CameraMinZoomDistance) or 0.5
+    local maxZ = tonumber(LocalPlayer.CameraMaxZoomDistance) or 128
+    if maxZ <= 1.0 and minZ <= 1.0 then return true end
+    return false
+end
+
+function SmoothCamera_Update(dt)
+    if not Config then return end
+    local enabled = Config.SmoothCameraEnabled == true
+    local amount = math.clamp(tonumber(Config.SmoothCameraAmount) or 0, 0, 100)
+    if not enabled or amount <= 0 then
+        if Cache.SmoothCamActive then
+            SmoothCamera_Restore()
+        end
+        return
+    end
+
+    local cam = Workspace.CurrentCamera or Camera
+    local char = LocalPlayer.Character
+    local hrp = char and (char:FindFirstChild("HumanoidRootPart") or char.PrimaryPart)
+    local hum = char and char:FindFirstChildOfClass("Humanoid")
+    if not cam or not hrp or not hum or hum.Health <= 0 then
+        return
+    end
+
+    -- don't fight pure first-person
+    if SmoothCamera_IsFirstPerson(cam, hrp) then
+        Cache.SmoothCamCF = cam.CFrame
+        return
+    end
+
+    dt = math.clamp(tonumber(dt) or 0.016, 0.001, 0.1)
+    Cache.SmoothCamActive = true
+
+    -- Roblox already placed the camera (Custom / shiftlock / zoom). We lag behind it.
+    local ideal = cam.CFrame
+    if not Cache.SmoothCamCF then
+        Cache.SmoothCamCF = ideal
+        return
+    end
+
+    -- higher amount => slower catch-up
+    local smooth01 = amount / 100
+    local speed = 26 * (1 - smooth01 * 0.93) -- ~26 at 0, ~1.8 at 100
+    speed = math.max(speed, 1.2)
+    local alpha = 1 - math.exp(-speed * dt)
+
+    -- blend position stronger than rotation so look stays responsive
+    local cur = Cache.SmoothCamCF
+    local newPos = cur.Position:Lerp(ideal.Position, alpha)
+    local lookAlpha = math.clamp(alpha * 1.35, 0, 1)
+    local newCF = cur:Lerp(ideal, lookAlpha)
+    Cache.SmoothCamCF = CFrame.new(newPos) * (newCF - newCF.Position)
+
+    pcall(function()
+        cam.CFrame = Cache.SmoothCamCF
+    end)
+end
+
+function SmoothCamera_EnsureBind()
+    if Cache.SmoothCamBound then return end
+    Cache.SmoothCamBound = true
+    -- after default Roblox camera so we post-smooth native 3rd person / shiftlock
+    pcall(function()
+        RunService:BindToRenderStep("AnxiumSmoothCamera", Enum.RenderPriority.Camera.Value + 2, function(dt)
+            if SmoothCamera_Update then
+                SmoothCamera_Update(dt)
+            end
+        end)
+    end)
+end
+
+task.defer(function()
+    if SmoothCamera_EnsureBind then SmoothCamera_EnsureBind() end
+end)
+
 function ThirdPerson_ForceDistance(dist)
-    dist = math.clamp(tonumber(dist) or 12, 4, 50)
+    dist = math.clamp(tonumber(dist) or (Config.ThirdPersonDistance or 12), 4, 50)
     pcall(function()
         LocalPlayer.CameraMode = Enum.CameraMode.Classic
-        LocalPlayer.DevEnableMouseLock = true
         LocalPlayer.CameraMinZoomDistance = dist
         LocalPlayer.CameraMaxZoomDistance = dist
     end)
     local char = LocalPlayer.Character
     local hum = char and char:FindFirstChildOfClass("Humanoid")
-    local cam = Workspace.CurrentCamera or Camera
-    if cam and hum then
-        pcall(function()
-            if cam.CameraType ~= Enum.CameraType.Custom and cam.CameraType ~= Enum.CameraType.Track then
-                cam.CameraType = Enum.CameraType.Custom
-            end
-            if cam.CameraSubject ~= hum then
-                cam.CameraSubject = hum
-            end
-        end)
-    end
     if hum then
         pcall(function() hum.CameraOffset = Vector3.zero end)
     end
@@ -4717,14 +5201,52 @@ function ThirdPerson_ForceDistance(dist)
     return dist
 end
 
+function ThirdPerson_LockLoop()
+    if Cache.ThirdPersonLockHB then return end
+    Cache.ThirdPersonLockHB = RunService.RenderStepped:Connect(function()
+        if not Config or not Config.ThirdPersonEnabled then return end
+        local dist = math.clamp(tonumber(Config.ThirdPersonDistance) or 12, 4, 50)
+        pcall(function()
+            LocalPlayer.CameraMode = Enum.CameraMode.Classic
+            if LocalPlayer.CameraMinZoomDistance ~= dist or LocalPlayer.CameraMaxZoomDistance ~= dist then
+                LocalPlayer.CameraMinZoomDistance = dist
+                LocalPlayer.CameraMaxZoomDistance = dist
+            end
+        end)
+    end)
+    if not Cache.ThirdPersonWheelConn then
+        Cache.ThirdPersonWheelConn = UserInputService.InputChanged:Connect(function(input)
+            if not Config or not Config.ThirdPersonEnabled then return end
+            if input.UserInputType == Enum.UserInputType.MouseWheel then
+                local dist = math.clamp(tonumber(Config.ThirdPersonDistance) or 12, 4, 50)
+                task.defer(function()
+                    pcall(function()
+                        LocalPlayer.CameraMinZoomDistance = dist
+                        LocalPlayer.CameraMaxZoomDistance = dist
+                    end)
+                end)
+            end
+        end)
+    end
+end
+
 function ThirdPerson_Enable()
     pcall(function()
+        Cache.ThirdPersonActive = true
+        if Cache.ThirdPersonUnlockHB then pcall(function() Cache.ThirdPersonUnlockHB:Disconnect() end) Cache.ThirdPersonUnlockHB = nil end
         if Cache.ThirdPersonSavedMinZoom == nil then
             Cache.ThirdPersonSavedMinZoom = LocalPlayer.CameraMinZoomDistance
             Cache.ThirdPersonSavedMaxZoom = LocalPlayer.CameraMaxZoomDistance
+            local modeOk, cameraMode = pcall(function()
+                return LocalPlayer.CameraMode
+            end)
+            if modeOk then
+                Cache.ThirdPersonSavedCameraMode = cameraMode
+            end
         end
         local dist = math.clamp(Config.ThirdPersonDistance or 12, 4, 50)
         ThirdPerson_ForceDistance(dist)
+        ThirdPerson_LockLoop()
         local char = LocalPlayer.Character
         if char then
             ThirdPerson_SetBodyVisible(char, true)
@@ -4737,41 +5259,51 @@ end
 function ThirdPerson_Disable()
     pcall(function()
         ThirdPerson_ClearToolConns()
-        local restoreMin = tonumber(Cache.ThirdPersonSavedMinZoom)
-        local restoreMax = tonumber(Cache.ThirdPersonSavedMaxZoom)
-        Cache.ThirdPersonSavedMinZoom = nil
-        Cache.ThirdPersonSavedMaxZoom = nil
+        Cache.ThirdPersonActive = false
         Cache.ThirdPersonUsingOffset = false
         Cache.ThirdPersonLastDist = nil
-        if restoreMin == nil then restoreMin = 0.5 end
-        if restoreMax == nil then restoreMax = 128 end
-        if restoreMax < restoreMin then restoreMax = restoreMin end
-        local function restoreCamera()
-            pcall(function()
-                LocalPlayer.CameraMode = Enum.CameraMode.Classic
-                LocalPlayer.CameraMinZoomDistance = restoreMin
-                LocalPlayer.CameraMaxZoomDistance = restoreMax
-            end)
-            local char = LocalPlayer.Character
-            local hum = char and char:FindFirstChildOfClass("Humanoid")
-            if hum then
-                pcall(function() hum.CameraOffset = Vector3.zero end)
-            end
-            local cam = Workspace.CurrentCamera or Camera
-            if cam and hum then
-                pcall(function()
-                    cam.CameraType = Enum.CameraType.Custom
-                    cam.CameraSubject = hum
-                end)
-            end
-            if char then
-                ThirdPerson_SetBodyVisible(char, true)
-            end
+
+        if Cache.ThirdPersonUnlockHB then
+            pcall(function() Cache.ThirdPersonUnlockHB:Disconnect() end)
+            Cache.ThirdPersonUnlockHB = nil
         end
-        restoreCamera()
-        task.defer(restoreCamera)
-        task.delay(0.1, restoreCamera)
-        task.delay(0.3, restoreCamera)
+        if Cache.ThirdPersonLockHB then
+            pcall(function() Cache.ThirdPersonLockHB:Disconnect() end)
+            Cache.ThirdPersonLockHB = nil
+        end
+        if Cache.ThirdPersonWheelConn then
+            pcall(function() Cache.ThirdPersonWheelConn:Disconnect() end)
+            Cache.ThirdPersonWheelConn = nil
+        end
+
+        -- Restore the camera settings that were active before Third Person was enabled.
+        -- If the feature was never enabled, leave the player's camera untouched.
+        local savedMin = Cache.ThirdPersonSavedMinZoom
+        local savedMax = Cache.ThirdPersonSavedMaxZoom
+        local savedMode = Cache.ThirdPersonSavedCameraMode
+
+        if savedMin ~= nil then
+            pcall(function() LocalPlayer.CameraMinZoomDistance = savedMin end)
+        end
+        if savedMax ~= nil then
+            pcall(function() LocalPlayer.CameraMaxZoomDistance = savedMax end)
+        end
+        if savedMode ~= nil then
+            pcall(function() LocalPlayer.CameraMode = savedMode end)
+        end
+
+        Cache.ThirdPersonSavedMinZoom = nil
+        Cache.ThirdPersonSavedMaxZoom = nil
+        Cache.ThirdPersonSavedCameraMode = nil
+
+        local char = LocalPlayer.Character
+        if char and ThirdPerson_RestoreCharacter then
+            pcall(ThirdPerson_RestoreCharacter, char)
+        elseif char then
+            pcall(function()
+                ThirdPerson_SetBodyVisible(char, true)
+            end)
+        end
     end)
 end
 
@@ -5260,7 +5792,7 @@ VersionTag = Instance.new("TextLabel")
 VersionTag.Size = UDim2.new(0, 120, 1, 0)
 VersionTag.Position = UDim2.new(1, -130, 0, 0)
 VersionTag.BackgroundTransparency = 1
-VersionTag.Text = "beta 1.0.1"
+VersionTag.Text = "beta 1.0.2"
 VersionTag.TextColor3 = Color3.fromRGB(255, 255, 255)
 VersionTag.TextSize = 11
 VersionTag.Font = SelectedFont
@@ -6491,7 +7023,7 @@ if ScreenGui and not Cache._AnxiumListStrokeHook then
     end)
 end
 
-CreateFeatureRow = function(name, layoutOrder, parentTab, colorKey)
+CreateFeatureRow = function(name, layoutOrder, parentTab, colorKey, colorKey2)
     local host = ResolveUIParent(parentTab)
     local inGroup = host ~= parentTab
     local Row = Instance.new("Frame")
@@ -6529,133 +7061,99 @@ CreateFeatureRow = function(name, layoutOrder, parentTab, colorKey)
     Label.TextXAlignment = Enum.TextXAlignment.Left
     Label.Parent = Row
 
-    if colorKey then
+    local function makeColorBtn(ck, xOffset, btnName)
         local colBtn = Instance.new("TextButton")
-        colBtn.Name = "ColorBtn"
+        colBtn.Name = btnName or "ColorBtn"
         colBtn.Size = UDim2.new(0, 22, 0, 22)
-        colBtn.Position = UDim2.new(1, -78, 0.5, -11)
-        colBtn.BackgroundColor3 = Config[colorKey] or Theme.Accent
+        colBtn.Position = UDim2.new(1, xOffset, 0.5, -11)
+        colBtn.BackgroundColor3 = Config[ck] or Theme.Accent
         colBtn.BorderSizePixel = 0
         colBtn.Text = ""
         colBtn.Parent = Row
         Cache.ColorButtons = Cache.ColorButtons or {}
-        Cache.ColorButtons[colorKey] = colBtn
+        Cache.ColorButtons[ck] = colBtn
         pcall(function()
-            colBtn:SetAttribute("AnxiumColorKey", tostring(colorKey))
+            colBtn:SetAttribute("AnxiumColorKey", tostring(ck))
         end)
-
         colBtn.MouseButton1Click:Connect(function()
-            OpenRGBPicker(Config[colorKey] or Theme.Accent, function(col)
-                Config[colorKey] = col
+            OpenRGBPicker(Config[ck] or Theme.Accent, function(col)
+                Config[ck] = col
                 colBtn.BackgroundColor3 = col
-                
+                if ck == "Color_Healthbar" then
+                    Config.Color_HealthbarTop = col
+                end
                 pcall(function()
-                    if colorKey == "Color_TargetRing" then
+                    if ck == "Color_TargetRing" then
                         
-                    elseif colorKey == "Color_Orbit" then
-                        OrbTrail1.Color = ColorSequence.new(col)
-                        OrbTrail2.Color = ColorSequence.new(col)
-                    elseif colorKey == "Color_TargetLine" then
+                    elseif ck == "Color_TargetLine" then
                         if TargetLineDraw then TargetLineDraw.Color = col end
-                    elseif colorKey == "Color_TargetHud" then
+                    elseif ck == "Color_Healthbar" or ck == "Color_HealthbarBottom" or ck == "Color_HealthbarTop" then
+                        -- healthbar reads Config each frame
+                    elseif ck == "Color_TargetHud" then
                         if ApplyTargetHudColor then
                             ApplyTargetHudColor(col)
-                        else
-                            if TargetHudStroke then TargetHudStroke.Color = col end
-                            if AvatarStroke then AvatarStroke.Color = col end
-                            if TargetHealthFill then TargetHealthFill.BackgroundColor3 = Color3.fromRGB(255,255,255) end
-                            if Cache.TargetHealthGrad and TargetHud_HealthGradFromColor then
-                                Cache.TargetHealthGrad.Color = TargetHud_HealthGradFromColor(col)
-                            end
                         end
-                    elseif colorKey == "Color_Trail" then
+                    elseif ck == "Color_IconEsp" then
+                        Config.Color_IconEsp = col
+                        pcall(function()
+                            for _, data in pairs(Cache.EspNameBills or {}) do
+                                if data and data.icon then
+                                    local st = data.icon:FindFirstChild("IconEspStroke")
+                                    if st then st.Color = col end
+                                end
+                            end
+                        end)
+                    elseif ck == "Color_Trail" then
                         if Cache.PlayerTrail then Cache.PlayerTrail.Color = ColorSequence.new(col) end
-                    elseif colorKey == "Color_Fov" then
-                        FovCircle.Color = col
-                    elseif colorKey == "Color_FovFill" then
+                    elseif ck == "Color_Fov" then
+                        if FovCircle then FovCircle.Color = col end
+                    elseif ck == "Color_FovFill" then
                         if FovCircleFill then FovCircleFill.Color = col end
-                    elseif colorKey == "Color_SilentV2FovFill" then
+                    elseif ck == "Color_SilentV2FovFill" then
                         if Cache.SilentV2FovCircleFill then Cache.SilentV2FovCircleFill.Color = col end
-                    elseif colorKey == "Color_Aura" then
-                        ClassicAura_RefreshAll()
+                    elseif ck == "Color_Aura" then
+                        if ClassicAura_RefreshAll then ClassicAura_RefreshAll() end
                         if ParticleAura_RefreshAll then ParticleAura_RefreshAll() end
-                    elseif colorKey == "Color_Chams" then
-                        for _, ch in pairs(Cache.Chams) do
+                    elseif ck == "Color_Chams" then
+                        for _, ch in pairs(Cache.Chams or {}) do
                             if ch and ch.Parent then ch.FillColor = col end
                         end
-                    elseif colorKey == "Color_TeamEsp" then
-                    elseif colorKey == "Color_BoxEsp" or colorKey == "Color_BoxEspFill" then
-                        for _, boxData in pairs(Cache.Boxes) do
-                            if boxData then
-                                local c1 = Config.Color_BoxEsp or col
-                                local c2 = Config.Color_BoxEspFill or Color3.fromRGB(80, 40, 160)
-                                if boxData.Box then boxData.Box.Color = c1 end
-                                if boxData.Fill then boxData.Fill.Color = c1 end
-                                if boxData.Outline then
-                                    boxData.Outline.Color = Color3.new(
-                                        math.clamp(c1.R * 0.22, 0, 1),
-                                        math.clamp(c1.G * 0.22, 0, 1),
-                                        math.clamp(c1.B * 0.22, 0, 1)
-                                    )
-                                end
-                                if boxData.Corners then
-                                    for _, ln in pairs(boxData.Corners) do if ln then ln.Color = c1 end end
-                                end
-                                if boxData.Gradients then
-                                    local steps = #boxData.Gradients
-                                    for i, g in ipairs(boxData.Gradients) do
-                                        if g then
-                                            local t = (i - 1) / math.max(steps - 1, 1)
-                                            g.Color = c1:Lerp(c2, t)
-                                        end
-                                    end
-                                end
+                    elseif ck == "Color_BoxEsp" or ck == "Color_BoxEspFill" then
+                        for _, boxData in pairs(Cache.Boxes or {}) do
+                            if boxData and boxData.Box then
+                                boxData.Box.Color = Config.Color_BoxEsp or col
                             end
                         end
-                    elseif colorKey == "Color_ForceField" then
-                        if Config.ForceFieldEnabled then ForceField_Update() end
-                    elseif colorKey == "Color_WeaponFF" then
-                        Cache.WeaponFFLastApply = 0
-                        if Config.WeaponForceFieldEnabled and WeaponFF_UpdateColor then
-                            WeaponFF_UpdateColor()
+                    elseif ck == "Color_ForceField" or ck == "Color_SelfMaterial" then
+                        if ck == "Color_SelfMaterial" then
+                            Config.Color_ForceField = col
+                        elseif ck == "Color_ForceField" then
+                            Config.Color_SelfMaterial = col
                         end
-                    elseif colorKey == "Color_AngelHalo" then
-                        Cache.AngelHaloSig = nil
-                        if Config.AngelHaloEnabled and AngelHalo_Update then
-                            pcall(AngelHalo_Update)
+                        if (Config.SelfMaterialEnabled or Config.ForceFieldEnabled) and ForceField_Update then
+                            pcall(ForceField_Update)
                         end
-                    elseif colorKey == "Color_ChinaHat" then
-                        if Config.ChinaHatEnabled then
-                            pcall(function()
-                                if BuildHatDrawing then BuildHatDrawing() end
-                            end)
-                        end
-                    elseif colorKey == "Color_JumpCircle" then
-                    elseif colorKey == "Color_BulletTracer" then
-                    elseif colorKey == "Color_FallingStars" then
-                        if Cache.FallingStarsApply then pcall(Cache.FallingStarsApply) end
-                    elseif colorKey == "Color_OffscreenArrow" then
-                        if UV_RefreshArrowGradients then UV_RefreshArrowGradients() end
-                    elseif colorKey == "Color_Crosshair" then
-                        CrosshairX.Color = col
-                        CrosshairY.Color = col
-                    elseif colorKey == "Color_Tracers" or colorKey == "Color_TracerGradientB" then
-                        for _, tr in pairs(Cache.TracerLines or {}) do
-                            if typeof(tr) == "table" and tr.Segs then
-                                for _, line in ipairs(tr.Segs) do if line then line.Color = col end end
-                            elseif tr then tr.Color = col end
-                        end
-                    elseif colorKey == "Color_Healthbar" then
-                        for _, hb in pairs(Cache.Healthbars or {}) do
-                            if hb and hb.Fill then hb.Fill.Color = col end
-                        end
+                    elseif ck == "Color_AngelHalo" then
+                    elseif ck == "Color_ChinaHat" then
+                    elseif ck == "Color_Tracers" or ck == "Color_TracerGradientB" then
+                    elseif ck == "Color_Skeleton" then
+                    elseif ck == "Color_Crosshair" then
                     end
                 end)
-                Notify("Color", name .. " color set")
             end, colBtn)
         end)
+        return colBtn
     end
 
+    if colorKey then
+        -- with second palette: [color1][color2] next to switch; without: single color as before
+        -- with 2 palettes leave a small gap between the 22px color buttons
+        local x1 = colorKey2 and -112 or -78
+        makeColorBtn(colorKey, x1, "ColorBtn")
+        if colorKey2 then
+            makeColorBtn(colorKey2, -78, "ColorBtn2")
+        end
+    end
 
     local SwitchBg = Instance.new("Frame")
     SwitchBg.Name = "SwitchBg"
@@ -7214,6 +7712,7 @@ CreateGroupPanel = function(title, layoutOrder, parentTab)
     local function prettyTitle(s)
         s = tostring(s or "")
         if s == "" then return s end
+        if s == string.upper(s) then return s end
         return string.upper(string.sub(s, 1, 1)) .. string.lower(string.sub(s, 2))
     end
     local wrap = Instance.new("Frame")
@@ -7225,38 +7724,51 @@ CreateGroupPanel = function(title, layoutOrder, parentTab)
     wrap.LayoutOrder = layoutOrder or 0
     wrap.ClipsDescendants = false
     wrap.Parent = parentTab
-    local wrapLay = Instance.new("UIListLayout")
-    wrapLay.SortOrder = Enum.SortOrder.LayoutOrder
-    wrapLay.Padding = UDim.new(0, 6)
-    wrapLay.Parent = wrap
-    local wrapPad = Instance.new("UIPadding")
-    wrapPad.PaddingBottom = UDim.new(0, 6)
-    wrapPad.Parent = wrap
+    -- Group title is placed over the card's top border, like a fieldset legend.
+    -- The wrapper uses manual child positioning so the title can create a clean gap in the outline.
 
     local head = Instance.new("TextLabel")
     head.Name = "GroupTitle"
-    head.Size = UDim2.new(1, -4, 0, 16)
-    head.BackgroundTransparency = 1
+    head.Size = UDim2.new(0, 0, 0, 16)
+    head.AutomaticSize = Enum.AutomaticSize.X
+    head.Position = UDim2.fromOffset(14, 0)
+    head.BackgroundColor3 = Color3.fromRGB(22, 22, 26)
+    head.BackgroundTransparency = 0
+    head.BorderSizePixel = 0
     head.Text = prettyTitle(title or "")
     head.TextColor3 = Color3.fromRGB(255, 255, 255)
     head.TextSize = 11
     head.Font = SelectedFont
     head.TextXAlignment = Enum.TextXAlignment.Left
     head.LayoutOrder = 0
+    head.ZIndex = 3
     head.Parent = wrap
+    local titlePad = Instance.new("UIPadding")
+    titlePad.PaddingLeft = UDim.new(0, 6)
+    titlePad.PaddingRight = UDim.new(0, 6)
+    titlePad.Parent = head
     Cache.SectionLabels = Cache.SectionLabels or {}
     table.insert(Cache.SectionLabels, head)
 
     local card = Instance.new("Frame")
     card.Name = "GroupCard"
     card.Size = UDim2.new(1, 0, 0, 12)
+    card.Position = UDim2.new(0, 0, 0, 8)
     card.AutomaticSize = Enum.AutomaticSize.None
     card.BackgroundColor3 = Color3.fromRGB(22, 22, 26)
     card.BackgroundTransparency = 0
     card.BorderSizePixel = 0
     card.LayoutOrder = 1
     card.ClipsDescendants = false
+    card.ZIndex = 1
     card.Parent = wrap
+    local cardStroke = Instance.new("UIStroke")
+    cardStroke.Name = "GroupCardOutline"
+    cardStroke.Color = Color3.fromRGB(0, 0, 0)
+    cardStroke.Thickness = 1
+    cardStroke.Transparency = 0
+    cardStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+    cardStroke.Parent = card
     local cardPad = Instance.new("UIPadding")
     cardPad.PaddingTop = UDim.new(0, 6)
     cardPad.PaddingBottom = UDim.new(0, 6)
@@ -7305,7 +7817,7 @@ CreateGroupPanel = function(title, layoutOrder, parentTab)
         local cardH = ch + 12
         if cardH < 12 then cardH = 12 end
         card.Size = UDim2.new(1, 0, 0, cardH)
-        local wrapH = 16 + 6 + cardH + 6
+        local wrapH = 8 + cardH + 6
         wrap.Size = UDim2.new(0.96, 0, 0, wrapH)
         pcall(function()
             if parentTab and parentTab:IsA("ScrollingFrame") then
@@ -7613,12 +8125,7 @@ function RefreshAllSliders()
         ['FOV Value'] = function() return Config.CameraFovValue or 120 end,
         ['Darkness'] = function() return math.floor(tonumber(Config.DarkModeIntensity) or 50) end,
         ['World Color Intensity'] = function() return math.floor(tonumber(Config.WorldColorIntensity) or 55) end,
-        ['Hit Marker Duration'] = function() return tonumber(Config.HitMarkerDuration) or 1.2 end,
-        ['Hit Marker Size'] = function() return math.floor(tonumber(Config.HitMarkerSize) or 18) end,
-        ['Hit Marker Gap'] = function() return math.floor(tonumber(Config.HitMarkerGap) or 6) end,
-        ['Hit Marker Thickness'] = function() return math.floor(tonumber(Config.HitMarkerThickness) or 3) end,
-        ['Hit Marker Rotation'] = function() return tonumber(Config.HitMarkerRotation) or 0 end,
-        ['Active HUD Transparency'] = function() return math.floor((tonumber(Config.ActiveListTransparency) or 0.05) * 100) end,
+                        ['Active HUD Transparency'] = function() return math.floor((tonumber(Config.ActiveListTransparency) or 0.05) * 100) end,
         ['Binds HUD Transparency'] = function() return math.floor((tonumber(Config.BindListTransparency) or 0.05) * 100) end,
         ['Mesh Size'] = function() return Config.ChinaHatMeshSize or 3 end,
         ['Mesh Transparency'] = function() return math.floor((Config.ChinaHatMeshTransparency or 0.5) * 100) end,
@@ -7644,16 +8151,17 @@ function RefreshAllSliders()
         ['Jump Circle Size'] = function() return Config.JumpCircleSize or 6 end,
         ['Jump Circle Transparency'] = function() return math.floor((tonumber(Config.JumpCircleTransparency) or 0.15) * 100) end,
         ['Jump Circle Life'] = function() return Config.JumpCircleLife or 1.2 end,
-        ['Star Size'] = function() return math.floor(tonumber(Config.FallingStarsSize) or 28) end,
-        ['Star Count'] = function() return math.floor(tonumber(Config.FallingStarsCount) or 70) end,
+        ['Snow Size'] = function() return math.floor(tonumber(Config.FallingStarsSize) or 28) end,
+        ['Snow Count'] = function() return math.floor(tonumber(Config.FallingStarsCount) or 70) end,
         ['Cam Distance'] = function() return Config.ThirdPersonDistance end,
         ['Flash Duration (x0.1s)'] = function() return math.floor((Config.KillFlashDuration or 0.85) * 10) end,
         ['Tracer Cooldown (ms)'] = function() return math.floor(tonumber(Config.BulletTracerCooldown) or 120) end,
         ['Tracer Transparency'] = function() return math.floor((tonumber(Config.BulletTracerTransparency) or 0.15) * 100) end,
         ['Tracer Size'] = function() return math.floor(tonumber(Config.BulletTracerSize) or 5) end,
-        ['Autowall Size'] = function() return math.floor(tonumber(Config.AutowallSize) or 18) end,
-        ['Autowall Corner'] = function() return math.floor(tonumber(Config.AutowallCorner) or 3) end,
-        ['Autowall Transparency'] = function() return math.floor((tonumber(Config.AutowallTransparency) or 0.15) * 100) end,
+        ['AA Arrow Size'] = function() return math.floor(tonumber(Config.AntiAimManualArrowSize) or 28) end,
+        ['Penetration Size'] = function() return math.floor(tonumber(Config.PenetrationSize) or 18) end,
+        ['Penetration Corner'] = function() return math.floor(tonumber(Config.PenetrationCorner) or 3) end,
+        ['Penetration Transparency'] = function() return math.floor((tonumber(Config.PenetrationTransparency) or 0.15) * 100) end,
         ['FOV Fill Transparency'] = function() return math.floor((Config.FovFillTransparency or 0.7) * 100) end,
         ['FOV Pulse Speed'] = function() return Config.FovPulseSpeed or 3 end,
         ['FOV Pulse Amount'] = function() return math.floor((Config.FovPulseAmount or 0.12) * 100) end,
@@ -7783,13 +8291,13 @@ end
 
 
 BoxEspBtn, BoxEspBg, BoxEspKnob = CreateFeatureRow("2D Box ESP", 1, VisualsTab, "Color_BoxEsp")
-TeamEspBtn, TeamEspBg, TeamEspKnob = CreateFeatureRow("Team ESP", 1.05, VisualsTab, "Color_TeamEsp")
-TeamNameEspBtn, TeamNameEspBg, TeamNameEspKnob = CreateFeatureRow("Team Name ESP", 1.06, VisualsTab)
-TeamDistEspBtn, TeamDistEspBg, TeamDistEspKnob = CreateFeatureRow("Team Distance ESP", 1.07, VisualsTab)
-BoxFillBtn, BoxFillBg, BoxFillKnob = CreateFeatureRow("Box Fill Gradient", 1.2, VisualsTab, "Color_BoxEspFill")
-BoxOutlineGradBtn, BoxOutlineGradBg, BoxOutlineGradKnob = CreateFeatureRow("Box Outline Gradient", 1.25, VisualsTab)
-BoxFillRotBtn, BoxFillRotBg, BoxFillRotKnob = CreateFeatureRow("Fill Rotation", 1.3, VisualsTab)
-CreateSliderRow("Fill Rot Speed", 0.1, 10, Config.BoxFillRotationSpeed or 2, 1.35, VisualsTab, function(val)
+TeamEspBtn, TeamEspBg, TeamEspKnob = CreateFeatureRow("Team ESP", 1.12, VisualsTab, "Color_TeamEsp")
+TeamNameEspBtn, TeamNameEspBg, TeamNameEspKnob = CreateFeatureRow("Team Name ESP", 1.13, VisualsTab)
+TeamDistEspBtn, TeamDistEspBg, TeamDistEspKnob = CreateFeatureRow("Team Distance ESP", 1.14, VisualsTab)
+BoxFillBtn, BoxFillBg, BoxFillKnob = CreateFeatureRow("Box Fill Gradient", 1.02, VisualsTab, "Color_BoxEspFill")
+BoxOutlineGradBtn, BoxOutlineGradBg, BoxOutlineGradKnob = CreateFeatureRow("Box Outline Gradient", 1.03, VisualsTab)
+BoxFillRotBtn, BoxFillRotBg, BoxFillRotKnob = CreateFeatureRow("Fill Rotation", 1.04, VisualsTab)
+CreateSliderRow("Fill Rot Speed", 0.1, 10, Config.BoxFillRotationSpeed or 2, 1.05, VisualsTab, function(val)
     Config.BoxFillRotationSpeed = val
 end)
 
@@ -7804,7 +8312,7 @@ do
     HeaderRow.BorderSizePixel = 0
     HeaderRow.AutoButtonColor = false
     HeaderRow.Text = ""
-    HeaderRow.LayoutOrder = 2.5
+    HeaderRow.LayoutOrder = 1.01
     HeaderRow.Parent = ResolveUIParent(VisualsTab)
     local HeaderLbl = Instance.new("TextLabel")
     HeaderLbl.Size = UDim2.new(1, -40, 1, 0)
@@ -7826,7 +8334,7 @@ do
     ListFrame.BackgroundColor3 = Theme.Card
     ListFrame.BorderSizePixel = 0
     ListFrame.ClipsDescendants = true
-    ListFrame.LayoutOrder = 2.51
+    ListFrame.LayoutOrder = 1.011
     ListFrame.Visible = false
     ListFrame.Parent = ResolveUIParent(VisualsTab)
     pcall(AnxiumListFrameStroke, ListFrame)
@@ -7900,7 +8408,7 @@ do
 end
 
 
-HealthbarEspBtn, HealthbarEspBg, HealthbarEspKnob = CreateFeatureRow("Healthbar ESP", 3, VisualsTab, "Color_Healthbar")
+HealthbarEspBtn, HealthbarEspBg, HealthbarEspKnob = CreateFeatureRow("Healthbar ESP", 3, VisualsTab, "Color_Healthbar", "Color_HealthbarBottom")
 do
     local styles = { "Gradient", "Solid" }
     local Expanded = false
@@ -8267,6 +8775,7 @@ if EspGroupContent then
     Cache.GroupParentByTab[VisualsTab] = EspGroupContent
 end
 NameEspBtn, NameEspBg, NameEspKnob = CreateFeatureRow("Name ESP", 5, VisualsTab, "Color_NameEsp")
+IconEspBtn, IconEspBg, IconEspKnob = CreateFeatureRow("Icon ESP", 5.05, VisualsTab, "Color_IconEsp")
 DistEspBtn, DistEspBg, DistEspKnob = CreateFeatureRow("Distance ESP", 6, VisualsTab, "Color_DistanceEsp")
 do
     local opts = { "Top", "Bottom", "Left", "Right" }
@@ -9464,10 +9973,12 @@ do
 end
 CreateGroupPanel("Players / Extra", 9.65, VisualsTab)
 DmgNumBtn, DmgNumBg, DmgNumKnob = CreateFeatureRow("Damage Numbers", 9.7, VisualsTab, "Color_DamageNumber")
-SelfChamsBtn, SelfChamsBg, SelfChamsKnob = CreateFeatureRow("Self Chams (Highlight)", 9.9, VisualsTab, "Color_SelfChams")
+-- Self Chams removed (use Self Material)
+SelfChamsBtn, SelfChamsBg, SelfChamsKnob = nil, nil, nil
 
 CloneChamsBtn, CloneChamsBg, CloneChamsKnob = CreateFeatureRow("Clone player", 9.92, VisualsTab, "Color_CloneChams")
 OffscreenBtn, OffscreenBg, OffscreenKnob = CreateFeatureRow("Offscreen Arrows", 9.93, VisualsTab)
+
 do
     local ColorListScroll
     local function CreateArrowColorRow(label, colorKey, defaultColor)
@@ -9733,7 +10244,6 @@ do
 end
 DeathBurstBtn, DeathBurstBg, DeathBurstKnob = CreateFeatureRow("Death Burst", 9.95, VisualsTab, "Color_DeathBurst")
 KillDissolveBtn, KillDissolveBg, KillDissolveKnob = CreateFeatureRow("Kill Dissolve", 9.96, VisualsTab, "Color_KillDissolve")
-DeathXRayBtn, DeathXRayBg, DeathXRayKnob = CreateFeatureRow("Death FX Through Walls", 9.97, VisualsTab)
 KillFlashBtn, KillFlashBg, KillFlashKnob = CreateFeatureRow("Kill Flash (Screen)", 9.972, VisualsTab, "Color_KillFlash")
 CreateSliderRow("Flash Duration (x0.1s)", 2, 25, math.floor((Config.KillFlashDuration or 0.85) * 10), 9.973, VisualsTab, function(val)
     Config.KillFlashDuration = val / 10
@@ -9770,22 +10280,6 @@ CreateSliderRow("World Color Intensity", 0, 100, math.floor(tonumber(Config.Worl
     if Config.WorldColorEnabled then pcall(ApplyWorldVisuals) end
 end)
 NoShadowsBtn, NoShadowsBg, NoShadowsKnob = CreateFeatureRow("No Shadows", 10.7, VisualsTab)
-HitMarkerBtn, HitMarkerBg, HitMarkerKnob = CreateFeatureRow("Hit Marker", 10.8, VisualsTab, "Color_HitMarker")
-CreateSliderRow("Hit Marker Duration", 0.2, 3, tonumber(Config.HitMarkerDuration) or 1.2, 10.85, VisualsTab, function(val)
-    Config.HitMarkerDuration = val
-end)
-CreateSliderRow("Hit Marker Size", 8, 40, math.floor(tonumber(Config.HitMarkerSize) or 18), 10.86, VisualsTab, function(val)
-    Config.HitMarkerSize = math.floor(val + 0.5)
-end)
-CreateSliderRow("Hit Marker Gap", 2, 16, math.floor(tonumber(Config.HitMarkerGap) or 6), 10.87, VisualsTab, function(val)
-    Config.HitMarkerGap = math.floor(val + 0.5)
-end)
-CreateSliderRow("Hit Marker Thickness", 1, 8, math.floor(tonumber(Config.HitMarkerThickness) or 3), 10.88, VisualsTab, function(val)
-    Config.HitMarkerThickness = math.floor(val + 0.5)
-end)
-CreateSliderRow("Hit Marker Rotation", 0, 360, tonumber(Config.HitMarkerRotation) or 0, 10.89, VisualsTab, function(val)
-    Config.HitMarkerRotation = val
-end)
 
 ActiveListBtn, ActiveListBg, ActiveListKnob = CreateFeatureRow("Active Modules HUD", 11, VisualsTab)
 CreateSliderRow("Active HUD Transparency", 0, 95, math.floor((tonumber(Config.ActiveListTransparency) or 0.05) * 100), 11.05, VisualsTab, function(val)
@@ -10045,12 +10539,12 @@ CreateSliderRow("Halo Rings", 1, 3, math.floor(tonumber(Config.AngelHaloRings) o
     Config.AngelHaloRings = math.clamp(math.floor(val + 0.5), 1, 3)
     pcall(AngelHalo_Hide)
 end)
-
-CreateGroupPanel("World / FX", 16.8, VisualsTab)
-CreateSliderRow("Angel Halo Glow", 0, 12, math.floor(tonumber(Config.AngelHaloGlow) or 3), 16.95, VisualsTab, function(val)
+CreateSliderRow("Angel Halo Glow", 0, 12, math.floor(tonumber(Config.AngelHaloGlow) or 3), 16.62, VisualsTab, function(val)
     Config.AngelHaloGlow = math.floor(val + 0.5)
     Cache.AngelHaloSig = nil
 end)
+
+CreateGroupPanel("World / FX", 16.8, VisualsTab)
 TargetDotBtn, TargetDotBg, TargetDotKnob = CreateFeatureRow("Target Dot", 17.4, VisualsTab, "Color_TargetDot")
 CreateSliderRow("Target Dot Size", 10, 120, math.floor(tonumber(Config.TargetDotSize) or 28), 17.41, VisualsTab, function(val)
     Config.TargetDotSize = math.floor(val + 0.5)
@@ -10058,8 +10552,6 @@ end)
 CreateSliderRow("Target Dot Transp %", 0, 90, math.floor((tonumber(Config.TargetDotTransparency) or 0.1) * 100), 17.42, VisualsTab, function(val)
     Config.TargetDotTransparency = val / 100
 end)
-OrbitOrbsBtn, OrbitOrbsBg, OrbitOrbsKnob = CreateFeatureRow("Neon Orbit Bands", 17, VisualsTab, "Color_Orbit")
-CreateSliderRow("Orbit Speed", 1, 20, Config.OrbitSpeedValue, 18, VisualsTab, function(val) Config.OrbitSpeedValue = val end)
 TargetRingBtn, TargetRingBg, TargetRingKnob = CreateFeatureRow("Target Scan Ring", 18.2, VisualsTab, "Color_TargetRing")
 CreateSliderRow("Scan Speed", 0.2, 5, Config.TargetRingSpeed or 1.2, 18.3, VisualsTab, function(val)
     Config.TargetRingSpeed = val
@@ -10101,18 +10593,23 @@ CreateSliderRow("Jump Circle Transparency", 0, 95, math.floor((tonumber(Config.J
 end)
 CreateSliderRow("Jump Circle Life", 0.3, 4, Config.JumpCircleLife or 1.2, 24, VisualsTab, function(val) Config.JumpCircleLife = val end)
 
-FallingStarsBtn, FallingStarsBg, FallingStarsKnob = CreateFeatureRow("Falling Stars", 24.4, VisualsTab, "Color_FallingStars")
-CreateSliderRow("Star Size", 8, 90, math.floor(tonumber(Config.FallingStarsSize) or 28), 24.45, VisualsTab, function(val)
+FallingStarsBtn, FallingStarsBg, FallingStarsKnob = CreateFeatureRow("Snow Particles", 24.4, VisualsTab)
+CreateSliderRow("Snow Size", 8, 90, math.floor(tonumber(Config.FallingStarsSize) or 28), 24.45, VisualsTab, function(val)
     Config.FallingStarsSize = math.floor(val + 0.5)
     if Cache.FallingStarsApply then Cache.FallingStarsApply() end
 end)
-CreateSliderRow("Star Count", 20, 150, math.floor(tonumber(Config.FallingStarsCount) or 70), 24.46, VisualsTab, function(val)
+CreateSliderRow("Snow Count", 20, 150, math.floor(tonumber(Config.FallingStarsCount) or 70), 24.46, VisualsTab, function(val)
     Config.FallingStarsCount = math.floor(val + 0.5)
     if Cache.FallingStarsRebuild then Cache.FallingStarsRebuild() end
 end)
 
 AspectBtn, AspectBg, AspectKnob = CreateFeatureRow("Aspect Ratio", 25, VisualsTab)
-CreateSliderRow("Aspect Scale (%)", 50, 200, 133, 26, VisualsTab, function(val) Config.AspectRatioValue = val / 100 end)
+CreateSliderRow("Aspect Scale (%)", 50, 200, math.floor((Config.AspectRatioValue or 1.333) * 100), 26, VisualsTab, function(val)
+    Config.AspectRatioValue = val / 100
+    if Config.AspectRatioEnabled and AspectRatio_Apply then
+        pcall(AspectRatio_Apply)
+    end
+end)
 
 ThirdPersonBtn, ThirdPersonBg, ThirdPersonKnob = CreateFeatureRow("Third Person", 27, VisualsTab)
 CreateSliderRow("Cam Distance", 5, 50, Config.ThirdPersonDistance, 28, VisualsTab, function(val)
@@ -10121,9 +10618,122 @@ CreateSliderRow("Cam Distance", 5, 50, Config.ThirdPersonDistance, 28, VisualsTa
         ThirdPerson_ForceDistance(val)
     end
 end)
+SmoothCameraBtn, SmoothCameraBg, SmoothCameraKnob = CreateFeatureRow("Smooth Camera", 28.2, VisualsTab)
+CreateSliderRow("Smooth Amount", 0, 100, Config.SmoothCameraAmount or 40, 28.3, VisualsTab, function(val)
+    Config.SmoothCameraAmount = val
+end)
 
 CreateSectionHeader("- Materials -", 29, VisualsTab)
-FFBtn, FFBg, FFKnob = CreateFeatureRow("Self ForceField", 30, VisualsTab, "Color_ForceField")
+FFBtn, FFBg, FFKnob = CreateFeatureRow("Self Material", 30, VisualsTab, "Color_SelfMaterial")
+do
+    local styles = { "Glass", "Ice", "Metal", "SmoothPlastic", "Foil", "Plastic" }
+    local Expanded = false
+    local HeaderRow = Instance.new("TextButton")
+    HeaderRow.Name = "SelfMaterialStyleHeader"
+    HeaderRow.Size = UDim2.new(0.96, 0, 0, 34)
+    HeaderRow.BackgroundColor3 = Theme.Card
+    HeaderRow.BorderSizePixel = 0
+    HeaderRow.LayoutOrder = 30.05
+    HeaderRow.AutoButtonColor = false
+    HeaderRow.Text = ""
+    HeaderRow.Parent = ResolveUIParent(VisualsTab)
+    local HeaderLbl = Instance.new("TextLabel")
+    HeaderLbl.Size = UDim2.new(1, -40, 1, 0)
+    HeaderLbl.Position = UDim2.new(0, 12, 0, 0)
+    HeaderLbl.BackgroundTransparency = 1
+    HeaderLbl.Text = "Self Style  ·  " .. tostring(Config.SelfMaterialStyle or "Glass")
+    HeaderLbl.TextColor3 = Theme.Text
+    HeaderLbl.TextSize = 12
+    HeaderLbl.Font = SelectedFont
+    HeaderLbl.TextXAlignment = Enum.TextXAlignment.Left
+    HeaderLbl.Parent = HeaderRow
+    Cache.SelfMaterialStyleHeaderLbl = HeaderLbl
+    local ArrowLbl = AnxiumMakeListArrow(HeaderRow)
+    local ListFrame = Instance.new("Frame")
+    ListFrame.Name = "SelfMaterialStyleList"
+    ListFrame.Size = UDim2.new(1, 0, 0, 0)
+    ListFrame.Visible = false
+    ListFrame.BackgroundColor3 = Theme.BgSecondary
+    ListFrame.BackgroundTransparency = 0.15
+    ListFrame.BorderSizePixel = 0
+    ListFrame.ClipsDescendants = true
+    ListFrame.LayoutOrder = 30.06
+    ListFrame.Parent = ResolveUIParent(VisualsTab)
+    pcall(AnxiumListFrameStroke, ListFrame)
+    local ListScroll = Instance.new("ScrollingFrame")
+    ListScroll.Size = UDim2.new(1, -8, 1, -8)
+    ListScroll.Position = UDim2.new(0, 4, 0, 4)
+    ListScroll.BackgroundTransparency = 1
+    ListScroll.BorderSizePixel = 0
+    ListScroll.ScrollBarThickness = 4
+    ListScroll.ScrollBarImageColor3 = Theme.Accent
+    ListScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+    ListScroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
+    ListScroll.Parent = ListFrame
+    local lay = Instance.new("UIListLayout")
+    lay.SortOrder = Enum.SortOrder.LayoutOrder
+    lay.Padding = UDim.new(0, 4)
+    lay.Parent = ListScroll
+    Cache.SelfMaterialStyleButtons = {}
+    local function RefreshSelfMatHighlight()
+        local cur = Config.SelfMaterialStyle or "Glass"
+        if Cache.SelfMaterialStyleHeaderLbl then
+            Cache.SelfMaterialStyleHeaderLbl.Text = "Self Style  ·  " .. tostring(cur)
+        end
+        for name, b in pairs(Cache.SelfMaterialStyleButtons) do
+            if b and b.Parent then
+                if name == cur then
+                    b.BackgroundColor3 = Theme.Accent
+                    b.TextColor3 = Color3.fromRGB(255, 255, 255)
+                else
+                    b.BackgroundColor3 = Theme.BgTertiary
+                    b.TextColor3 = Theme.Text
+                end
+            end
+        end
+    end
+    Cache.RefreshSelfMaterialStyleList = RefreshSelfMatHighlight
+    for i, styleName in ipairs(styles) do
+        local b = Instance.new("TextButton")
+        b.Size = UDim2.new(1, -4, 0, 28)
+        b.BackgroundColor3 = Theme.BgTertiary
+        b.BorderSizePixel = 0
+        b.Text = "  " .. styleName
+        b.TextColor3 = Theme.Text
+        b.TextSize = 13
+        b.Font = SelectedFont
+        b.TextXAlignment = Enum.TextXAlignment.Left
+        b.LayoutOrder = i
+        b.Parent = ListScroll
+        Cache.SelfMaterialStyleButtons[styleName] = b
+        b.MouseButton1Click:Connect(function()
+            Config.SelfMaterialStyle = styleName
+            RefreshSelfMatHighlight()
+            if Config.SelfMaterialEnabled or Config.ForceFieldEnabled then
+                pcall(function()
+                    local char = LocalPlayer.Character
+                    if char then
+                        if ForceField_Restore then ForceField_Restore(char) end
+                        if ForceField_Apply then ForceField_Apply(char) end
+                    end
+                end)
+            end
+            if Notify then Notify("Self Material", styleName) end
+        end)
+    end
+    RefreshSelfMatHighlight()
+    local listH = math.min(28 * #styles + 16, 200)
+    HeaderRow.MouseButton1Click:Connect(function()
+        Expanded = not Expanded
+        if Expanded then AnxiumSetListOpen(ListFrame, true, listH, HeaderRow) else AnxiumSetListOpen(ListFrame, false) end
+        if ArrowLbl:IsA("ImageLabel") then
+            ArrowLbl.Image = Expanded and "rbxassetid://71457658246709" or "rbxassetid://98648581502859"
+            ArrowLbl.Rotation = 0
+        elseif ArrowLbl:IsA("TextLabel") then
+            ArrowLbl.Text = Expanded and "▲" or "▼"
+        end
+    end)
+end
 WeaponFFBtn, WeaponFFBg, WeaponFFKnob = CreateFeatureRow("Weapon Material", 31, VisualsTab, "Color_WeaponFF")
 do
     local styles = { "ForceField", "Neon", "Glass", "Ice", "Metal", "SmoothPlastic", "Foil", "Plastic" }
@@ -10230,6 +10840,109 @@ do
 end
 HitboxShowBtn, HitboxShowBg, HitboxShowKnob = CreateFeatureRow("Show Hitboxes", 15.5, CombatTab, "Color_Hitbox")
 BulletTracerBtn, BulletTracerBg, BulletTracerKnob = CreateFeatureRow("Bullet Tracers", 32.5, VisualsTab, "Color_BulletTracer")
+do
+    local styles = { "Solid", "Obelus", "Lightning", "Lightning Bolt", "Lightning Bolt2", "Laser", "Red Laser", "DNA" }
+    local Expanded = false
+    local HeaderRow = Instance.new("TextButton")
+    HeaderRow.Name = "BulletTracerStyleHeader"
+    HeaderRow.Size = UDim2.new(0.96, 0, 0, 34)
+    HeaderRow.BackgroundColor3 = Theme.Card
+    HeaderRow.BorderSizePixel = 0
+    HeaderRow.AutoButtonColor = false
+    HeaderRow.Text = ""
+    HeaderRow.LayoutOrder = 32.505
+    HeaderRow.Parent = ResolveUIParent(VisualsTab)
+    local HeaderLbl = Instance.new("TextLabel")
+    HeaderLbl.Size = UDim2.new(1, -40, 1, 0)
+    HeaderLbl.Position = UDim2.new(0, 12, 0, 0)
+    HeaderLbl.BackgroundTransparency = 1
+    HeaderLbl.Text = "Tracer Style  ·  " .. tostring(Config.BulletTracerStyle or "Solid")
+    HeaderLbl.TextColor3 = Theme.Text
+    HeaderLbl.TextSize = 12
+    HeaderLbl.Font = SelectedFont
+    HeaderLbl.TextXAlignment = Enum.TextXAlignment.Left
+    HeaderLbl.Parent = HeaderRow
+    Cache.BulletTracerStyleHeaderLbl = HeaderLbl
+    local ArrowLbl = AnxiumMakeListArrow(HeaderRow)
+    local ListFrame = Instance.new("Frame")
+    ListFrame.Name = "BulletTracerStyleList"
+    ListFrame.Size = UDim2.new(1, 0, 0, 0)
+    ListFrame.Visible = false
+    ListFrame.BackgroundColor3 = Theme.Card
+    ListFrame.BorderSizePixel = 0
+    ListFrame.ClipsDescendants = true
+    ListFrame.LayoutOrder = 32.506
+    ListFrame.Parent = ResolveUIParent(VisualsTab)
+    pcall(AnxiumListFrameStroke, ListFrame)
+    local ListScroll = Instance.new("ScrollingFrame")
+    ListScroll.Size = UDim2.new(1, -8, 1, -8)
+    ListScroll.Position = UDim2.new(0, 4, 0, 4)
+    ListScroll.BackgroundTransparency = 1
+    ListScroll.BorderSizePixel = 0
+    ListScroll.ScrollBarThickness = 3
+    ListScroll.ScrollBarImageColor3 = Theme.Accent
+    ListScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+    ListScroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
+    ListScroll.Parent = ListFrame
+    local ListLayout = Instance.new("UIListLayout")
+    ListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+    ListLayout.Padding = UDim.new(0, 3)
+    ListLayout.Parent = ListScroll
+    Cache.BulletTracerStyleButtons = {}
+    local function RefreshTracerStyleHighlight()
+        local cur = Config.BulletTracerStyle or "Solid"
+        if Cache.BulletTracerStyleHeaderLbl then
+            Cache.BulletTracerStyleHeaderLbl.Text = "Tracer Style  ·  " .. tostring(cur)
+        end
+        for name, b in pairs(Cache.BulletTracerStyleButtons) do
+            if b and b.Parent then
+                if name == cur then
+                    b.BackgroundColor3 = Theme.Accent
+                    b.TextColor3 = Color3.fromRGB(255, 255, 255)
+                else
+                    b.BackgroundColor3 = Theme.BgTertiary
+                    b.TextColor3 = Theme.Text
+                end
+            end
+        end
+    end
+    Cache.RefreshBulletTracerStyleList = RefreshTracerStyleHighlight
+    for i, styleName in ipairs(styles) do
+        local b = Instance.new("TextButton")
+        b.Size = UDim2.new(1, 0, 0, 28)
+        b.BackgroundColor3 = Theme.BgTertiary
+        b.BorderSizePixel = 0
+        b.Text = "  " .. styleName
+        b.TextColor3 = Theme.Text
+        b.TextSize = 12
+        b.Font = SelectedFont
+        b.TextXAlignment = Enum.TextXAlignment.Left
+        b.AutoButtonColor = false
+        b.LayoutOrder = i
+        b.Parent = ListScroll
+        local bc = Instance.new("UICorner")
+        bc.CornerRadius = UDim.new(0, 6)
+        bc.Parent = b
+        Cache.BulletTracerStyleButtons[styleName] = b
+        b.MouseButton1Click:Connect(function()
+            Config.BulletTracerStyle = styleName
+            RefreshTracerStyleHighlight()
+            if Notify then Notify("Tracers", "Style: " .. styleName) end
+        end)
+    end
+    RefreshTracerStyleHighlight()
+    local listH = math.min(28 * #styles + 16, 220)
+    HeaderRow.MouseButton1Click:Connect(function()
+        Expanded = not Expanded
+        if Expanded then AnxiumSetListOpen(ListFrame, true, listH, HeaderRow) else AnxiumSetListOpen(ListFrame, false) end
+        if ArrowLbl:IsA("ImageLabel") then
+            ArrowLbl.Image = Expanded and "rbxassetid://71457658246709" or "rbxassetid://98648581502859"
+            ArrowLbl.Rotation = 0
+        elseif ArrowLbl:IsA("TextLabel") then
+            ArrowLbl.Text = Expanded and "▲" or "▼"
+        end
+    end)
+end
 CreateSliderRow("Tracer Cooldown (ms)", 0, 5000, math.floor(tonumber(Config.BulletTracerCooldown) or 120), 32.51, VisualsTab, function(val)
     Config.BulletTracerCooldown = math.floor(val + 0.5)
 end)
@@ -10243,20 +10956,20 @@ end)
 
 
 
-CreateSectionHeader("- Autowall -", 31.8, VisualsTab)
-AutowallBtn, AutowallBg, AutowallKnob = CreateFeatureRow("Autowall", 31.81, VisualsTab)
-AutowallInfoBtn, AutowallInfoBg, AutowallInfoKnob = CreateFeatureRow("Autowall Info", 31.82, VisualsTab)
-CreateSliderRow("Autowall Size", 8, 48, math.floor(tonumber(Config.AutowallSize) or 18), 31.83, VisualsTab, function(val)
-    Config.AutowallSize = val
-    if Cache.AutowallApply then Cache.AutowallApply() end
+CreateSectionHeader("- Penetration -", 31.8, VisualsTab)
+PenetrationBtn, PenetrationBg, PenetrationKnob = CreateFeatureRow("Penetration", 31.81, VisualsTab)
+PenetrationInfoBtn, PenetrationInfoBg, PenetrationInfoKnob = CreateFeatureRow("Penetration Info", 31.82, VisualsTab)
+CreateSliderRow("Penetration Size", 8, 48, math.floor(tonumber(Config.PenetrationSize) or 18), 31.83, VisualsTab, function(val)
+    Config.PenetrationSize = val
+    if Cache.PenetrationApply then Cache.PenetrationApply() end
 end)
-CreateSliderRow("Autowall Corner", 0, 20, math.floor(tonumber(Config.AutowallCorner) or 3), 31.84, VisualsTab, function(val)
-    Config.AutowallCorner = val
-    if Cache.AutowallApply then Cache.AutowallApply() end
+CreateSliderRow("Penetration Corner", 0, 20, math.floor(tonumber(Config.PenetrationCorner) or 3), 31.84, VisualsTab, function(val)
+    Config.PenetrationCorner = val
+    if Cache.PenetrationApply then Cache.PenetrationApply() end
 end)
-CreateSliderRow("Autowall Transparency", 0, 90, math.floor((tonumber(Config.AutowallTransparency) or 0.15) * 100), 31.85, VisualsTab, function(val)
-    Config.AutowallTransparency = math.clamp(val, 0, 90) / 100
-    if Cache.AutowallApply then Cache.AutowallApply() end
+CreateSliderRow("Penetration Transparency", 0, 90, math.floor((tonumber(Config.PenetrationTransparency) or 0.15) * 100), 31.85, VisualsTab, function(val)
+    Config.PenetrationTransparency = math.clamp(val, 0, 90) / 100
+    if Cache.PenetrationApply then Cache.PenetrationApply() end
 end)
 do
     local ColorListScroll
@@ -10329,7 +11042,7 @@ do
     end
 
     local HeaderRow = Instance.new("TextButton")
-    HeaderRow.Name = "AutowallColorListHeader"
+    HeaderRow.Name = "PenetrationColorListHeader"
     HeaderRow.Size = UDim2.new(0.96, 0, 0, 34)
     HeaderRow.BackgroundColor3 = Theme.Card
     HeaderRow.BorderSizePixel = 0
@@ -10349,7 +11062,7 @@ do
     HeaderLbl.Parent = HeaderRow
     local ArrowLbl = AnxiumMakeListArrow(HeaderRow)
     local ListFrame = Instance.new("Frame")
-    ListFrame.Name = "AutowallColorList"
+    ListFrame.Name = "PenetrationColorList"
     ListFrame.Size = UDim2.new(1, 0, 0, 0)
     ListFrame.Visible = false
     ListFrame.BackgroundColor3 = Theme.Card
@@ -10378,9 +11091,9 @@ do
     ColorListPad.PaddingLeft = UDim.new(0, 4)
     ColorListPad.PaddingRight = UDim.new(0, 4)
     ColorListPad.Parent = ColorListScroll
-    CreateAWColorRow("Can Penetrate", "Color_AutowallPen")
-    CreateAWColorRow("Maybe", "Color_AutowallMid")
-    CreateAWColorRow("Cannot", "Color_AutowallBlock")
+    CreateAWColorRow("Can Penetrate", "Color_PenetrationPen")
+    CreateAWColorRow("Maybe", "Color_PenetrationMid")
+    CreateAWColorRow("Cannot", "Color_PenetrationBlock")
     local listOpen = false
     local LIST_H = 3 * 33 + 12
     HeaderRow.MouseButton1Click:Connect(function()
@@ -10405,6 +11118,7 @@ ParticleAngelBtn, ParticleAngelBg, ParticleAngelKnob = CreateFeatureRow("Angel",
 TeamCheckerBtn, TeamCheckerBg, TeamCheckerKnob = CreateFeatureRow("Team Checker", 0.5, CombatTab)
 AimBtn, AimBg, AimKnob = CreateFeatureRow("Aimbot", 1, CombatTab)
 AimWallBtn, AimWallBg, AimWallKnob = CreateFeatureRow("Aim Wall Check", 1.2, CombatTab)
+AimFull360Btn, AimFull360Bg, AimFull360Knob = CreateFeatureRow("Aimbot 360", 1.25, CombatTab)
 ShowFovBtn, ShowFovBg, ShowFovKnob = CreateFeatureRow("Show FOV", 2, CombatTab, "Color_Fov")
 FovFillBtn, FovFillBg, FovFillKnob = CreateFeatureRow("FOV Fill", 2.1, CombatTab, "Color_FovFill")
 CreateSliderRow("FOV Fill Transparency", 0, 100, math.floor((Config.FovFillTransparency or 0.7) * 100), 2.2, CombatTab, function(val)
@@ -10643,6 +11357,11 @@ CreateSliderRow("FOV Size", 30, 500, Config.FovRadius, 3, CombatTab, function(va
     if FovSquare then FovSquare.Size = Vector2.new(d, d) end
     if FovSquareFill then FovSquareFill.Size = Vector2.new(d, d) end
 end)
+FovOutlineBtn, FovOutlineBg, FovOutlineKnob = CreateFeatureRow("FOV Outline", 3.015, CombatTab, "Color_FovOutline")
+CreateSliderRow("FOV Outline Width", 5, 120, math.floor((tonumber(Config.FovOutlineThickness) or 2) * 10), 3.02, CombatTab, function(val)
+    Config.FovOutlineThickness = math.clamp(val / 10, 0.5, 12)
+end)
+
 FovDynBtn, FovDynBg, FovDynKnob = CreateFeatureRow("FOV Dynamic", 3.05, CombatTab)
 CreateSliderRow("FOV Dynamic Expand", 0, 150, math.floor(tonumber(Config.FovDynamicExpand) or 40), 3.06, CombatTab, function(val)
     Config.FovDynamicExpand = math.floor(val + 0.5)
@@ -10772,6 +11491,109 @@ CreateBodyPartList = function(title, layoutOrder, getPart, setPart, parentTab)
     end)
 
     return refresh
+end
+
+
+do
+    local modes = { "Closest", "Closest Dist", "Farthest Dist", "Lowest HP", "Highest HP" }
+    local function CreatePriorityList(title, layoutOrder, getMode, setMode, parentTab, cacheKey)
+        local Expanded = false
+        local HeaderRow = Instance.new("TextButton")
+        HeaderRow.Name = cacheKey .. "Header"
+        HeaderRow.Size = UDim2.new(0.96, 0, 0, 34)
+        HeaderRow.BackgroundColor3 = Theme.Card
+        HeaderRow.BorderSizePixel = 0
+        HeaderRow.AutoButtonColor = false
+        HeaderRow.Text = ""
+        HeaderRow.LayoutOrder = layoutOrder
+        HeaderRow.Parent = ResolveUIParent(parentTab)
+        local HeaderLbl = Instance.new("TextLabel")
+        HeaderLbl.Size = UDim2.new(1, -40, 1, 0)
+        HeaderLbl.Position = UDim2.new(0, 12, 0, 0)
+        HeaderLbl.BackgroundTransparency = 1
+        HeaderLbl.Text = title .. "  ·  " .. tostring(getMode() or "Closest")
+        HeaderLbl.TextColor3 = Theme.Text
+        HeaderLbl.TextSize = 12
+        HeaderLbl.Font = SelectedFont
+        HeaderLbl.TextXAlignment = Enum.TextXAlignment.Left
+        HeaderLbl.Parent = HeaderRow
+        local ArrowLbl = AnxiumMakeListArrow(HeaderRow)
+        local ListFrame = Instance.new("Frame")
+        ListFrame.Name = cacheKey .. "List"
+        ListFrame.Size = UDim2.new(1, 0, 0, 0)
+        ListFrame.Visible = false
+        ListFrame.BackgroundColor3 = Theme.Card
+        ListFrame.BorderSizePixel = 0
+        ListFrame.ClipsDescendants = true
+        ListFrame.LayoutOrder = layoutOrder + 0.001
+        ListFrame.Parent = ResolveUIParent(parentTab)
+        pcall(AnxiumListFrameStroke, ListFrame)
+        local ListScroll = Instance.new("ScrollingFrame")
+        ListScroll.Size = UDim2.new(1, -8, 1, -8)
+        ListScroll.Position = UDim2.new(0, 4, 0, 4)
+        ListScroll.BackgroundTransparency = 1
+        ListScroll.BorderSizePixel = 0
+        ListScroll.ScrollBarThickness = 3
+        ListScroll.ScrollBarImageColor3 = Theme.Accent
+        ListScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+        ListScroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
+        ListScroll.Parent = ListFrame
+        local lay = Instance.new("UIListLayout")
+        lay.SortOrder = Enum.SortOrder.LayoutOrder
+        lay.Padding = UDim.new(0, 3)
+        lay.Parent = ListScroll
+        local buttons = {}
+        local function refresh()
+            local cur = getMode() or "Closest"
+            HeaderLbl.Text = title .. "  ·  " .. tostring(cur)
+            for name, btn in pairs(buttons) do
+                if name == cur then
+                    btn.BackgroundColor3 = Theme.Accent
+                    btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+                else
+                    btn.BackgroundColor3 = Theme.BgTertiary
+                    btn.TextColor3 = Theme.Text
+                end
+            end
+        end
+        for i, name in ipairs(modes) do
+            local btn = Instance.new("TextButton")
+            btn.Size = UDim2.new(1, 0, 0, 28)
+            btn.BackgroundColor3 = Theme.BgTertiary
+            btn.BorderSizePixel = 0
+            btn.Text = "  " .. name
+            btn.TextColor3 = Theme.Text
+            btn.TextSize = 12
+            btn.Font = SelectedFont
+            btn.TextXAlignment = Enum.TextXAlignment.Left
+            btn.LayoutOrder = i
+            btn.Parent = ListScroll
+            do local c = Instance.new("UICorner"); c.CornerRadius = UDim.new(0, 6); c.Parent = btn end
+            buttons[name] = btn
+            btn.MouseButton1Click:Connect(function()
+                setMode(name)
+                refresh()
+                Notify(title, name)
+            end)
+        end
+        refresh()
+        local listH = #modes * 31 + 12
+        HeaderRow.MouseButton1Click:Connect(function()
+            Expanded = not Expanded
+            if Expanded then
+                AnxiumSetListOpen(ListFrame, true, listH, HeaderRow)
+                if ArrowLbl:IsA("ImageLabel") then ArrowLbl.Image = "rbxassetid://71457658246709"; ArrowLbl.Rotation = 0 end
+            else
+                AnxiumSetListOpen(ListFrame, false)
+                if ArrowLbl:IsA("ImageLabel") then ArrowLbl.Image = "rbxassetid://98648581502859"; ArrowLbl.Rotation = 0 end
+            end
+        end)
+        return refresh
+    end
+    Cache.RefreshAimPriorityList = CreatePriorityList("Aim Priority", 1.28, function()
+        return Config.AimTargetPriority or "Closest"
+    end, function(v) Config.AimTargetPriority = v end, CombatTab, "AimPriority")
+    Cache.CreateTargetPriorityList = CreatePriorityList
 end
 
 Cache.RefreshAimPartList = CreateBodyPartList("Aimbot Hit Part", 5.1, function()
@@ -10912,6 +11734,231 @@ do
         end
     end)
 end
+
+-- AA Manual direction (setting for Static mode, not a mode type)
+-- list UI matched to Hit Sound List style
+do
+    local modes = { "None", "Front", "Back", "Left", "Right" }
+    local listOpen = false
+
+    local HeaderRow = Instance.new("TextButton")
+    HeaderRow.Name = "AAManualDirHeader"
+    HeaderRow.Size = UDim2.new(0.96, 0, 0, 34)
+    HeaderRow.BackgroundColor3 = Theme.Card
+    HeaderRow.BackgroundTransparency = 0
+    HeaderRow.BorderSizePixel = 0
+    HeaderRow.LayoutOrder = 8.75
+    HeaderRow.AutoButtonColor = false
+    HeaderRow.Text = ""
+    HeaderRow.Parent = ResolveUIParent(CombatTab)
+
+    local HeaderLbl = Instance.new("TextLabel")
+    HeaderLbl.Size = UDim2.new(1, -40, 1, 0)
+    HeaderLbl.Position = UDim2.new(0, 12, 0, 0)
+    HeaderLbl.BackgroundTransparency = 1
+    HeaderLbl.Text = "AA Manual  ·  " .. tostring(Config.AntiAimManualDir or "None")
+    HeaderLbl.TextColor3 = Theme.Text
+    HeaderLbl.TextSize = 12
+    HeaderLbl.Font = SelectedFont
+    HeaderLbl.TextXAlignment = Enum.TextXAlignment.Left
+    HeaderLbl.Parent = HeaderRow
+    Cache.AAManualHeaderLbl = HeaderLbl
+
+    local ArrowLbl = AnxiumMakeListArrow(HeaderRow)
+
+    local ListFrame = Instance.new("Frame")
+    ListFrame.Name = "AAManualDirList"
+    ListFrame.Size = UDim2.new(1, 0, 0, 0)
+    ListFrame.Visible = false
+    ListFrame.BackgroundColor3 = Theme.Card
+    ListFrame.BackgroundTransparency = 0
+    ListFrame.BorderSizePixel = 0
+    ListFrame.LayoutOrder = 8.76
+    ListFrame.ClipsDescendants = true
+    ListFrame.Parent = ResolveUIParent(CombatTab)
+    pcall(AnxiumListFrameStroke, ListFrame)
+
+    local ListScroll = Instance.new("ScrollingFrame")
+    ListScroll.Size = UDim2.new(1, -8, 1, -8)
+    ListScroll.Position = UDim2.new(0, 4, 0, 4)
+    ListScroll.BackgroundTransparency = 1
+    ListScroll.BorderSizePixel = 0
+    ListScroll.ScrollBarThickness = 3
+    ListScroll.ScrollBarImageColor3 = Theme.Accent
+    ListScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+    ListScroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
+    ListScroll.Parent = ListFrame
+
+    local listLay = Instance.new("UIListLayout")
+    listLay.SortOrder = Enum.SortOrder.LayoutOrder
+    listLay.Padding = UDim.new(0, 3)
+    listLay.Parent = ListScroll
+
+    local listPad = Instance.new("UIPadding")
+    listPad.PaddingTop = UDim.new(0, 4)
+    listPad.PaddingBottom = UDim.new(0, 4)
+    listPad.PaddingLeft = UDim.new(0, 4)
+    listPad.PaddingRight = UDim.new(0, 4)
+    listPad.Parent = ListScroll
+
+    Cache.AAManualButtons = {}
+
+    local function RefreshAAManualList()
+        local cur = Config.AntiAimManualDir or "None"
+        if Cache.AAManualHeaderLbl then
+            Cache.AAManualHeaderLbl.Text = "AA Manual  ·  " .. tostring(cur)
+        end
+        for name, btn in pairs(Cache.AAManualButtons) do
+            if btn and btn.Parent then
+                if name == cur then
+                    btn.BackgroundColor3 = Theme.Accent
+                    btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+                else
+                    btn.BackgroundColor3 = Theme.BgTertiary
+                    btn.TextColor3 = Theme.Text
+                end
+            end
+        end
+    end
+    Cache.RefreshAAManualList = RefreshAAManualList
+
+    for i, name in ipairs(modes) do
+        local btn = Instance.new("TextButton")
+        btn.Size = UDim2.new(1, 0, 0, 28)
+        btn.BackgroundColor3 = Theme.BgTertiary
+        btn.BorderSizePixel = 0
+        btn.Text = "  " .. name
+        btn.TextColor3 = Theme.Text
+        btn.TextSize = 12
+        btn.Font = SelectedFont
+        btn.TextXAlignment = Enum.TextXAlignment.Left
+        btn.LayoutOrder = i
+        btn.AutoButtonColor = false
+        btn.Parent = ListScroll
+        do
+            local c = Instance.new("UICorner")
+            c.CornerRadius = UDim.new(0, 6)
+            c.Parent = btn
+        end
+        Cache.AAManualButtons[name] = btn
+        btn.MouseButton1Click:Connect(function()
+            Config.AntiAimManualDir = name
+            RefreshAAManualList()
+            Notify("Anti-Aim", "Manual: " .. name)
+            -- close list after select (same feel as compact lists)
+            listOpen = false
+            AnxiumSetListOpen(ListFrame, false)
+            if ArrowLbl and ArrowLbl:IsA("ImageLabel") then
+                ArrowLbl.Image = "rbxassetid://98648581502859"
+                ArrowLbl.Rotation = 0
+            end
+        end)
+    end
+    RefreshAAManualList()
+
+    local LIST_H = #modes * 31 + 12
+    HeaderRow.MouseButton1Click:Connect(function()
+        listOpen = not listOpen
+        if listOpen then
+            AnxiumSetListOpen(ListFrame, true, LIST_H, HeaderRow)
+            if ArrowLbl and ArrowLbl:IsA("ImageLabel") then
+                ArrowLbl.Image = "rbxassetid://71457658246709"
+                ArrowLbl.Rotation = 0
+            end
+        else
+            AnxiumSetListOpen(ListFrame, false)
+            if ArrowLbl and ArrowLbl:IsA("ImageLabel") then
+                ArrowLbl.Image = "rbxassetid://98648581502859"
+                ArrowLbl.Rotation = 0
+            end
+        end
+    end)
+end
+
+-- AA Manual side keybinds
+do
+    Cache.AAManualKeyLabels = Cache.AAManualKeyLabels or {}
+    local sides = {
+        { "Front", 8.77 },
+        { "Back", 8.78 },
+        { "Left", 8.79 },
+        { "Right", 8.80 },
+    }
+    for _, info in ipairs(sides) do
+        local side, order = info[1], info[2]
+        local cfgKey = "AntiAimManual" .. side .. "Key"
+        local Row = Instance.new("Frame")
+        Row.Size = UDim2.new(0.96, 0, 0, 34)
+        Row.BackgroundColor3 = Theme.Card
+        Row.BorderSizePixel = 0
+        Row.LayoutOrder = order
+        Row.Parent = ResolveUIParent(CombatTab)
+        do
+            local c = Instance.new("UICorner")
+            c.CornerRadius = UDim.new(0, 9)
+            c.Parent = Row
+        end
+        local Label = Instance.new("TextLabel")
+        Label.Size = UDim2.new(0.5, 0, 1, 0)
+        Label.Position = UDim2.fromOffset(12, 0)
+        Label.BackgroundTransparency = 1
+        Label.Text = "Bind Manual " .. side
+        Label.TextColor3 = Theme.Text
+        Label.TextSize = 13
+        Label.Font = SelectedFont
+        Label.TextXAlignment = Enum.TextXAlignment.Left
+        Label.Parent = Row
+        local KeyLbl = Instance.new("TextLabel")
+        KeyLbl.Size = UDim2.fromOffset(70, 22)
+        KeyLbl.Position = UDim2.new(1, -150, 0.5, -11)
+        KeyLbl.BackgroundColor3 = Theme.BgTertiary
+        KeyLbl.BorderSizePixel = 0
+        local curK = Config[cfgKey]
+        KeyLbl.Text = (curK and curK ~= "") and ("[" .. curK .. "]") or "[-]"
+        KeyLbl.TextColor3 = Theme.TextDim
+        KeyLbl.TextSize = 11
+        KeyLbl.Font = SelectedFont
+        KeyLbl.Parent = Row
+        do
+            local c = Instance.new("UICorner")
+            c.CornerRadius = UDim.new(0, 6)
+            c.Parent = KeyLbl
+        end
+        Cache.AAManualKeyLabels[side] = KeyLbl
+        local SetBtn = Instance.new("TextButton")
+        SetBtn.Size = UDim2.fromOffset(44, 22)
+        SetBtn.Position = UDim2.new(1, -72, 0.5, -11)
+        SetBtn.BackgroundColor3 = Theme.Accent
+        pcall(function() TrackThemeAccent(SetBtn, "BackgroundColor3") end)
+        SetBtn.BorderSizePixel = 0
+        SetBtn.Text = "Set"
+        SetBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        SetBtn.TextSize = 11
+        SetBtn.Font = SelectedFont
+        SetBtn.Parent = Row
+        local ClrBtn = Instance.new("TextButton")
+        ClrBtn.Size = UDim2.fromOffset(22, 22)
+        ClrBtn.Position = UDim2.new(1, -24, 0.5, -11)
+        ClrBtn.BackgroundColor3 = Theme.BgTertiary
+        ClrBtn.BorderSizePixel = 0
+        ClrBtn.Text = "×"
+        ClrBtn.TextColor3 = Theme.Text
+        ClrBtn.TextSize = 14
+        ClrBtn.Font = SelectedFont
+        ClrBtn.Parent = Row
+        SetBtn.MouseButton1Click:Connect(function()
+            Cache.WaitingAAManualKey = side
+            Cache.AAManualKeyIgnoreUntil = tick() + 0.25
+            Notify("Anti-Aim", "Press key for Manual " .. side .. " (Esc cancel)")
+        end)
+        ClrBtn.MouseButton1Click:Connect(function()
+            Config[cfgKey] = ""
+            KeyLbl.Text = "[-]"
+            Notify("Anti-Aim", "Manual " .. side .. " bind cleared")
+        end)
+    end
+end
+
 CreateSliderRow("AA Jitter Range", 5, 90, Config.AntiAimJitter or 35, 8.8, CombatTab, function(val)
     Config.AntiAimJitter = val
 end)
@@ -10940,12 +11987,21 @@ CreateSliderRow("AA Random Yaw (ms)", 20, 1000, math.floor(tonumber(Config.AntiA
     Config.AntiAimRandomYawMs = math.floor(val + 0.5)
 end)
 
+
+AAManualArrowsBtn, AAManualArrowsBg, AAManualArrowsKnob = CreateFeatureRow("AA Manual Arrows", 8.805, CombatTab)
+CreateSliderRow("AA Arrow Size", 14, 56, math.floor(tonumber(Config.AntiAimManualArrowSize) or 28), 8.806, CombatTab, function(val)
+    Config.AntiAimManualArrowSize = math.floor(val + 0.5)
+    if AAManualArrows_Update then pcall(AAManualArrows_Update) end
+end)
+
 CreateGroupPanel("Trigger / Misc", 8.95, CombatTab)
+
 TriggerbotBtn, TriggerbotBg, TriggerbotKnob = CreateFeatureRow("Triggerbot", 9, CombatTab)
 CreateSliderRow("Trigger Delay (ms)", 0, 200, Config.TriggerbotDelay, 10, CombatTab, function(val)
     Config.TriggerbotDelay = val
 end)
 TriggerbotAWBtn, TriggerbotAWBg, TriggerbotAWKnob = CreateFeatureRow("Trigger Autowall", 10.02, CombatTab)
+TriggerbotInvulnBtn, TriggerbotInvulnBg, TriggerbotInvulnKnob = CreateFeatureRow("Check Invulnerable", 10.025, CombatTab)
 
 WeaponAutoSwapBtn, WeaponAutoSwapBg, WeaponAutoSwapKnob = CreateFeatureRow("Weapon Auto Swap", 10.05, CombatTab)
 CreateSliderRow("WAS Speed (ms)", 30, 1000, Config.WeaponAutoSwapSpeed or 150, 10.06, CombatTab, function(val)
@@ -11110,6 +12166,11 @@ CreateSliderRow("Silent FOV", 20, 500, Config.SilentV2Fov or 140, 10.83, CombatT
     if Cache.SilentV2FovCircle then Cache.SilentV2FovCircle.Radius = val end
     if Cache.SilentV2FovCircleFill then Cache.SilentV2FovCircleFill.Radius = val end
 end)
+SilentFovOutlineBtn, SilentFovOutlineBg, SilentFovOutlineKnob = CreateFeatureRow("Silent FOV Outline", 10.8305, CombatTab, "Color_SilentV2FovOutline")
+CreateSliderRow("Silent Outline Width", 5, 120, math.floor((tonumber(Config.SilentV2FovOutlineThickness) or 2) * 10), 10.831, CombatTab, function(val)
+    Config.SilentV2FovOutlineThickness = math.clamp(val / 10, 0.5, 12)
+end)
+
 SilentFovDynBtn, SilentFovDynBg, SilentFovDynKnob = CreateFeatureRow("Silent FOV Dynamic", 10.832, CombatTab)
 CreateSliderRow("Silent Dynamic Expand", 0, 150, math.floor(tonumber(Config.SilentV2FovDynamicExpand) or 40), 10.833, CombatTab, function(val)
     Config.SilentV2FovDynamicExpand = math.floor(val + 0.5)
@@ -11244,13 +12305,20 @@ do
 end
 
 SilentV2TeamBtn, SilentV2TeamBg, SilentV2TeamKnob = CreateFeatureRow("Silent Team Check", 10.85, CombatTab)
-SilentV2VisBtn, SilentV2VisBg, SilentV2VisKnob = CreateFeatureRow("Silent Visible Check", 10.86, CombatTab)
+SilentV2VisBtn, SilentV2VisBg, SilentV2VisKnob = CreateFeatureRow("Visible Only", 10.86, CombatTab)
 SilentV2PredBtn, SilentV2PredBg, SilentV2PredKnob = CreateFeatureRow("Silent Prediction", 10.87, CombatTab)
 CreateSliderRow("Silent Predict x100", 0, 30, math.floor((Config.SilentV2PredictionAmount or 0.12) * 100), 10.88, CombatTab, function(val)
     Config.SilentV2PredictionAmount = val / 100
 end)
 SilentV2StickyBtn, SilentV2StickyBg, SilentV2StickyKnob = CreateFeatureRow("Silent Sticky", 10.89, CombatTab)
 SilentV2Full360Btn, SilentV2Full360Bg, SilentV2Full360Knob = CreateFeatureRow("Silent 360", 10.895, CombatTab)
+if Cache.CreateTargetPriorityList then
+    Cache.RefreshSilentPriorityList = Cache.CreateTargetPriorityList("Silent Priority", 10.8965, function()
+        return Config.SilentTargetPriority or "Closest"
+    end, function(v) Config.SilentTargetPriority = v end, CombatTab, "SilentPriority")
+elseif typeof(Cache.RefreshSilentPriorityList) ~= "function" then
+    -- fallback: list was not created earlier
+end
 
 CreateSectionHeader("- Kill Sounds -", 11, CombatTab)
 FireSoundBtn, FireSoundBg, FireSoundKnob = CreateFeatureRow("Kill Sounds", 12, CombatTab)
@@ -11267,7 +12335,7 @@ do
         "Button", "Click", "Neverlose", "Standart", "Fatality", "Headshot",
         "Click1", "Agpa1", "Agpa2", "Camera1", "Bonk5", "Bubble3",
         "Hentai1", "Hentai2", "Hentai3", "Hentai4",
-        "Odin Svinia", "Skeet",
+        "Odin Svinia", "Skeet", "Primordial", "Stapler",
     }
 
     
@@ -11421,7 +12489,7 @@ do
         "Button", "Click", "Neverlose", "Standart", "Fatality", "Headshot",
         "Click1", "Agpa1", "Agpa2", "Camera1", "Bonk5", "Bubble3",
         "Hentai1", "Hentai2", "Hentai3", "Hentai4",
-        "Odin Svinia", "Skeet",
+        "Odin Svinia", "Skeet", "Primordial", "Stapler",
     }
 
     local HeaderRow = Instance.new("TextButton")
@@ -12351,16 +13419,66 @@ function ApplyAccentColor(color)
 
     
     pcall(function()
+        Theme.ToggleOn = color
         if RefreshAllSwitches then RefreshAllSwitches() end
         if RefreshAllColorButtons then pcall(RefreshAllColorButtons) end
         if RefreshAllSliders then pcall(RefreshAllSliders) end
         
+        -- force every ON switch bg + glow to new accent immediately (no notify)
         if Cache and Cache.FeatureUI then
             for key, ui in pairs(Cache.FeatureUI) do
                 if ui and ui.bg and Config and Config[key] == true then
                     ui.bg.BackgroundColor3 = color
+                    local g = ui.bg:FindFirstChild("SwitchGlow")
+                    if g then
+                        g.Color = color
+                        g.Transparency = 0.25
+                        g.Thickness = 2
+                    end
                 end
             end
+        end
+        -- also scan known switch frames by SwitchGlow name under menu
+        pcall(function()
+            if ScreenGui then
+                for _, d in ipairs(ScreenGui:GetDescendants()) do
+                    if d.Name == "SwitchGlow" and d:IsA("UIStroke") then
+                        local bg = d.Parent
+                        if bg and bg:IsA("GuiObject") then
+                            -- ON switches sit near accent; update glow always, bg if looks "on"
+                            d.Color = color
+                            local kn = bg:FindFirstChild("Knob") or bg:FindFirstChildWhichIsA("Frame")
+                            if kn and kn:IsA("GuiObject") then
+                                local px = kn.Position.X.Offset
+                                if px > 12 then
+                                    bg.BackgroundColor3 = color
+                                    d.Transparency = 0.25
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end)
+        -- selected rows in dropdown lists
+        local refreshes = {
+            "RefreshBoxStyleList", "RefreshChamsStyleList", "RefreshHealthbarStyleList",
+            "RefreshHealthbarStyleHighlight", "RefreshAAModeList", "RefreshAAManualList",
+            "RefreshHitSoundList", "RefreshHitSoundHighlight", "RefreshHitOnlySoundHighlight",
+            "RefreshStrafeModeList", "RefreshWeaponMaterialList", "RefreshSelfMaterialStyleList",
+            "RefreshAnimList", "RefreshScopeModeList", "RefreshCloneStyleList", "RefreshDeathStyleList",
+            "RefreshMultipointList", "RefreshPriorityList", "RefreshAimPartList", "RefreshSilentV2PartList", "RefreshAimPriorityList", "RefreshSilentPriorityList",
+            "RefreshTracerOriginList", "RefreshDistancePosList", "RefreshWeaponPosList",
+            "RefreshWatermarkPosList", "RefreshWmPosHighlight", "RefreshFakeFpsHighlight",
+        }
+        for _, name in ipairs(refreshes) do
+            local fn = Cache and Cache[name]
+            if typeof(fn) == "function" then
+                pcall(fn)
+            end
+        end
+        if WatermarkAccentBar then
+            WatermarkAccentBar.BackgroundColor3 = color
         end
     end)
 
@@ -12427,6 +13545,22 @@ function ApplyAccentColor(color)
 
     pcall(function()
         if AnxiumHudStrokes_UpdateTheme then AnxiumHudStrokes_UpdateTheme() end
+        -- keep user-picked colors independent from theme accent
+        pcall(function()
+            if ApplyTargetHudColor and Config then
+                ApplyTargetHudColor(Config.Color_TargetHud)
+            end
+            local ic = Config and Config.Color_IconEsp
+            if ic then
+                for _, data in pairs(Cache.EspNameBills or {}) do
+                    if data and data.icon then
+                        local st = data.icon:FindFirstChild("IconEspStroke")
+                        if st then st.Color = ic end
+                    end
+                end
+            end
+        end)
+
     end)
 
     
@@ -13001,7 +14135,16 @@ function ApplyLoadedConfig(data)
     end
     
     pcall(function()
-        if Cache.AntiAimModeBtn then
+        if Cache.RefreshAAManualList then pcall(Cache.RefreshAAManualList) end
+            if Cache.AAManualKeyLabels then
+                for side, lbl in pairs(Cache.AAManualKeyLabels) do
+                    local k = Config["AntiAimManual" .. side .. "Key"]
+                    if lbl then
+                        lbl.Text = (k and k ~= "") and ("[" .. k .. "]") or "[-]"
+                    end
+                end
+            end
+            if Cache.AntiAimModeBtn then
             Cache.AntiAimModeBtn.Text = "AA Mode  ·  " .. tostring(Config.AntiAimMode or "Static")
         end
         if Cache.RefreshAAModeList then pcall(Cache.RefreshAAModeList) end
@@ -13099,6 +14242,7 @@ function RefreshAllSwitches()
         { Config.ChamsEnabled, ChamsBg, ChamsKnob },
         { Config.ChamsVisCheckEnabled, ChamsVisBg, ChamsVisKnob },
         { Config.NameEspEnabled, NameEspBg, NameEspKnob },
+        { Config.IconEspEnabled, IconEspBg, IconEspKnob },
         { Config.NameEspFillEnabled, NameEspFillBg, NameEspFillKnob },
         { Config.DistanceEspEnabled, DistEspBg, DistEspKnob },
         { Config.DistanceEspGradientEnabled, DistEspGradBg, DistEspGradKnob },
@@ -13119,8 +14263,7 @@ function RefreshAllSwitches()
         { Config.DamageNumbersEnabled, DmgNumBg, DmgNumKnob },
         { Config.WorldColorEnabled, WorldColorBg, WorldColorKnob },
         { Config.NoShadowsEnabled, NoShadowsBg, NoShadowsKnob },
-        { Config.HitMarkerEnabled, HitMarkerBg, HitMarkerKnob },
-        { Config.SelfChamsEnabled, SelfChamsBg, SelfChamsKnob },
+        
         { Config.CloneChamsEnabled, CloneChamsBg, CloneChamsKnob },
         { Config.OffscreenArrowsEnabled, OffscreenBg, OffscreenKnob },
         { Config.ArrowPulseEnabled, ArrowPulseBg, ArrowPulseKnob },
@@ -13142,7 +14285,7 @@ function RefreshAllSwitches()
         { Config.ChinaHatEnabled, HatBg, HatKnob },
         { Config.FakeLagEnabled, FakeLagBg, FakeLagKnob },
         { Config.FakeLagRandomize, FakeLagRandBg, FakeLagRandKnob },
-        { Config.OrbitOrbsEnabled, OrbitOrbsBg, OrbitOrbsKnob },
+        
         { Config.TargetRingEnabled, TargetRingBg, TargetRingKnob },
         { Config.TargetMarkerEnabled, TargetMarkerBg, TargetMarkerKnob },
         { Config.TargetDotEnabled, TargetDotBg, TargetDotKnob },
@@ -13153,7 +14296,8 @@ function RefreshAllSwitches()
         { Config.FootstepsEnabled, FootstepsBg, FootstepsKnob },
         { Config.AspectRatioEnabled, AspectBg, AspectKnob },
         { Config.ThirdPersonEnabled, ThirdPersonBg, ThirdPersonKnob },
-        { Config.ForceFieldEnabled, FFBg, FFKnob },
+        { Config.SmoothCameraEnabled, SmoothCameraBg, SmoothCameraKnob },
+        { Config.SelfMaterialEnabled or Config.ForceFieldEnabled, FFBg, FFKnob },
         { Config.WeaponForceFieldEnabled, WeaponFFBg, WeaponFFKnob },
         { Config.KillFlashEnabled, KillFlashBg, KillFlashKnob },
         { Config.KillLightningEnabled, KillLightningBg, KillLightningKnob },
@@ -13161,8 +14305,8 @@ function RefreshAllSwitches()
         { Config.HitLogsEnabled, HitLogsBg, HitLogsKnob },
         { Config.HitboxShow, HitboxShowBg, HitboxShowKnob },
         { Config.BulletTracersEnabled, BulletTracerBg, BulletTracerKnob },
-        { Config.AutowallEnabled, AutowallBg, AutowallKnob },
-        { Config.AutowallShowInfo, AutowallInfoBg, AutowallInfoKnob },
+        { Config.PenetrationEnabled, PenetrationBg, PenetrationKnob },
+        { Config.PenetrationShowInfo, PenetrationInfoBg, PenetrationInfoKnob },
         { Config.BindListEnabled, BindListSettingsBg or BindListBg, BindListSettingsKnob or BindListKnob },
         { Config.AuraEnabled, AuraBg, AuraKnob },
         { Config.ClassicPinkEnabled, ClassicPinkBg, ClassicPinkKnob },
@@ -13175,7 +14319,9 @@ function RefreshAllSwitches()
         { Config.TeamDistanceEspEnabled, TeamDistEspBg, TeamDistEspKnob },
         { Config.AimEnabled, AimBg, AimKnob },
         { Config.AimWallCheck, AimWallBg, AimWallKnob },
+        { Config.AimFull360, AimFull360Bg, AimFull360Knob },
         { Config.ShowFovEnabled, ShowFovBg, ShowFovKnob },
+        { Config.FovOutlineEnabled, FovOutlineBg, FovOutlineKnob },
         { Config.FovFillEnabled, FovFillBg, FovFillKnob },
         { Config.FovPulseEnabled, FovPulseBg, FovPulseKnob },
         { Config.TargetHudEnabled, TargetHudBg, TargetHudKnob },
@@ -13184,11 +14330,13 @@ function RefreshAllSwitches()
         { Config.DarkModeEnabled, DarkModeBg, DarkModeKnob },
         { Config.SpinEnabled, SpinBg, SpinKnob },
         { Config.AntiAimEnabled, AntiAimBg, AntiAimKnob },
+        { Config.AntiAimManualArrowsEnabled, AAManualArrowsBg, AAManualArrowsKnob },
         { Config.AntiAimResolveEnabled, AntiAimResolveBg, AntiAimResolveKnob },
         { Config.AntiAimRandomPitchEnabled, AntiAimRandPitchBg, AntiAimRandPitchKnob },
         { Config.AntiAimRandomYawEnabled, AntiAimRandYawBg, AntiAimRandYawKnob },
         { Config.TriggerbotEnabled, TriggerbotBg, TriggerbotKnob },
         { Config.TriggerbotAutowall, TriggerbotAWBg, TriggerbotAWKnob },
+        { Config.TriggerbotCheckInvuln, TriggerbotInvulnBg, TriggerbotInvulnKnob },
         { Config.WeaponAutoSwapEnabled, WeaponAutoSwapBg, WeaponAutoSwapKnob },
         { Config.CustomFireSoundEnabled, FireSoundBg, FireSoundKnob },
         { Config.HitSoundEnabled, HitSoundBg, HitSoundKnob },
@@ -13206,6 +14354,7 @@ function RefreshAllSwitches()
         { Config.BoxFillRotation, BoxFillRotBg, BoxFillRotKnob },
         { Config.SilentAimV2Enabled, SilentV2Bg, SilentV2Knob },
         { Config.SilentV2ShowFov, SilentV2FovBg, SilentV2FovKnob },
+        { Config.SilentV2FovOutlineEnabled, SilentFovOutlineBg, SilentFovOutlineKnob },
         { Config.SilentV2TeamCheck, SilentV2TeamBg, SilentV2TeamKnob },
         { Config.SilentV2VisibleCheck, SilentV2VisBg, SilentV2VisKnob },
         { Config.SilentV2Sticky, SilentV2StickyBg, SilentV2StickyKnob },
@@ -13336,11 +14485,6 @@ function RefreshAllSwitches()
         if not Config.SpeedHackEnabled and LocalPlayer.Character then
             local hum = LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
             if hum then hum.WalkSpeed = 16 end
-        end
-        if Config.ThirdPersonEnabled then
-            ThirdPerson_Enable()
-        else
-            ThirdPerson_Disable()
         end
     end)
 end
@@ -13919,10 +15063,10 @@ do
             if WeaponAutoSwap_Apply then WeaponAutoSwap_Apply() end
             if Cache.RefreshWeaponAutoSwapList then pcall(Cache.RefreshWeaponAutoSwapList) end
 
-            if Cache.AutowallSetEnabled then
-                Cache.AutowallSetEnabled(Config.AutowallEnabled == true)
+            if Cache.PenetrationSetEnabled then
+                Cache.PenetrationSetEnabled(Config.PenetrationEnabled == true)
             end
-            if Cache.AutowallApply then Cache.AutowallApply() end
+            if Cache.PenetrationApply then Cache.PenetrationApply() end
             if ActiveListFrame then
                 ActiveListFrame.Visible = Config.ActiveListEnabled == true
             end
@@ -13946,6 +15090,22 @@ do
     if Cache.RefreshHitOnlySoundHighlight then pcall(Cache.RefreshHitOnlySoundHighlight) end
             if Cache.RefreshHealthbarStyleHighlight then pcall(Cache.RefreshHealthbarStyleHighlight) end
             if Cache.RefreshChamsStyleList then pcall(Cache.RefreshChamsStyleList) end
+            if Cache.RefreshBulletTracerStyleList then pcall(Cache.RefreshBulletTracerStyleList) end
+            -- migrate / sync Self Material
+            if Config.SelfMaterialEnabled == nil and Config.ForceFieldEnabled then
+                Config.SelfMaterialEnabled = Config.ForceFieldEnabled == true
+            end
+            if Config.ForceFieldEnabled and not Config.SelfMaterialEnabled then
+                Config.SelfMaterialEnabled = true
+            end
+            if Config.SelfMaterialEnabled and not Config.ForceFieldEnabled then
+                Config.ForceFieldEnabled = true
+            end
+            if Cache.RefreshSelfMaterialStyleList then pcall(Cache.RefreshSelfMaterialStyleList) end
+            if (Config.SelfMaterialEnabled or Config.ForceFieldEnabled) and ForceField_Toggle then
+                pcall(ForceField_Toggle, true)
+            end
+
             if Cache.RefreshBoxStyleList then pcall(Cache.RefreshBoxStyleList) end
             if Cache.RefreshWeaponStyleList then pcall(Cache.RefreshWeaponStyleList) end
                         if Cache.RefreshAimPartList then pcall(Cache.RefreshAimPartList) end
@@ -14980,6 +16140,7 @@ function AnxiumPluginAPI.RegisterScript(def)
         Id = id,
         TabName = tabName,
         Tab = tabFrame,
+        UI = UI,
         Theme = Theme,
         Notify = function(title, msg)
             if Notify then
@@ -16504,30 +17665,17 @@ ApplyEspToPlayer = function(targetPlayer)
         Cache.Highlights[targetPlayer] = highlight
 
         
-        local chams = Cache.Chams[targetPlayer]
-        if chams and chams.Parent then
-            pcall(function() chams:Destroy() end)
+        -- force rebuild chams on every character spawn so they never stay detached
+        if Cache.Chams and Cache.Chams[targetPlayer] then
+            pcall(function() Cache.Chams[targetPlayer]:Destroy() end)
+            Cache.Chams[targetPlayer] = nil
         end
-        chams = Instance.new("Highlight")
-        chams.Name = "AnxiumChams_" .. tostring(targetPlayer.UserId)
-        chams.Adornee = character
-        chams.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
-        chams.FillColor = GetEspColorForPlayer(targetPlayer, Config.Color_Chams or Theme.Accent)
-        chams.OutlineColor = Color3.fromRGB(255, 255, 255)
-        chams.FillTransparency = 0.4
-        chams.OutlineTransparency = 0.2
-        local skipTeam = Config.TeamCheckerEnabled and IsTeammate and IsTeammate(targetPlayer)
-        chams.Enabled = Config.ChamsEnabled and not skipTeam
-        
-        local okParent = pcall(function()
-            if gethui then chams.Parent = gethui()
-            elseif syn and syn.protect_gui then chams.Parent = CoreGui
-            else chams.Parent = ScreenGui end
-        end)
-        if not okParent then
-            chams.Parent = character
+        if Config.ChamsEnabled and not (Config.TeamCheckerEnabled and IsTeammate and IsTeammate(targetPlayer)) then
+            local chams = Chams_Ensure(targetPlayer, character)
+            if chams then
+                ApplyChamsStyle(chams, GetEspColorForPlayer(targetPlayer, Config.Color_Chams or Theme.Accent), Config.ChamsStyle)
+            end
         end
-        Cache.Chams[targetPlayer] = chams
 
         
         Cache.ChamsPartFallback = Cache.ChamsPartFallback or {}
@@ -16904,6 +18052,125 @@ LocalPlayer.CharacterAdded:Connect(function()
 end)
 
 
+
+-- AA Manual direction arrows (center of screen, only sides with binds)
+Cache.AAManualArrowGui = Cache.AAManualArrowGui or nil
+Cache.AAManualArrowLabels = Cache.AAManualArrowLabels or {}
+
+function AAManualArrows_Destroy()
+    pcall(function()
+        if Cache.AAManualArrowGui then Cache.AAManualArrowGui:Destroy() end
+    end)
+    Cache.AAManualArrowGui = nil
+    Cache.AAManualArrowLabels = {}
+end
+
+function AAManualArrows_Ensure()
+    if Cache.AAManualArrowGui and Cache.AAManualArrowGui.Parent then
+        return Cache.AAManualArrowLabels
+    end
+    AAManualArrows_Destroy()
+    local pg = nil
+    pcall(function()
+        pg = CoreGui
+    end)
+    if not pg then
+        pcall(function() pg = LocalPlayer:FindFirstChildOfClass("PlayerGui") end)
+    end
+    if not pg then return {} end
+    local gui = Instance.new("ScreenGui")
+    gui.Name = "AnxiumAAManualArrows"
+    gui.ResetOnSpawn = false
+    gui.IgnoreGuiInset = true
+    gui.DisplayOrder = 80
+    gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+    pcall(function() gui.Parent = pg end)
+    if not gui.Parent then
+        pcall(function() gui.Parent = LocalPlayer:WaitForChild("PlayerGui") end)
+    end
+    Cache.AAManualArrowGui = gui
+    local labels = {}
+    -- offsets from center for each direction (pixels)
+    local layout = {
+        Front = { text = "▲", pos = UDim2.new(0.5, 0, 0.5, -42) },
+        Back  = { text = "▼", pos = UDim2.new(0.5, 0, 0.5, 42) },
+        Left  = { text = "◀", pos = UDim2.new(0.5, -48, 0.5, 0) },
+        Right = { text = "▶", pos = UDim2.new(0.5, 48, 0.5, 0) },
+    }
+    for side, info in pairs(layout) do
+        local lbl = Instance.new("TextLabel")
+        lbl.Name = "AAArrow_" .. side
+        lbl.AnchorPoint = Vector2.new(0.5, 0.5)
+        lbl.Position = info.pos
+        local sz = math.clamp(math.floor(tonumber(Config.AntiAimManualArrowSize) or 28), 14, 64)
+        lbl.Size = UDim2.fromOffset(sz + 8, sz + 8)
+        lbl.BackgroundTransparency = 1
+        lbl.Text = info.text
+        lbl.TextSize = sz
+        lbl.Font = Enum.Font.GothamBold
+        lbl.TextColor3 = Color3.fromRGB(200, 200, 200)
+        lbl.TextStrokeTransparency = 0.4
+        lbl.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
+        lbl.Visible = false
+        lbl.Parent = gui
+        labels[side] = lbl
+    end
+    Cache.AAManualArrowLabels = labels
+    return labels
+end
+
+function AAManualArrows_Update()
+    if not Config or Config.AntiAimManualArrowsEnabled ~= true or Config.AntiAimEnabled ~= true then
+        if Cache.AAManualArrowLabels then
+            for _, lbl in pairs(Cache.AAManualArrowLabels) do
+                if lbl then lbl.Visible = false end
+            end
+        end
+        return
+    end
+    local labels = AAManualArrows_Ensure()
+    local active = tostring(Config.AntiAimManualDir or "None")
+    local accent = (Theme and Theme.Accent) or Color3.fromRGB(180, 140, 255)
+    local idle = Color3.fromRGB(190, 190, 190)
+    local sides = {
+        Front = Config.AntiAimManualFrontKey,
+        Back = Config.AntiAimManualBackKey,
+        Left = Config.AntiAimManualLeftKey,
+        Right = Config.AntiAimManualRightKey,
+    }
+    local sz = math.clamp(math.floor(tonumber(Config.AntiAimManualArrowSize) or 28), 14, 64)
+    local gap = math.floor(sz * 1.55)
+    local positions = {
+        Front = UDim2.new(0.5, 0, 0.5, -gap),
+        Back  = UDim2.new(0.5, 0, 0.5, gap),
+        Left  = UDim2.new(0.5, -gap, 0.5, 0),
+        Right = UDim2.new(0.5, gap, 0.5, 0),
+    }
+    for side, key in pairs(sides) do
+        local lbl = labels[side]
+        if not lbl then continue end
+        local hasBind = type(key) == "string" and key ~= ""
+        lbl.Visible = hasBind
+        if hasBind then
+            lbl.TextSize = sz
+            lbl.Size = UDim2.fromOffset(sz + 8, sz + 8)
+            if positions[side] then lbl.Position = positions[side] end
+            if active == side then
+                lbl.TextColor3 = accent
+            else
+                lbl.TextColor3 = idle
+            end
+        end
+    end
+end
+
+if not Cache._AAManualArrowsBound then
+    Cache._AAManualArrowsBound = true
+    RunService.RenderStepped:Connect(function()
+        pcall(AAManualArrows_Update)
+    end)
+end
+
 function AntiAim_Update(dt)
     if not Config.AntiAimEnabled then return end
     local char = LocalPlayer.Character
@@ -16977,26 +18244,20 @@ function AntiAim_Update(dt)
     end
 
     if mode == "Static" and not resolveActive then
-        local md = Vector3.zero
-        if hum then
-            pcall(function() md = hum.MoveDirection end)
+        -- no WASD steering: yaw locked to camera + manual side + AA Yaw slider
+        local man = tostring(Config.AntiAimManualDir or "None")
+        local manOff = 0
+        if man == "Front" then
+            manOff = 0
+        elseif man == "Back" then
+            manOff = 180
+        elseif man == "Left" then
+            manOff = -90
+        elseif man == "Right" then
+            manOff = 90
         end
-        local moveFlat = Vector3.new(md.X, 0, md.Z)
-        if moveFlat.Magnitude < 0.08 then
-            
-            local v = hrp.AssemblyLinearVelocity
-            moveFlat = Vector3.new(v.X, 0, v.Z)
-        end
-        if moveFlat.Magnitude > 0.15 then
-            local inv = -moveFlat.Unit 
-            targetYaw = math.atan2(-inv.X, -inv.Z)
-            Cache.AntiAimLastStaticYaw = targetYaw
-        elseif Cache.AntiAimLastStaticYaw then
-            targetYaw = Cache.AntiAimLastStaticYaw
-        else
-            
-            targetYaw = camYaw + math.rad(yawOffDeg)
-        end
+        targetYaw = camYaw + math.rad(manOff + yawOffDeg)
+        Cache.AntiAimLastStaticYaw = targetYaw
     end
     local pos = hrp.Position
     local vel = hrp.AssemblyLinearVelocity
@@ -17267,6 +18528,9 @@ function IsValidAimTarget(player)
 end
 
 
+-- Unified screen projection: ESP / FOV / tracers / name tags all use this.
+-- When Aspect Ratio is on, camera is stretched each frame AFTER Roblox camera update,
+-- so WorldToViewportPoint matches the stretched view (and 3D Billboards / name tags follow it).
 function WorldToScreen(worldPos)
     local cam = Workspace.CurrentCamera or Camera
     if not cam then
@@ -17276,29 +18540,48 @@ function WorldToScreen(worldPos)
     return sp, onScreen and sp.Z > 0
 end
 
-
+function AspectRatio_GetScale()
+    local s = tonumber(Config and Config.AspectRatioValue) or 1.333
+    return math.clamp(s, 0.5, 2.5)
+end
 
 function AspectRatio_Apply()
+    if not Config or Config.AspectRatioEnabled ~= true then return end
     local cam = Workspace.CurrentCamera or Camera
     if not cam then return end
-    if not Config.AspectRatioEnabled then return end
-    local s = tonumber(Config.AspectRatioValue) or 1
-    if s < 0.05 then s = 0.05 end
-    if math.abs(s - 1) < 0.001 then return end
+    local s = AspectRatio_GetScale()
+    if math.abs(s - 1) < 0.002 then return end
     local cf = cam.CFrame
-    
+    local pos = cf.Position
     local look = cf.LookVector
     local right = cf.RightVector
-    
-    local up = right:Cross(look)
-    if up.Magnitude < 1e-4 then
-        up = cf.UpVector
-    else
-        up = up.Unit
-    end
-    right = look:Cross(up).Unit
-    cam.CFrame = CFrame.fromMatrix(cf.Position, right, up * s, -look)
+    local up = cf.UpVector
+    -- rebuild orthonormal basis then stretch vertical axis (classic AR stretch)
+    -- this affects the whole rendered world, BillboardGuis, and viewport projection
+    local newUp = up * s
+    local newRight = right
+    -- keep looking direction stable
+    pcall(function()
+        cam.CFrame = CFrame.fromMatrix(pos, newRight, newUp, -look)
+    end)
 end
+
+function AspectRatio_EnsureBind()
+    if Cache.AspectBound then return end
+    Cache.AspectBound = true
+    -- after default Roblox camera so we don't compound; before/with late camera effects
+    pcall(function()
+        RunService:BindToRenderStep("AnxiumAspectRatio", Enum.RenderPriority.Camera.Value + 1, function()
+            if Config and Config.AspectRatioEnabled then
+                AspectRatio_Apply()
+            end
+        end)
+    end)
+end
+
+task.defer(function()
+    if AspectRatio_EnsureBind then AspectRatio_EnsureBind() end
+end)
 
 function GetMovementDynamicExtra(enabled, maxExtra, cacheKey)
     cacheKey = cacheKey or "_dynExtra"
@@ -17324,41 +18607,85 @@ function GetMovementDynamicExtra(enabled, maxExtra, cacheKey)
     return cur
 end
 
+-- lower score = better
+function AimScoreCandidate(priority, screenDist, worldDist, health)
+    local mode = tostring(priority or "Closest")
+    if mode == "Closest Dist" then
+        return worldDist or 1e9
+    elseif mode == "Farthest Dist" then
+        return -(worldDist or 0)
+    elseif mode == "Lowest HP" then
+        return health or 1e9
+    elseif mode == "Highest HP" then
+        return -(health or 0)
+    end
+    -- Closest to crosshair / FOV center
+    return screenDist or 1e9
+end
+
 GetClosestPlayerInFOV = function()
     local myChar = LocalPlayer.Character
-    if not myChar or not myChar:FindFirstChild("HumanoidRootPart") then
+    local myRoot = myChar and myChar:FindFirstChild("HumanoidRootPart")
+    if not myChar or not myRoot then
         Cache.AimLockTarget = nil
         return nil
     end
 
-    local fovCenter = Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y / 2)
+    local cam = Workspace.CurrentCamera or Camera
+    if not cam then
+        Cache.AimLockTarget = nil
+        return nil
+    end
+
+    local fovCenter = Vector2.new(cam.ViewportSize.X / 2, cam.ViewportSize.Y / 2)
     local fovRadius = (Config.FovRadius or 150) + GetMovementDynamicExtra(Config.FovDynamicEnabled == true, Config.FovDynamicExpand, "FovDynamicExtra")
+    local full360 = Config.AimFull360 == true
+    local priority = Config.AimTargetPriority or "Closest"
 
-    
-    local closestPlayer = nil
-    local shortestScreenDist = math.huge
+    local bestPlayer = nil
+    local bestScore = math.huge
 
-    for i = 1, #CachedPlayerList do
-        local player = CachedPlayerList[i]
+    local list = CachedPlayerList or Players:GetPlayers()
+    for i = 1, #list do
+        local player = list[i]
         local ok, head = IsValidAimTarget(player)
-        if ok then
+        if ok and head then
             local pos, onScreen = WorldToScreen(head.Position)
-            if onScreen and pos.Z > 0 then
+            local use = false
+            local screenDist = 1e9
+            if full360 then
+                -- any valid target (prefer on-screen for screen score)
+                use = true
+                if onScreen and pos and pos.Z > 0 then
+                    local dx = pos.X - fovCenter.X
+                    local dy = pos.Y - fovCenter.Y
+                    screenDist = math.sqrt(dx * dx + dy * dy)
+                else
+                    screenDist = 1e8 -- off-screen still allowed in 360
+                end
+            elseif onScreen and pos and pos.Z > 0 then
                 local dx = pos.X - fovCenter.X
                 local dy = pos.Y - fovCenter.Y
-                local screenDist = math.sqrt(dx * dx + dy * dy)
+                screenDist = math.sqrt(dx * dx + dy * dy)
                 local inFov = FovPointInRange and FovPointInRange(dx, dy, fovRadius)
                 if inFov == nil then inFov = screenDist <= fovRadius end
-                if inFov and screenDist < shortestScreenDist then
-                    shortestScreenDist = screenDist
-                    closestPlayer = player
+                use = inFov and true or false
+            end
+            if use then
+                local worldDist = (head.Position - myRoot.Position).Magnitude
+                local hum = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
+                local hp = hum and hum.Health or 100
+                local score = AimScoreCandidate(priority, screenDist, worldDist, hp)
+                if score < bestScore then
+                    bestScore = score
+                    bestPlayer = player
                 end
             end
         end
     end
 
-    Cache.AimLockTarget = closestPlayer
-    return closestPlayer
+    Cache.AimLockTarget = bestPlayer
+    return bestPlayer
 end
 
 
@@ -17529,6 +18856,75 @@ function Chams_RestoreParts(player)
     Cache.ChamsPartFallback[player] = {}
 end
 
+-- Reliable chams: recreate if destroyed, rebind Adornee on respawn, prefer character parent
+function Chams_IsValid(hl, char)
+    if not hl then return false end
+    local ok, parent = pcall(function() return hl.Parent end)
+    if not ok or parent == nil then return false end
+    if char then
+        local okA, adornee = pcall(function() return hl.Adornee end)
+        if not okA or adornee ~= char then return false end
+    end
+    return true
+end
+
+function Chams_Destroy(player)
+    local hl = Cache.Chams and Cache.Chams[player]
+    if hl then
+        pcall(function() hl.Enabled = false end)
+        pcall(function() hl:Destroy() end)
+    end
+    if Cache.Chams then Cache.Chams[player] = nil end
+    pcall(Chams_RestoreParts, player)
+end
+
+function Chams_Ensure(player, char)
+    if not player or not char or not char.Parent then return nil end
+    Cache.Chams = Cache.Chams or {}
+    local hl = Cache.Chams[player]
+    if Chams_IsValid(hl, char) then
+        pcall(function()
+            hl.Adornee = char
+            hl.Enabled = true
+            hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+        end)
+        return hl
+    end
+    -- dead / wrong adornee → rebuild
+    if hl then
+        pcall(function() hl:Destroy() end)
+        Cache.Chams[player] = nil
+    end
+    hl = Instance.new("Highlight")
+    hl.Name = "AnxiumChams_" .. tostring(player.UserId)
+    hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+    hl.FillTransparency = 0.35
+    hl.OutlineTransparency = 0.1
+    hl.OutlineColor = Color3.fromRGB(255, 255, 255)
+    hl.Adornee = char
+    hl.Enabled = true
+    -- parent on character first (most stable); fallback to UI containers
+    local parented = pcall(function() hl.Parent = char end)
+    if not parented or not hl.Parent then
+        pcall(function()
+            if gethui then
+                hl.Parent = gethui()
+            elseif ScreenGui then
+                hl.Parent = ScreenGui
+            end
+        end)
+    end
+    if not hl.Parent then
+        pcall(function() hl.Parent = CoreGui end)
+    end
+    if not hl.Parent then
+        pcall(function() hl:Destroy() end)
+        return nil
+    end
+    Cache.Chams[player] = hl
+    return hl
+end
+
 IsTeammate = function(player)
     if not player or player == LocalPlayer then return false end
     local now = tick()
@@ -17577,6 +18973,41 @@ GetPlayerByName = function(targetName)
 end
 
 TriggerbotLastShot = 0
+
+function Triggerbot_IsInvulnerable(player)
+    -- optional gate: Config.TriggerbotCheckInvuln
+    if not Config or Config.TriggerbotCheckInvuln ~= true then
+        return false
+    end
+    if not player then return true end
+    local char = player.Character
+    if not char then return true end
+    -- classic ForceField spawn protection
+    if char:FindFirstChildOfClass("ForceField") then
+        return true
+    end
+    -- common attributes / values used by games
+    local attrs = { "Invulnerable", "Invincible", "GodMode", "IsInvulnerable", "Protected", "NoDamage", "ForceField" }
+    for _, a in ipairs(attrs) do
+        local ok, v = pcall(function() return char:GetAttribute(a) end)
+        if ok and (v == true or v == 1 or v == "true") then
+            return true
+        end
+    end
+    local hum = char:FindFirstChildOfClass("Humanoid")
+    if hum then
+        for _, a in ipairs(attrs) do
+            local ok, v = pcall(function() return hum:GetAttribute(a) end)
+            if ok and (v == true or v == 1 or v == "true") then
+                return true
+            end
+        end
+        -- some games use 0 max health temporarily / platform stand with ff
+        if hum.Health <= 0 then return true end
+    end
+    return false
+end
+
 Cache.TriggerbotPendingUntil = 0
 Cache.TriggerbotPendingTarget = nil
 
@@ -17595,8 +19026,8 @@ function Triggerbot_AutowallHit(player)
     local dist = totalDir.Magnitude
     if dist < 0.5 or dist > 1200 then return false end
     local dir = totalDir.Unit
-    local softMax = tonumber(Config.AutowallSoftMax) or 2.2
-    local hardMax = tonumber(Config.AutowallHardMax) or 0.55
+    local softMax = tonumber(Config.PenetrationSoftMax) or 2.2
+    local hardMax = tonumber(Config.PenetrationHardMax) or 0.55
     local thickness = 0
     local pos = origin
     local remain = dist + 0.5
@@ -17688,7 +19119,7 @@ function Triggerbot_GetTargetUnderCrosshair()
                     return nil
                 end
                 local hum = player.Character:FindFirstChildOfClass("Humanoid")
-                if hum and hum.Health > 0 then
+                if hum and hum.Health > 0 and not Triggerbot_IsInvulnerable(player) then
                     return player
                 end
             end
@@ -17704,7 +19135,7 @@ function Triggerbot_GetTargetUnderCrosshair()
                 if not (Config.TeamCheckerEnabled and IsTeammate and IsTeammate(player)) then
                     local hum = player.Character:FindFirstChildOfClass("Humanoid")
                     local head = player.Character:FindFirstChild("Head") or player.Character:FindFirstChild("HumanoidRootPart")
-                    if hum and hum.Health > 0 and head then
+                    if hum and hum.Health > 0 and head and not Triggerbot_IsInvulnerable(player) then
                         local to = (head.Position - origin)
                         if to.Magnitude > 1 and to.Magnitude < 900 then
                             local dot = look:Dot(to.Unit)
@@ -17736,6 +19167,7 @@ function Triggerbot_GetSilentFovTarget()
                 if Config.TeamCheckerEnabled and IsTeammate and IsTeammate(tv) then return end
                 local hum = char:FindFirstChildOfClass("Humanoid")
                 if not hum or hum.Health <= 0 then return end
+                if Triggerbot_IsInvulnerable(tv) then return end
                 if not Triggerbot_HasLineOfSight(tv, part) then return end
                 ok = true
             end)
@@ -17781,7 +19213,10 @@ RunService.Heartbeat:Connect(function()
                 if Cache and Cache.SilentV2Target == pending then
                     aimPart = Cache.SilentV2Part
                 end
-                if not Triggerbot_HasLineOfSight(pending, aimPart) then
+                if Triggerbot_IsInvulnerable(pending) then
+                    Cache.TriggerbotPendingTarget = nil
+                    Cache.TriggerbotPendingUntil = 0
+                elseif not Triggerbot_HasLineOfSight(pending, aimPart) then
                     Cache.TriggerbotPendingTarget = nil
                     Cache.TriggerbotPendingUntil = 0
                 else
@@ -17872,6 +19307,9 @@ function NameEsp_DestroyBill(player)
     if data then
         pcall(function()
             if data.bill then data.bill:Destroy() end
+            if data.icon and data.icon.Parent then
+                data.icon:Destroy()
+            end
             if data.label and data.label.Parent and data.label:IsA("TextLabel") and data.screen then
                 data.label:Destroy()
             end
@@ -18089,24 +19527,22 @@ function Healthbar_Update(player, minX, minY, height, hp, maxHp)
     data.Fill.Visible = true
     data.LastRatio = ratio
     local style = Config.HealthbarStyle or "Gradient"
-    local base = Config.Color_Healthbar or Theme.Accent or Color3.fromRGB(180, 140, 255)
-    if typeof(base) ~= "Color3" then base = Color3.fromRGB(180, 140, 255) end
-    local topCol = Config.Color_HealthbarTop or Color3.fromRGB(0, 255, 0)
-    local botCol = Config.Color_HealthbarBottom or Color3.fromRGB(255, 0, 0)
-    if typeof(topCol) ~= "Color3" then topCol = Color3.fromRGB(0, 255, 0) end
-    if typeof(botCol) ~= "Color3" then botCol = Color3.fromRGB(255, 0, 0) end
-    local midCol = base
+    -- color1 (left palette) + color2 (right palette) for Gradient; Solid uses color1 only
+    local c1 = Config.Color_Healthbar or Config.Color_HealthbarTop or Theme.Accent or Color3.fromRGB(180, 140, 255)
+    local c2 = Config.Color_HealthbarBottom or Color3.fromRGB(180, 140, 255)
+    if typeof(c1) ~= "Color3" then c1 = Color3.fromRGB(180, 140, 255) end
+    if typeof(c2) ~= "Color3" then c2 = Color3.fromRGB(255, 0, 0) end
+    Config.Color_HealthbarTop = c1
     if style == "Solid" then
         if data.Grad then data.Grad.Enabled = false end
-        data.Fill.BackgroundColor3 = base
+        data.Fill.BackgroundColor3 = c1
     else
         if data.Grad then
             data.Grad.Enabled = true
             data.Grad.Rotation = 90
             data.Grad.Color = ColorSequence.new({
-                ColorSequenceKeypoint.new(0, topCol),
-                ColorSequenceKeypoint.new(0.5, midCol),
-                ColorSequenceKeypoint.new(1, botCol),
+                ColorSequenceKeypoint.new(0, c1),
+                ColorSequenceKeypoint.new(1, c2),
             })
         end
         data.Fill.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
@@ -18125,10 +19561,71 @@ function Healthbar_Update(player, minX, minY, height, hp, maxHp)
 end
 
 
+
+Cache.EspIconCache = Cache.EspIconCache or {}
+
+function NameEsp_LoadIcon(player, icon)
+    if not player or not icon then return end
+    local uid = player.UserId
+    if Cache.EspIconCache[uid] then
+        icon.Image = Cache.EspIconCache[uid]
+        return
+    end
+    -- quick rbxthumb fallback while async loads
+    pcall(function()
+        icon.Image = "rbxthumb://type=AvatarHeadShot&id=" .. tostring(uid) .. "&w=48&h=48"
+    end)
+    task.spawn(function()
+        local ok, thumb = pcall(function()
+            return Players:GetUserThumbnailAsync(
+                uid,
+                Enum.ThumbnailType.HeadShot,
+                Enum.ThumbnailSize.Size48x48
+            )
+        end)
+        if ok and type(thumb) == "string" and #thumb > 0 then
+            Cache.EspIconCache[uid] = thumb
+            if icon and icon.Parent then
+                icon.Image = thumb
+            end
+        end
+    end)
+end
+
+function NameEsp_CreateIcon(player, sg)
+    local icon = Instance.new("ImageLabel")
+    icon.Name = "Icon_" .. tostring(player.UserId)
+    icon.Size = UDim2.fromOffset(18, 18)
+    icon.AnchorPoint = Vector2.new(1, 1)
+    icon.Position = UDim2.fromOffset(-5000, -5000)
+    icon.BackgroundColor3 = Color3.fromRGB(30, 28, 40)
+    icon.BackgroundTransparency = 0.25
+    icon.BorderSizePixel = 0
+    icon.ScaleType = Enum.ScaleType.Crop
+    icon.Visible = false
+    icon.ZIndex = 52
+    icon.Parent = sg
+    local c = Instance.new("UICorner")
+    c.CornerRadius = UDim.new(0, 4)
+    c.Parent = icon
+    local st = Instance.new("UIStroke")
+    st.Name = "IconEspStroke"
+    st.Thickness = 1
+    st.Color = (Config and Config.Color_IconEsp) or Color3.fromRGB(180, 140, 255)
+    st.Transparency = 0.35
+    st.Parent = icon
+    NameEsp_LoadIcon(player, icon)
+    return icon
+end
+
 function NameEsp_EnsureBill(player, adornee)
     Cache.EspNameBills = Cache.EspNameBills or {}
     local data = Cache.EspNameBills[player]
     if data and data.label and data.label.Parent then
+        if not data.icon or not data.icon.Parent then
+            local sg = NameEsp_GetScreenGui()
+            data.icon = NameEsp_CreateIcon(player, sg)
+        end
         if not data.distLabel or not data.distLabel.Parent then
             local sg = NameEsp_GetScreenGui()
             local distLbl = Instance.new("TextLabel")
@@ -18252,7 +19749,8 @@ function NameEsp_EnsureBill(player, adornee)
     wpnLbl.TextYAlignment = Enum.TextYAlignment.Center
     wpnLbl.Visible = false
     wpnLbl.Parent = sg
-    data = { label = lbl, distLabel = distLbl, distGrad = distGrad, weaponLabel = wpnLbl, grad = grad, screen = true, player = player }
+    local icon = NameEsp_CreateIcon(player, sg)
+    data = { label = lbl, icon = icon, distLabel = distLbl, distGrad = distGrad, weaponLabel = wpnLbl, grad = grad, screen = true, player = player }
     Cache.EspNameBills[player] = data
     return data
 end
@@ -18405,6 +19903,7 @@ RunService.RenderStepped:Connect(function(dt)
     Cache.FrameN = (Cache.FrameN or 0) + 1
     local frameN = Cache.FrameN
     dt = (typeof(dt) == "number" and dt > 0 and dt < 0.1) and dt or 0.016
+    Cache._lastDt = dt
     Camera = Workspace.CurrentCamera or Camera
 
     if not Config then return end
@@ -18428,12 +19927,7 @@ RunService.RenderStepped:Connect(function(dt)
         end)
     end
 
-    if Config.AspectRatioEnabled and AspectRatio_Apply then
-        Cache._arN = (Cache._arN or 0) + 1
-        if Cache._arN % 3 == 0 then
-            pcall(AspectRatio_Apply)
-        end
-    end
+    -- Aspect Ratio applied in RenderStepped (AnxiumAspectRatio), not here
     Camera = Workspace.CurrentCamera or Camera
     local vp = Camera.ViewportSize
     local screenCenter = Vector2.new(vp.X * 0.5, vp.Y * 0.5)
@@ -18499,7 +19993,7 @@ RunService.RenderStepped:Connect(function(dt)
 
     
     local orbitHrp = nil
-    if Config.OrbitOrbsEnabled then
+    if false and Config.OrbitOrbsEnabled then
         orbitHrp = orbitTargetHrp or myHrp
     else
         if OrbitPart1 and OrbitPart1.Parent then OrbitPart1.Parent = nil end
@@ -18573,26 +20067,7 @@ RunService.RenderStepped:Connect(function(dt)
         end
     end
 
-    if Config.OrbitOrbsEnabled and orbitHrp then
-        orbitTargetHrp = orbitHrp
-        if not OrbitPart1.Parent then OrbitPart1.Parent = Workspace end
-        if not OrbitPart2.Parent then OrbitPart2.Parent = Workspace end
-
-        if frameN % 30 == 0 then local ocol = Config.Color_Orbit or Theme.Accent; OrbTrail1.Color = ColorSequence.new(ocol); OrbTrail2.Color = ColorSequence.new(ocol) end
-        Cache.OrbitAngle = (Cache.OrbitAngle + Config.OrbitSpeedValue) % 360
-        local rad = math.rad(Cache.OrbitAngle)
-        local heightWave1 = math.sin(rad * 2) * 0.6
-        local heightWave2 = math.cos(rad * 2) * 0.6
-
-        local pos1 = orbitTargetHrp.Position + Vector3.new(math.cos(rad) * 3.5, heightWave1, math.sin(rad) * 3.5)
-        local pos2 = orbitTargetHrp.Position + Vector3.new(math.cos(rad + math.pi) * 3.5, heightWave2, math.sin(rad + math.pi) * 3.5)
-
-        OrbitPart1.CFrame = CFrame.new(pos1, pos1 + Vector3.new(-math.sin(rad), 0, math.cos(rad)))
-        OrbitPart2.CFrame = CFrame.new(pos2, pos2 + Vector3.new(-math.sin(rad + math.pi) * 3.5, heightWave2, math.sin(rad + math.pi) * 3.5))
-    else
-        if OrbitPart1.Parent then OrbitPart1.Parent = nil end
-        if OrbitPart2.Parent then OrbitPart2.Parent = nil end
-    end
+    -- Neon Orbit feature removed
 
     
     local needBoxDraw = Config.BoxEspEnabled or Config.HealthbarEspEnabled
@@ -19078,6 +20553,7 @@ RunService.RenderStepped:Connect(function(dt)
         end)
     end
 
+
     if Config.AimEnabled then
         
         local aimTarget = GetClosestPlayerInFOV()
@@ -19221,8 +20697,8 @@ RunService.RenderStepped:Connect(function(dt)
 
     
     if not Config.ChamsEnabled then
-        for _, ch in pairs(Cache.Chams or {}) do
-            if ch then ch.Enabled = false end
+        for plr, ch in pairs(Cache.Chams or {}) do
+            if ch then pcall(function() ch.Enabled = false end) end
         end
         if Cache.ChamsPartFallback then
             for plr, map in pairs(Cache.ChamsPartFallback) do
@@ -19234,86 +20710,63 @@ RunService.RenderStepped:Connect(function(dt)
     elseif Config.ChamsEnabled then
         local enemyChamsCol = Config.Color_Chams or Theme.Accent
         Cache.ChamsTick = (Cache.ChamsTick or 0) + 1
-        local doParts = (Cache.ChamsTick % 90 == 0) or Cache.ChamsForceRefresh
         Cache.ChamsForceRefresh = false
-        local list = CachedPlayerList
+        local list = CachedPlayerList or Players:GetPlayers()
         local nPlr = #list
-        
-        local step = (nPlr > 18) and 3 or ((nPlr > 10) and 2 or 1)
-        local phase = (Cache.ChamsTick or 0) % step
+        -- process everyone every frame for stickiness; light work only when already valid
         for i = 1, nPlr do
-            if step > 1 and (i % step) ~= phase then
-                
-            else
             local player = list[i]
-            if player ~= LocalPlayer then
+            if player and player ~= LocalPlayer then
                 local char = player.Character
-                local chams = Cache.Chams[player]
-                
+                local chams = Cache.Chams and Cache.Chams[player]
+
                 if ShouldSkipEspPlayer(player) then
-                    if chams then chams.Enabled = false end
-                    
+                    if chams then pcall(function() chams.Enabled = false end) end
                     if Cache.ChamsPartFallback and Cache.ChamsPartFallback[player] and next(Cache.ChamsPartFallback[player]) then
                         pcall(Chams_RestoreParts, player)
                     end
                 elseif char and char.Parent then
                     local hum = char:FindFirstChildOfClass("Humanoid")
-                    local alive = not hum or hum.Health > 0
+                    local alive = not hum or (hum.Health > 0)
                     if alive then
-                        if not chams or not chams.Parent then
-                            chams = Instance.new("Highlight")
-                            chams.Name = "AnxiumChams_" .. tostring(player.UserId)
-                            chams.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
-                            chams.FillTransparency = 0.35
-                            chams.OutlineTransparency = 0.1
-                            chams.OutlineColor = Color3.fromRGB(255, 255, 255)
+                        chams = Chams_Ensure(player, char)
+                        if chams then
+                            local useCol = GetEspColorForPlayer(player, enemyChamsCol)
+                            if Config.ChamsVisCheckEnabled and not IsEspTeammate(player) then
+                                local tickN = Cache.ChamsTick or 0
+                                local cached = Cache.ChamsVisCache and Cache.ChamsVisCache[player]
+                                if (cached == nil) or (tickN % 4 == 0) then
+                                    local head = char:FindFirstChild("Head") or char:FindFirstChild("HumanoidRootPart")
+                                    local vis = true
+                                    if head and typeof(IsVisibleToCamera) == "function" then
+                                        local ok, res = pcall(IsVisibleToCamera, player, head)
+                                        vis = ok and res == true
+                                    end
+                                    Cache.ChamsVisCache = Cache.ChamsVisCache or {}
+                                    Cache.ChamsVisCache[player] = vis
+                                    cached = vis
+                                end
+                                useCol = cached and (Config.Color_ChamsVisible or enemyChamsCol) or (Config.Color_ChamsOccluded or enemyChamsCol)
+                            end
                             pcall(function()
-                                if gethui then
-                                    chams.Parent = gethui()
-                                else
-                                    chams.Parent = ScreenGui
-                                end
+                                chams.Adornee = char
+                                chams.Enabled = true
+                                chams.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
                             end)
-                            if not chams.Parent then
-                                chams.Parent = CoreGui
+                            ApplyChamsStyle(chams, useCol, Config.ChamsStyle)
+                            Cache.ChamsLastCol = Cache.ChamsLastCol or {}
+                            Cache.ChamsLastCol[player] = useCol
+                            if Cache.ChamsPartFallback and Cache.ChamsPartFallback[player] and next(Cache.ChamsPartFallback[player]) then
+                                pcall(Chams_RestoreParts, player)
                             end
-                            Cache.Chams[player] = chams
                         end
-                        chams.Adornee = char
-                        chams.Enabled = true
-                        local useCol = GetEspColorForPlayer(player, enemyChamsCol)
-                        if Config.ChamsVisCheckEnabled and not IsEspTeammate(player) then
-                            local cacheKey = player
-                            local tickN = Cache.ChamsTick or 0
-                            local cached = Cache.ChamsVisCache and Cache.ChamsVisCache[cacheKey]
-                            if (not cached) or (tickN % 4 == 0) then
-                                local head = char:FindFirstChild("Head") or char:FindFirstChild("HumanoidRootPart")
-                                local vis = true
-                                if head and typeof(IsVisibleToCamera) == "function" then
-                                    local ok, res = pcall(IsVisibleToCamera, player, head)
-                                    vis = ok and res == true
-                                end
-                                Cache.ChamsVisCache = Cache.ChamsVisCache or {}
-                                Cache.ChamsVisCache[cacheKey] = vis
-                                cached = vis
-                            end
-                            useCol = cached and (Config.Color_ChamsVisible or enemyChamsCol) or (Config.Color_ChamsOccluded or enemyChamsCol)
-                        end
-                        chams.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
-                        ApplyChamsStyle(chams, useCol, Config.ChamsStyle)
-                        if Cache.ChamsPartFallback and Cache.ChamsPartFallback[player] and next(Cache.ChamsPartFallback[player]) then
-                            pcall(Chams_RestoreParts, player)
-                        end
-                        Cache.ChamsLastCol = Cache.ChamsLastCol or {}
-                        Cache.ChamsLastCol[player] = useCol
                     elseif chams then
-                        chams.Enabled = false
+                        pcall(function() chams.Enabled = false end)
                     end
                 elseif chams then
-                    chams.Enabled = false
+                    pcall(function() chams.Enabled = false end)
                 end
             end
-            end 
         end
     end
 
@@ -19713,15 +21166,16 @@ if Config.NameEspEnabled or Config.DistanceEspEnabled or Config.WeaponEspEnabled
                         end
                     end
                     if not usedBox then
-                        local sp, vis = cam:WorldToViewportPoint(head.Position + Vector3.new(0, 1.35, 0))
-                        if not vis or sp.Z < 0.5 then
+                        local sp, vis = WorldToScreen(head.Position + Vector3.new(0, 1.35, 0))
+                        if not vis or (sp.Z and sp.Z < 0.5) then
                             lbl.Visible = false
+                            if data.icon then data.icon.Visible = false end
                             if distLbl then distLbl.Visible = false end
                             if data.weaponLabel then data.weaponLabel.Visible = false end
                             return
                         end
                         boxCx, boxTop = sp.X, sp.Y - 2
-                        local sp2 = cam:WorldToViewportPoint(head.Position - Vector3.new(0, 2.2, 0))
+                        local sp2 = WorldToScreen(head.Position - Vector3.new(0, 2.2, 0))
                         boxBot = (sp2 and sp2.Y) or (boxTop + 48)
                         boxLeft = boxCx - 22
                         boxW, boxH = 44, math.max(20, boxBot - boxTop)
@@ -19730,12 +21184,40 @@ if Config.NameEspEnabled or Config.DistanceEspEnabled or Config.WeaponEspEnabled
 
                     if showName and nameText ~= "" then
                         lbl.Text = nameText
-                        lbl.AnchorPoint = Vector2.new(0.5, 1)
-                        lbl.Position = UDim2.fromOffset(math.floor(boxCx + 0.5), math.floor(boxTop - 2 + 0.5))
                         NameEsp_ApplyGradient(data)
+                        local y = boxTop - 2
+                        local showIcon = Config.IconEspEnabled == true
+                        local icon = data.icon
+                        if showIcon then
+                            if (not icon or not icon.Parent) and NameEsp_CreateIcon then
+                                local sg = NameEsp_GetScreenGui and NameEsp_GetScreenGui()
+                                if sg then
+                                    icon = NameEsp_CreateIcon(player, sg)
+                                    data.icon = icon
+                                end
+                            end
+                            local iconSz = 18
+                            local gap = 4
+                            local nameW = (lbl.Size and lbl.Size.X.Offset) or 60
+                            local totalW = iconSz + gap + nameW
+                            local leftX = boxCx - totalW * 0.5
+                            if icon then
+                                icon.Size = UDim2.fromOffset(iconSz, iconSz)
+                                icon.AnchorPoint = Vector2.new(0, 1)
+                                icon.Position = UDim2.fromOffset(math.floor(leftX + 0.5), math.floor(y + 0.5))
+                                icon.Visible = true
+                            end
+                            lbl.AnchorPoint = Vector2.new(0, 1)
+                            lbl.Position = UDim2.fromOffset(math.floor(leftX + iconSz + gap + 0.5), math.floor(y + 0.5))
+                        else
+                            if icon then icon.Visible = false end
+                            lbl.AnchorPoint = Vector2.new(0.5, 1)
+                            lbl.Position = UDim2.fromOffset(math.floor(boxCx + 0.5), math.floor(y + 0.5))
+                        end
                         lbl.Visible = true
                     else
                         lbl.Visible = false
+                        if data.icon then data.icon.Visible = false end
                     end
 
                     if showDist and distMeters ~= nil and distLbl then
@@ -20003,6 +21485,7 @@ if Config.NameEspEnabled or Config.DistanceEspEnabled or Config.WeaponEspEnabled
                 FovCircle.Position = screenCenter
                 FovCircle.Radius = r
                 FovCircle.Color = col
+                FovCircle.Thickness = 1.5
             end
         end
         if FovCircleFill then
@@ -20021,6 +21504,32 @@ if Config.NameEspEnabled or Config.DistanceEspEnabled or Config.WeaponEspEnabled
                 FovSquare.Size = Vector2.new(d, d)
                 FovSquare.Position = Vector2.new(screenCenter.X - r, screenCenter.Y - r)
                 FovSquare.Color = col
+                FovSquare.Thickness = 1.5
+            end
+        end
+        -- outer outline ring around FOV
+        local showOutline = show and Config.FovOutlineEnabled == true
+        local outlineCol = Config.Color_FovOutline or Color3.fromRGB(180, 140, 255)
+        local outlineTh = math.clamp(tonumber(Config.FovOutlineThickness) or 2, 0.5, 12)
+        -- contour outside main FOV (not on the same stroke)
+        local rOut = r + (outlineTh * 0.5) + 0.75
+        if FovOutlineCircle then
+            FovOutlineCircle.Visible = showOutline and not isSquare
+            if FovOutlineCircle.Visible then
+                FovOutlineCircle.Position = screenCenter
+                FovOutlineCircle.Radius = rOut
+                FovOutlineCircle.Color = outlineCol
+                FovOutlineCircle.Thickness = outlineTh
+            end
+        end
+        if FovOutlineSquare then
+            FovOutlineSquare.Visible = showOutline and isSquare
+            if FovOutlineSquare.Visible then
+                local d = rOut * 2
+                FovOutlineSquare.Size = Vector2.new(d, d)
+                FovOutlineSquare.Position = Vector2.new(screenCenter.X - rOut, screenCenter.Y - rOut)
+                FovOutlineSquare.Color = outlineCol
+                FovOutlineSquare.Thickness = outlineTh
             end
         end
         if FovSquareFill then
@@ -20119,14 +21628,48 @@ if Config.NameEspEnabled or Config.DistanceEspEnabled or Config.WeaponEspEnabled
         LocalPlayer.Character:FindFirstChildOfClass("Humanoid").WalkSpeed = Config.WalkSpeedValue
     end
 
-    if Config.NoclipEnabled and LocalPlayer.Character then
-        Cache._noclipFrame = (Cache._noclipFrame or 0) + 1
-        if Cache._noclipFrame % 3 == 0 then
-            for _, part in ipairs(LocalPlayer.Character:GetDescendants()) do
-                if part:IsA("BasePart") and part.CanCollide then
-                    part.CanCollide = false
+    -- Noclip: disable collision while on; fully restore originals when off
+    do
+        Cache.NoclipOriginals = Cache.NoclipOriginals or {}
+        local function noclipClearStore()
+            Cache.NoclipOriginals = {}
+        end
+        local function noclipRestore()
+            local store = Cache.NoclipOriginals
+            if type(store) ~= "table" then return end
+            for part, wasCollide in pairs(store) do
+                pcall(function()
+                    if part and part.Parent and part:IsA("BasePart") then
+                        part.CanCollide = wasCollide == true
+                    end
+                end)
+            end
+            noclipClearStore()
+        end
+        Cache.NoclipRestore = noclipRestore
+
+        if Config.NoclipEnabled and LocalPlayer.Character then
+            Cache._noclipFrame = (Cache._noclipFrame or 0) + 1
+            if Cache._noclipFrame % 2 == 0 then
+                local char = LocalPlayer.Character
+                local store = Cache.NoclipOriginals
+                for _, part in ipairs(char:GetDescendants()) do
+                    if part:IsA("BasePart") then
+                        if store[part] == nil then
+                            store[part] = part.CanCollide
+                        end
+                        if part.CanCollide then
+                            part.CanCollide = false
+                        end
+                    end
                 end
             end
+            Cache._noclipWasOn = true
+        elseif Cache._noclipWasOn then
+            -- just turned off: restore every saved CanCollide
+            noclipRestore()
+            Cache._noclipWasOn = false
+            Cache._noclipFrame = 0
         end
     end
 
@@ -20353,6 +21896,10 @@ SpinBtn.MouseButton1Click:Connect(function()
         end
     end
 end)
+AimFull360Btn.MouseButton1Click:Connect(function()
+    Config.AimFull360 = not Config.AimFull360
+    UpdateSwitch(Config.AimFull360, AimFull360Bg, AimFull360Knob, "Aimbot 360")
+end)
 AntiAimBtn.MouseButton1Click:Connect(function()
     Config.AntiAimEnabled = not Config.AntiAimEnabled
     UpdateSwitch(Config.AntiAimEnabled, AntiAimBg, AntiAimKnob, "Anti-Aim")
@@ -20367,6 +21914,12 @@ AntiAimBtn.MouseButton1Click:Connect(function()
         if hum then pcall(function() hum.AutoRotate = false end) end
     end
 end)
+AAManualArrowsBtn.MouseButton1Click:Connect(function()
+    Config.AntiAimManualArrowsEnabled = not Config.AntiAimManualArrowsEnabled
+    UpdateSwitch(Config.AntiAimManualArrowsEnabled, AAManualArrowsBg, AAManualArrowsKnob, "AA Manual Arrows")
+    if AAManualArrows_Update then pcall(AAManualArrows_Update) end
+end)
+
 AntiAimResolveBtn.MouseButton1Click:Connect(function()
     Config.AntiAimResolveEnabled = not Config.AntiAimResolveEnabled
     UpdateSwitch(Config.AntiAimResolveEnabled, AntiAimResolveBg, AntiAimResolveKnob, "AA Shoot Resolve")
@@ -20459,6 +22012,10 @@ TeamNameEspBtn.MouseButton1Click:Connect(function()
     Config.TeamNameEspEnabled = not Config.TeamNameEspEnabled
     UpdateSwitch(Config.TeamNameEspEnabled, TeamNameEspBg, TeamNameEspKnob, "Team Name ESP")
 end)
+IconEspBtn.MouseButton1Click:Connect(function()
+    Config.IconEspEnabled = not Config.IconEspEnabled
+    UpdateSwitch(Config.IconEspEnabled, IconEspBg, IconEspKnob, "Icon ESP")
+end)
 TeamDistEspBtn.MouseButton1Click:Connect(function()
     Config.TeamDistanceEspEnabled = not Config.TeamDistanceEspEnabled
     UpdateSwitch(Config.TeamDistanceEspEnabled, TeamDistEspBg, TeamDistEspKnob, "Team Distance ESP")
@@ -20498,39 +22055,15 @@ ChamsBtn.MouseButton1Click:Connect(function()
                 if ApplyEspToPlayer then ApplyEspToPlayer(player) end
             end)
             local char = (GetPlayerCharacter and GetPlayerCharacter(player)) or player.Character
-            local chams = Cache.Chams[player]
-            if Config.ChamsEnabled and char then
-                if not chams or not chams.Parent then
-                    chams = Instance.new("Highlight")
-                    chams.Name = "AnxiumChams_" .. tostring(player.UserId)
-                    chams.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
-                    chams.FillTransparency = 0.4
-                    chams.OutlineTransparency = 0.2
-                    pcall(function()
-                        if gethui then chams.Parent = gethui()
-                        else chams.Parent = ScreenGui end
-                    end)
-                    Cache.Chams[player] = chams
+            if Config.ChamsEnabled and char and char.Parent and not ShouldSkipEspPlayer(player) then
+                local chams = Chams_Ensure(player, char)
+                if chams then
+                    ApplyChamsStyle(chams, GetEspColorForPlayer(player, Config.Color_Chams or Theme.Accent), Config.ChamsStyle)
                 end
-                chams.Adornee = char
-                chams.Enabled = true
-                chams.FillColor = GetEspColorForPlayer(targetPlayer, Config.Color_Chams or Theme.Accent)
-                chams.OutlineColor = Color3.fromRGB(255, 255, 255)
-                
             else
-                if chams then chams.Enabled = false end
-                local map = Cache.ChamsPartFallback[player]
-                if map then
-                    for part, data in pairs(map) do
-                        if part and part.Parent and data then
-                            pcall(function()
-                                part.Material = data.Material
-                                part.Color = data.Color
-                            end)
-                        end
-                    end
-                    Cache.ChamsPartFallback[player] = {}
-                end
+                local chams = Cache.Chams and Cache.Chams[player]
+                if chams then pcall(function() chams.Enabled = false end) end
+                pcall(Chams_RestoreParts, player)
             end
         end
     end
@@ -20646,11 +22179,8 @@ DmgNumBtn.MouseButton1Click:Connect(function()
 end)
 
 
-SelfChamsBtn.MouseButton1Click:Connect(function()
-    Config.SelfChamsEnabled = not Config.SelfChamsEnabled
-    UpdateSwitch(Config.SelfChamsEnabled, SelfChamsBg, SelfChamsKnob, "Self Chams")
-    if not Config.SelfChamsEnabled and SelfChams_Clear then SelfChams_Clear() end
-end)
+-- Self Chams removed
+
 CloneChamsBtn.MouseButton1Click:Connect(function()
     Config.CloneChamsEnabled = not Config.CloneChamsEnabled
     UpdateSwitch(Config.CloneChamsEnabled, CloneChamsBg, CloneChamsKnob, "Clone player")
@@ -20671,10 +22201,6 @@ end)
 DeathBurstBtn.MouseButton1Click:Connect(function()
     Config.DeathBurstEnabled = not Config.DeathBurstEnabled
     UpdateSwitch(Config.DeathBurstEnabled, DeathBurstBg, DeathBurstKnob, "Death Burst")
-end)
-DeathXRayBtn.MouseButton1Click:Connect(function()
-    Config.DeathEffectsXRay = not Config.DeathEffectsXRay
-    UpdateSwitch(Config.DeathEffectsXRay, DeathXRayBg, DeathXRayKnob, "Death FX Through Walls")
 end)
 KillDissolveBtn.MouseButton1Click:Connect(function()
     Config.KillDissolveEnabled = not Config.KillDissolveEnabled
@@ -20753,10 +22279,7 @@ NoShadowsBtn.MouseButton1Click:Connect(function()
     UpdateSwitch(Config.NoShadowsEnabled, NoShadowsBg, NoShadowsKnob, "No Shadows")
     pcall(ApplyWorldVisuals)
 end)
-HitMarkerBtn.MouseButton1Click:Connect(function()
-    Config.HitMarkerEnabled = not Config.HitMarkerEnabled
-    UpdateSwitch(Config.HitMarkerEnabled, HitMarkerBg, HitMarkerKnob, "Hit Marker")
-end)
+
 
 HatBtn.MouseButton1Click:Connect(function()
     Config.ChinaHatEnabled = not Config.ChinaHatEnabled
@@ -20772,7 +22295,6 @@ AngelHaloBtn.MouseButton1Click:Connect(function()
 end)
 
 
-OrbitOrbsBtn.MouseButton1Click:Connect(function() Config.OrbitOrbsEnabled = not Config.OrbitOrbsEnabled UpdateSwitch(Config.OrbitOrbsEnabled, OrbitOrbsBg, OrbitOrbsKnob, "Neon Orbit") end)
 TargetMarkerBtn.MouseButton1Click:Connect(function()
     Config.TargetMarkerEnabled = not Config.TargetMarkerEnabled
     UpdateSwitch(Config.TargetMarkerEnabled, TargetMarkerBg, TargetMarkerKnob, "Target Marker")
@@ -20803,6 +22325,10 @@ end)
 AspectBtn.MouseButton1Click:Connect(function()
     Config.AspectRatioEnabled = not Config.AspectRatioEnabled
     UpdateSwitch(Config.AspectRatioEnabled, AspectBg, AspectKnob, "Aspect Ratio")
+    pcall(AspectRatio_EnsureBind)
+    if Config.AspectRatioEnabled and AspectRatio_Apply then
+        pcall(AspectRatio_Apply)
+    end
 end)
 
 ThirdPersonBtn.MouseButton1Click:Connect(function()
@@ -20812,6 +22338,14 @@ ThirdPersonBtn.MouseButton1Click:Connect(function()
         ThirdPerson_Enable()
     else
         ThirdPerson_Disable()
+    end
+end)
+
+SmoothCameraBtn.MouseButton1Click:Connect(function()
+    Config.SmoothCameraEnabled = not Config.SmoothCameraEnabled
+    UpdateSwitch(Config.SmoothCameraEnabled, SmoothCameraBg, SmoothCameraKnob, "Smooth Camera")
+    if not Config.SmoothCameraEnabled and SmoothCamera_Restore then
+        pcall(SmoothCamera_Restore)
     end
 end)
 
@@ -20857,7 +22391,7 @@ end)
 
 FallingStarsBtn.MouseButton1Click:Connect(function()
     Config.FallingStarsEnabled = not Config.FallingStarsEnabled
-    UpdateSwitch(Config.FallingStarsEnabled, FallingStarsBg, FallingStarsKnob, "Falling Stars")
+    UpdateSwitch(Config.FallingStarsEnabled, FallingStarsBg, FallingStarsKnob, "Snow Particles")
     if Cache.FallingStarsSetEnabled then pcall(Cache.FallingStarsSetEnabled, Config.FallingStarsEnabled) end
 end)
 FootstepsBtn.MouseButton1Click:Connect(function() Config.FootstepsEnabled = not Config.FootstepsEnabled UpdateSwitch(Config.FootstepsEnabled, FootstepsBg, FootstepsKnob, "Jump Circles") end)
@@ -20877,6 +22411,10 @@ AimWallBtn.MouseButton1Click:Connect(function()
     end
 end)
 ShowFovBtn.MouseButton1Click:Connect(function() Config.ShowFovEnabled = not Config.ShowFovEnabled UpdateSwitch(Config.ShowFovEnabled, ShowFovBg, ShowFovKnob, "Show FOV") end)
+if FovOutlineBtn then FovOutlineBtn.MouseButton1Click:Connect(function()
+    Config.FovOutlineEnabled = not Config.FovOutlineEnabled
+    UpdateSwitch(Config.FovOutlineEnabled, FovOutlineBg, FovOutlineKnob, "FOV Outline")
+end) end
 FovFillBtn.MouseButton1Click:Connect(function()
     Config.FovFillEnabled = not Config.FovFillEnabled
     UpdateSwitch(Config.FovFillEnabled, FovFillBg, FovFillKnob, "FOV Fill")
@@ -20911,6 +22449,10 @@ TriggerbotAWBtn.MouseButton1Click:Connect(function()
     Config.TriggerbotAutowall = not Config.TriggerbotAutowall
     UpdateSwitch(Config.TriggerbotAutowall, TriggerbotAWBg, TriggerbotAWKnob, "Trigger Autowall")
 end)
+TriggerbotInvulnBtn.MouseButton1Click:Connect(function()
+    Config.TriggerbotCheckInvuln = not Config.TriggerbotCheckInvuln
+    UpdateSwitch(Config.TriggerbotCheckInvuln, TriggerbotInvulnBg, TriggerbotInvulnKnob, "Check Invulnerable")
+end)
 
 WeaponAutoSwapBtn.MouseButton1Click:Connect(function()
     Config.WeaponAutoSwapEnabled = not Config.WeaponAutoSwapEnabled
@@ -20926,6 +22468,10 @@ SilentV2Btn.MouseButton1Click:Connect(function()
         Cache.SilentV2Part = nil
         Cache.SilentV2Pos = nil
     end
+end)
+SilentFovOutlineBtn.MouseButton1Click:Connect(function()
+    Config.SilentV2FovOutlineEnabled = not Config.SilentV2FovOutlineEnabled
+    UpdateSwitch(Config.SilentV2FovOutlineEnabled, SilentFovOutlineBg, SilentFovOutlineKnob, "Silent FOV Outline")
 end)
 SilentV2FovBtn.MouseButton1Click:Connect(function()
     Config.SilentV2ShowFov = not Config.SilentV2ShowFov
@@ -20950,7 +22496,7 @@ SilentV2TeamBtn.MouseButton1Click:Connect(function()
 end)
 SilentV2VisBtn.MouseButton1Click:Connect(function()
     Config.SilentV2VisibleCheck = not Config.SilentV2VisibleCheck
-    UpdateSwitch(Config.SilentV2VisibleCheck, SilentV2VisBg, SilentV2VisKnob, "Silent Visible Check")
+    UpdateSwitch(Config.SilentV2VisibleCheck, SilentV2VisBg, SilentV2VisKnob, "Visible Only")
 end)
 SilentV2PredBtn.MouseButton1Click:Connect(function()
     Config.SilentV2Prediction = not Config.SilentV2Prediction
@@ -20993,7 +22539,14 @@ SpeedBtn.MouseButton1Click:Connect(function()
         LocalPlayer.Character:FindFirstChildOfClass("Humanoid").WalkSpeed = 16
     end
 end)
-NoclipBtn.MouseButton1Click:Connect(function() Config.NoclipEnabled = not Config.NoclipEnabled UpdateSwitch(Config.NoclipEnabled, NoclipBg, NoclipKnob, "Noclip") end)
+NoclipBtn.MouseButton1Click:Connect(function()
+    Config.NoclipEnabled = not Config.NoclipEnabled
+    UpdateSwitch(Config.NoclipEnabled, NoclipBg, NoclipKnob, "Noclip")
+    if not Config.NoclipEnabled and Cache.NoclipRestore then
+        pcall(Cache.NoclipRestore)
+        Cache._noclipWasOn = false
+    end
+end)
 FlyBtn.MouseButton1Click:Connect(function()
     Config.FlyEnabled = not Config.FlyEnabled
     UpdateSwitch(Config.FlyEnabled, FlyBg, FlyKnob, "Fly")
@@ -21027,9 +22580,9 @@ end)
 
 
 FFBtn.MouseButton1Click:Connect(function()
-    local newState = not Config.ForceFieldEnabled
+    local newState = not (Config.SelfMaterialEnabled or Config.ForceFieldEnabled)
     ForceField_Toggle(newState)
-    UpdateSwitch(newState, FFBg, FFKnob, "Self ForceField")
+    UpdateSwitch(newState, FFBg, FFKnob, "Self Material")
 end)
 
 WeaponFFBtn.MouseButton1Click:Connect(function()
@@ -21059,19 +22612,19 @@ HitboxShowBtn.MouseButton1Click:Connect(function()
     if not Config.HitboxShow and Hitbox_ClearAll then Hitbox_ClearAll() end
 end)
 pcall(function()
-    
-    UpdateSwitch(Config.AutowallEnabled == true, AutowallBg, AutowallKnob, nil)
-    UpdateSwitch(Config.AutowallShowInfo == true, AutowallInfoBg, AutowallInfoKnob, nil)
+    -- silent UI sync on boot (no Notify)
+    UpdateSwitch(Config.PenetrationEnabled == true, PenetrationBg, PenetrationKnob, nil)
+    UpdateSwitch(Config.PenetrationShowInfo == true, PenetrationInfoBg, PenetrationInfoKnob, nil)
 end)
-AutowallBtn.MouseButton1Click:Connect(function()
-    Config.AutowallEnabled = not Config.AutowallEnabled
-    UpdateSwitch(Config.AutowallEnabled, AutowallBg, AutowallKnob, "Autowall")
-    if Cache.AutowallSetEnabled then Cache.AutowallSetEnabled(Config.AutowallEnabled) end
+PenetrationBtn.MouseButton1Click:Connect(function()
+    Config.PenetrationEnabled = not Config.PenetrationEnabled
+    UpdateSwitch(Config.PenetrationEnabled, PenetrationBg, PenetrationKnob, "Penetration")
+    if Cache.PenetrationSetEnabled then Cache.PenetrationSetEnabled(Config.PenetrationEnabled) end
 end)
-AutowallInfoBtn.MouseButton1Click:Connect(function()
-    Config.AutowallShowInfo = not Config.AutowallShowInfo
-    UpdateSwitch(Config.AutowallShowInfo, AutowallInfoBg, AutowallInfoKnob, "Autowall Info")
-    if Cache.AutowallApply then Cache.AutowallApply() end
+PenetrationInfoBtn.MouseButton1Click:Connect(function()
+    Config.PenetrationShowInfo = not Config.PenetrationShowInfo
+    UpdateSwitch(Config.PenetrationShowInfo, PenetrationInfoBg, PenetrationInfoKnob, "Penetration Info")
+    if Cache.PenetrationApply then Cache.PenetrationApply() end
 end)
 
 BulletTracerBtn.MouseButton1Click:Connect(function()
@@ -21231,6 +22784,14 @@ FIRE_SOUND_FILES = {
     ["Skeet"] = {
         url = "https://raw.githubusercontent.com/AnxiumClient/sounnds/main/skeet.ogg",
         file = "Anxium_skeet.ogg"
+    },
+    ["Primordial"] = {
+        url = "https://raw.githubusercontent.com/AnxiumClient/sounnds/main/primordial.wav",
+        file = "Anxium_primordial.wav"
+    },
+    ["Stapler"] = {
+        url = "https://raw.githubusercontent.com/AnxiumClient/sounnds/main/stapler.wav",
+        file = "Anxium_stapler.wav"
     },
 }
 
@@ -21438,6 +22999,114 @@ function PlayHitSound()
     end
 end
 
+-- Bullet tracer beam styles (from Iridescent TracerProperties + Solid default)
+AnxiumTracerStyles = {
+    Solid = {
+        Texture = "",
+        Brightness = 1,
+        LightEmission = 0.85,
+        LightInfluence = 0,
+        Segments = 12,
+        TextureLength = 1,
+        TextureMode = Enum.TextureMode.Stretch,
+        TextureSpeed = 0,
+        WidthScale0 = 0.084,
+        WidthScale1 = 0.032,
+        FaceCamera = true,
+    },
+    Obelus = {
+        Texture = "rbxassetid://2382169232",
+        Brightness = 1.5,
+        LightEmission = 1,
+        LightInfluence = 0,
+        Segments = 1,
+        TextureLength = 5,
+        TextureMode = Enum.TextureMode.Stretch,
+        TextureSpeed = 0,
+        WidthScale0 = 0.06,
+        WidthScale1 = 0.06,
+        FaceCamera = true,
+    },
+    Lightning = {
+        Texture = "rbxassetid://7151778302",
+        Brightness = 1.5,
+        LightEmission = 1,
+        LightInfluence = 0,
+        Segments = 10,
+        TextureLength = 1,
+        TextureMode = Enum.TextureMode.Stretch,
+        TextureSpeed = 1,
+        WidthScale0 = 0.24,
+        WidthScale1 = 0.24,
+        FaceCamera = true,
+    },
+    ["Lightning Bolt"] = {
+        Texture = "rbxassetid://12781806168",
+        Brightness = 1.5,
+        LightEmission = 1,
+        LightInfluence = 0,
+        Segments = 10,
+        TextureLength = 1,
+        TextureMode = Enum.TextureMode.Stretch,
+        TextureSpeed = 1,
+        WidthScale0 = 0.2,
+        WidthScale1 = 0.2,
+        FaceCamera = true,
+    },
+    ["Lightning Bolt2"] = {
+        Texture = "rbxassetid://7151778302",
+        Brightness = 1.5,
+        LightEmission = 1,
+        LightInfluence = 0,
+        Segments = 10,
+        TextureLength = 1,
+        TextureMode = Enum.TextureMode.Stretch,
+        TextureSpeed = 1.2,
+        WidthScale0 = 0.24,
+        WidthScale1 = 0.24,
+        FaceCamera = true,
+    },
+    Laser = {
+        Texture = "rbxassetid://5864341017",
+        Brightness = 2,
+        LightEmission = 1,
+        LightInfluence = 0,
+        Segments = 1,
+        TextureLength = 4,
+        TextureMode = Enum.TextureMode.Stretch,
+        TextureSpeed = 0,
+        WidthScale0 = 0.05,
+        WidthScale1 = 0.05,
+        FaceCamera = true,
+    },
+    ["Red Laser"] = {
+        Texture = "rbxassetid://6333823534",
+        Brightness = 2,
+        LightEmission = 1,
+        LightInfluence = 0,
+        Segments = 1,
+        TextureLength = 4,
+        TextureMode = Enum.TextureMode.Stretch,
+        TextureSpeed = 0,
+        WidthScale0 = 0.05,
+        WidthScale1 = 0.05,
+        FaceCamera = true,
+    },
+    DNA = {
+        Texture = "rbxassetid://6511613786",
+        Brightness = 1.5,
+        LightEmission = 1,
+        LightInfluence = 0,
+        Segments = 1,
+        TextureLength = 12,
+        TextureMode = Enum.TextureMode.Wrap,
+        TextureSpeed = 1,
+        WidthScale0 = 0.12,
+        WidthScale1 = 0.12,
+        FaceCamera = true,
+    },
+}
+
 function SpawnBulletTracer(fromPos, toPos)
     if not Config.BulletTracersEnabled then return end
     if not fromPos or not toPos then return end
@@ -21447,8 +23116,10 @@ function SpawnBulletTracer(fromPos, toPos)
     local duration = math.clamp(tonumber(Config.BulletTracerDuration) or 2, 0.3, 8)
     local baseT = math.clamp(tonumber(Config.BulletTracerTransparency) or 0.15, 0, 0.85)
     local sizeMul = math.clamp(tonumber(Config.BulletTracerSize) or 5, 1, 20)
-    local w0 = sizeMul * 0.084
-    local w1 = sizeMul * 0.032
+    local styleName = tostring(Config.BulletTracerStyle or "Solid")
+    local props = (AnxiumTracerStyles and AnxiumTracerStyles[styleName]) or AnxiumTracerStyles.Solid
+    local w0 = sizeMul * (props.WidthScale0 or 0.084)
+    local w1 = sizeMul * (props.WidthScale1 or 0.032)
     local dist = (toPos - fromPos).Magnitude
     if dist < 0.5 then return end
 
@@ -21484,19 +23155,29 @@ function SpawnBulletTracer(fromPos, toPos)
     local beam = Instance.new("Beam")
     beam.Attachment0 = att0
     beam.Attachment1 = att1
-    beam.FaceCamera = true
-    beam.LightInfluence = 0
-    beam.Texture = ""
-    beam.TextureSpeed = 0
-    beam.Segments = 12
+    beam.FaceCamera = props.FaceCamera ~= false
+    beam.LightInfluence = props.LightInfluence or 0
+    beam.LightEmission = props.LightEmission or 0.85
+    beam.Texture = props.Texture or ""
+    beam.TextureSpeed = props.TextureSpeed or 0
+    beam.TextureLength = props.TextureLength or 1
+    pcall(function()
+        beam.TextureMode = props.TextureMode or Enum.TextureMode.Stretch
+    end)
+    beam.Segments = props.Segments or 12
     beam.Width0 = w0
     beam.Width1 = w1
-    beam.LightEmission = 0.85
+    -- Brightness is not a Beam property on all clients; approximate via color boost
+    local bright = tonumber(props.Brightness) or 1
     local neonCol = Color3.new(
-        math.clamp(col.R * 1.15 + 0.12, 0, 1),
-        math.clamp(col.G * 1.15 + 0.12, 0, 1),
-        math.clamp(col.B * 1.15 + 0.12, 0, 1)
+        math.clamp(col.R * (0.9 + bright * 0.25) + 0.08, 0, 1),
+        math.clamp(col.G * (0.9 + bright * 0.25) + 0.08, 0, 1),
+        math.clamp(col.B * (0.9 + bright * 0.25) + 0.08, 0, 1)
     )
+    if styleName == "Red Laser" then
+        col = Color3.fromRGB(255, 60, 60)
+        neonCol = Color3.fromRGB(255, 120, 120)
+    end
     beam.Color = ColorSequence.new({
         ColorSequenceKeypoint.new(0, neonCol),
         ColorSequenceKeypoint.new(0.5, col),
@@ -21719,47 +23400,6 @@ function MarkRecentTarget(player)
     end
 end
 
-function SpawnImmediateHitMarkerFromTarget(target)
-    if not target or target == LocalPlayer then return false end
-    local cfg = GetCfg() or Config
-    if not cfg or not cfg.HitMarkerEnabled or not SpawnHitMarker then return false end
-
-    local char = target.Character
-    if not char then return false end
-    local hum = char:FindFirstChildOfClass("Humanoid")
-    if hum and hum.Health <= 0 then return false end
-
-    local cam = Workspace.CurrentCamera or Camera
-    if not cam then return false end
-
-    local origin = cam.CFrame.Position
-    local mouse = UserInputService:GetMouseLocation()
-    local ray = cam:ViewportPointToRay(mouse.X, mouse.Y)
-    local params = RaycastParams.new()
-    params.FilterType = Enum.RaycastFilterType.Exclude
-    params.FilterDescendantsInstances = { LocalPlayer.Character }
-    params.IgnoreWater = true
-
-    local hit = Workspace:Raycast(ray.Origin, ray.Direction * 2000, params)
-    if hit and hit.Instance and hit.Instance:IsDescendantOf(char) then
-        pcall(SpawnHitMarker, hit.Position)
-        return true
-    end
-
-    -- Fallback for aim systems whose final hit part is not exactly under the mouse ray.
-    local part = char:FindFirstChild("Head") or char:FindFirstChild("HumanoidRootPart") or char.PrimaryPart
-    if part then
-        local to = part.Position - origin
-        if to.Magnitude > 0.1 then
-            local check = Workspace:Raycast(origin, to.Unit * (to.Magnitude + 12), params)
-            if check and check.Instance and check.Instance:IsDescendantOf(char) then
-                pcall(SpawnHitMarker, check.Position)
-                return true
-            end
-        end
-    end
-    return false
-end
 
 function NormalizeHitPartName(inst)
     if not inst then return "Body" end
@@ -21978,6 +23618,11 @@ function SelfChams_Clear()
 end
 
 function SelfChams_Update()
+    -- feature removed: Self Material replaces Self Chams
+    if true then
+        if SelfChams_Clear then pcall(SelfChams_Clear) end
+        return
+    end
     
     local cfg = GetCfg()
     local cache = GetCache()
@@ -22020,164 +23665,6 @@ function SelfChams_Update()
         cache.SelfChamsHL.Adornee = char
         cache.SelfChamsHL.FillColor = col
         cache.SelfChamsHL.OutlineColor = col
-    end
-end
-
-Cache._HitMarkers = Cache._HitMarkers or {}
-Cache._HitMarkerMax = 12
-Cache._HitMarkerRenderBound = Cache._HitMarkerRenderBound or false
-
-function SpawnHitMarker(adorneeOrPos)
-    local cfg = GetCfg() or Config
-    if not cfg or not cfg.HitMarkerEnabled then return end
-    if not Drawing then return end
-
-    local worldPos
-    if typeof(adorneeOrPos) == "Vector3" then
-        worldPos = adorneeOrPos
-    elseif typeof(adorneeOrPos) == "Instance" then
-        if adorneeOrPos:IsA("BasePart") then
-            worldPos = adorneeOrPos.Position
-        else
-            local h = adorneeOrPos:FindFirstChild("Head") or adorneeOrPos:FindFirstChild("HumanoidRootPart")
-            worldPos = h and h.Position
-        end
-    end
-    if not worldPos then return end
-
-    local list = Cache._HitMarkers
-    for i = #list, 1, -1 do
-        local d = list[i]
-        if not d or (d.expireTick and tick() > d.expireTick + 0.2) then
-            if d then
-                if d.outlines then for _, ln in ipairs(d.outlines) do pcall(function() ln:Remove() end) end end
-                if d.lines then for _, ln in ipairs(d.lines) do pcall(function() ln:Remove() end) end end
-            end
-            table.remove(list, i)
-        end
-    end
-    while #list >= (Cache._HitMarkerMax or 12) do
-        local old = table.remove(list, 1)
-        if old then
-            if old.outlines then for _, ln in ipairs(old.outlines) do pcall(function() ln:Remove() end) end end
-            if old.lines then for _, ln in ipairs(old.lines) do pcall(function() ln:Remove() end) end end
-        end
-    end
-
-    local thick = math.clamp(tonumber(cfg.HitMarkerThickness) or 2, 1, 8)
-    local dur = math.clamp(tonumber(cfg.HitMarkerDuration) or 1.2, 0.15, 5)
-    local col = cfg.Color_HitMarker or Color3.fromRGB(255, 255, 255)
-    local outlines, lines = {}, {}
-    for i = 1, 4 do
-        local ol = Drawing.new("Line")
-        ol.Thickness = thick + 2.2
-        ol.Color = Color3.fromRGB(0, 0, 0)
-        ol.Transparency = 0
-        ol.Visible = true
-        outlines[i] = ol
-        local ln = Drawing.new("Line")
-        ln.Thickness = thick
-        ln.Color = col
-        ln.Transparency = 0
-        ln.Visible = true
-        lines[i] = ln
-    end
-    local now = tick()
-    list[#list + 1] = {
-        outlines = outlines,
-        lines = lines,
-        worldPos = worldPos,
-        spawnTick = now,
-        expireTick = now + dur,
-    }
-
-    
-    local cam = Workspace.CurrentCamera or Camera
-    if cam then
-        local screenPos, onScreen = cam:WorldToViewportPoint(worldPos)
-        if onScreen and screenPos.Z > 0 then
-            local center = Vector2.new(screenPos.X, screenPos.Y)
-            local baseSize = math.clamp(tonumber(cfg.HitMarkerSize) or 22, 5, 60)
-            local baseGap = math.clamp(tonumber(cfg.HitMarkerGap) or 6, 2, 24)
-            local fixedRot = math.rad(tonumber(cfg.HitMarkerRotation) or 0)
-            local baseAngles = {0, 90, 180, 270}
-            for j = 1, 4 do
-                local totalAngle = fixedRot + math.rad(baseAngles[j])
-                local cosA, sinA = math.cos(totalAngle), math.sin(totalAngle)
-                local from = center + Vector2.new(cosA * baseGap, sinA * baseGap)
-                local to = center + Vector2.new(cosA * (baseGap + baseSize), sinA * (baseGap + baseSize))
-                local ol, ln = outlines[j], lines[j]
-                ol.From, ol.To = from, to
-                ol.Visible = true
-                ln.From, ln.To = from, to
-                ln.Visible = true
-            end
-        end
-    end
-
-    if not Cache._HitMarkerRenderBound then
-        Cache._HitMarkerRenderBound = true
-        RunService.RenderStepped:Connect(function()
-            pcall(function()
-                local cfg2 = GetCfg() or Config
-                local currentTick = tick()
-                local enabled = cfg2 and cfg2.HitMarkerEnabled
-                local col2 = (cfg2 and cfg2.Color_HitMarker) or Color3.fromRGB(255, 255, 255)
-                local baseSize = math.clamp(tonumber(cfg2 and cfg2.HitMarkerSize) or 22, 5, 60)
-                local spinSpeed = 0
-                local fixedRot = math.rad(tonumber(cfg2 and cfg2.HitMarkerRotation) or 0)
-                local baseGap = math.clamp(tonumber(cfg2 and cfg2.HitMarkerGap) or 6, 2, 24)
-                local thick2 = math.clamp(tonumber(cfg2 and cfg2.HitMarkerThickness) or 2, 1, 8)
-                local cam = Workspace.CurrentCamera or Camera
-                if not cam then return end
-                local markers = Cache._HitMarkers or {}
-                for i = #markers, 1, -1 do
-                    local data = markers[i]
-                    if not data or not enabled or currentTick > data.expireTick then
-                        if data then
-                            if data.outlines then for _, line in ipairs(data.outlines) do pcall(function() line:Remove() end) end end
-                            if data.lines then for _, line in ipairs(data.lines) do pcall(function() line:Remove() end) end end
-                        end
-                        table.remove(markers, i)
-                    else
-                        local screenPos, onScreen = cam:WorldToViewportPoint(data.worldPos)
-                        if onScreen and screenPos.Z > 0 then
-                            local center = Vector2.new(screenPos.X, screenPos.Y)
-                            local currentAngle = fixedRot
-                            local baseAngles = {0, 90, 180, 270}
-                            local lifeRatio = math.clamp((data.expireTick - currentTick) / math.max(data.expireTick - data.spawnTick, 0.01), 0, 1)
-                            local alpha = (lifeRatio > 0.4) and 1 or (lifeRatio / 0.4)
-                            local gap, sz = baseGap, baseSize
-                            for j = 1, 4 do
-                                local totalAngle = currentAngle + math.rad(baseAngles[j])
-                                local cosA, sinA = math.cos(totalAngle), math.sin(totalAngle)
-                                local from = center + Vector2.new(cosA * gap, sinA * gap)
-                                local to = center + Vector2.new(cosA * (gap + sz), sinA * (gap + sz))
-                                local ol = data.outlines and data.outlines[j]
-                                local ln = data.lines and data.lines[j]
-                                if ol then
-                                    ol.Color = Color3.fromRGB(0, 0, 0)
-                                    ol.Thickness = thick2 + 2.2
-                                    ol.Transparency = 1 - alpha
-                                    ol.From, ol.To = from, to
-                                    ol.Visible = true
-                                end
-                                if ln then
-                                    ln.Color = col2
-                                    ln.Thickness = thick2
-                                    ln.Transparency = 1 - alpha
-                                    ln.From, ln.To = from, to
-                                    ln.Visible = true
-                                end
-                            end
-                        else
-                            if data.outlines then for _, line in ipairs(data.outlines) do line.Visible = false end end
-                            if data.lines then for _, line in ipairs(data.lines) do line.Visible = false end end
-                        end
-                    end
-                end
-            end)
-        end)
     end
 end
 
@@ -22359,10 +23846,6 @@ function OnPlayerTookDamage(player, char, prevHp, newHp, maxHp)
         if best then worldPos = best.Position end
     end)
 
-    if cfg.HitMarkerEnabled and worldPos and SpawnHitMarker then
-        pcall(SpawnHitMarker, worldPos)
-    end
-
     if cfg.DamageNumbersEnabled and worldPos then
         pcall(SpawnDamageNumber, worldPos, dmg)
     end
@@ -22471,7 +23954,7 @@ if not Cache._UniversalCombatPoll then
                 local cfg = GetCfg() or Config
                 local cache = GetCache() or Cache
                 if not cfg or not cache then return end
-                if not (cfg.HitMarkerEnabled or cfg.CustomFireSoundEnabled or cfg.KillLogsEnabled or cfg.DamageNumbersEnabled or cfg.KillFlashEnabled) then
+                if not (cfg.CustomFireSoundEnabled or cfg.KillLogsEnabled or cfg.DamageNumbersEnabled or cfg.KillFlashEnabled) then
                     return
                 end
                 for _, player in ipairs(CachedPlayerList or Players:GetPlayers()) do
@@ -22635,7 +24118,7 @@ function UV_CreateChamsClone(character, color, fadeDelay, fadeTime, transparency
     local highlight = Instance.new("Highlight")
     highlight.Name = "AnxiumCloneChams"
     highlight.Adornee = clone
-    highlight.DepthMode = (Config.DeathEffectsXRay and Enum.HighlightDepthMode.AlwaysOnTop) or Enum.HighlightDepthMode.Occluded
+    highlight.DepthMode = Enum.HighlightDepthMode.Occluded
     highlight.FillColor = color
     highlight.OutlineColor = color
     highlight.FillTransparency = fillT
@@ -22877,6 +24360,38 @@ function UV_RefreshArrowGradients()
         if data.ArrowGradient then data.ArrowGradient.Color = seq end
         if data.GlowGradient then data.GlowGradient.Color = seq end
         if data.Glow2Gradient then data.Glow2Gradient.Color = seq2 end
+        pcall(UV_ApplyArrowStyle, data)
+    end
+end
+
+function UV_ApplyArrowStyle(data)
+    -- single style: gradient + soft glow (legacy)
+    if not data then return end
+    local colorA = Config.Color_OffscreenArrow or Color3.fromRGB(255, 70, 70)
+    local colorB = Config.Color_OffscreenArrowB or Color3.fromRGB(255, 150, 80)
+    if data.Glow then data.Glow.Visible = true end
+    if data.Glow2 then data.Glow2.Visible = true end
+    if data.Arrow then data.Arrow.ImageColor3 = Color3.new(1, 1, 1) end
+    if data.Arrow and (not data.ArrowGradient or not data.ArrowGradient.Parent) then
+        local g = UV_BuildArrowGradient(colorA, colorB)
+        g.Parent = data.Arrow
+        data.ArrowGradient = g
+    elseif data.ArrowGradient then
+        data.ArrowGradient.Enabled = true
+    end
+    if data.Glow and (not data.GlowGradient or not data.GlowGradient.Parent) then
+        local g = UV_BuildArrowGradient(colorA, colorB)
+        g.Parent = data.Glow
+        data.GlowGradient = g
+    elseif data.GlowGradient then
+        data.GlowGradient.Enabled = true
+    end
+    if data.Glow2 and (not data.Glow2Gradient or not data.Glow2Gradient.Parent) then
+        local g = UV_BuildArrowGradient(colorB, colorA)
+        g.Parent = data.Glow2
+        data.Glow2Gradient = g
+    elseif data.Glow2Gradient then
+        data.Glow2Gradient.Enabled = true
     end
 end
 
@@ -22937,6 +24452,7 @@ function UV_CreateArrow(player)
         CurrentRotation = 0,
     }
     Cache.UV_Arrows[player] = data
+    pcall(UV_ApplyArrowStyle, data)
     return data
 end
 
@@ -23202,7 +24718,7 @@ function UV_CreateKillDissolve(character)
     glow.OutlineColor = glowCol
     glow.FillTransparency = 0.3
     glow.OutlineTransparency = 0.05
-    glow.DepthMode = (Config.DeathEffectsXRay and Enum.HighlightDepthMode.AlwaysOnTop) or Enum.HighlightDepthMode.Occluded
+    glow.DepthMode = Enum.HighlightDepthMode.Occluded
     glow.Parent = clone
 
     local function strip(part)
@@ -23696,6 +25212,75 @@ function GetKillerFromHumanoid(humanoid)
     return nil, nil
 end
 
+
+-- progress bar at bottom of kill/hit log cards; fills L->R then fades card out
+function AnxiumLog_AttachLifeBar(card, holdSec)
+    if not card then return end
+    holdSec = tonumber(holdSec) or 2.8
+    -- room under content so bar is not flush against text
+    local barH = 3
+    local bottomPad = 5
+    local baseH = card.Size.Y.Offset
+    if baseH < 40 then
+        card.Size = UDim2.new(card.Size.X.Scale, card.Size.X.Offset, 0, baseH + bottomPad)
+    end
+    -- content shift: keep icons/text vertically centered in upper area
+    pcall(function()
+        for _, ch in ipairs(card:GetChildren()) do
+            if ch:IsA("ImageLabel") and ch.Name ~= "LogLifeBar" then
+                -- keep as is (0.5 center of full card is fine)
+            end
+        end
+    end)
+    local track = Instance.new("Frame")
+    track.Name = "LogLifeTrack"
+    track.AnchorPoint = Vector2.new(0, 1)
+    track.Position = UDim2.new(0, 0, 1, 0)
+    track.Size = UDim2.new(1, 0, 0, barH)
+    track.BackgroundColor3 = Color3.fromRGB(18, 28, 20)
+    track.BackgroundTransparency = 0.35
+    track.BorderSizePixel = 0
+    track.ZIndex = (card.ZIndex or 51) + 2
+    track.ClipsDescendants = true
+    track.Parent = card
+    local bar = Instance.new("Frame")
+    bar.Name = "LogLifeBar"
+    bar.Size = UDim2.new(0, 0, 1, 0)
+    bar.Position = UDim2.new(0, 0, 0, 0)
+    bar.BackgroundColor3 = Color3.fromRGB(22, 90, 40)
+    bar.BorderSizePixel = 0
+    bar.ZIndex = track.ZIndex + 1
+    bar.Parent = track
+    pcall(function()
+        local tiFill = TweenInfo.new(holdSec, Enum.EasingStyle.Linear, Enum.EasingDirection.Out)
+        local tw = TweenService:Create(bar, tiFill, { Size = UDim2.new(1, 0, 1, 0) })
+        tw:Play()
+        tw.Completed:Connect(function()
+            if not card or not card.Parent then return end
+            pcall(function()
+                local tiOut = TweenInfo.new(0.32, Enum.EasingStyle.Quart, Enum.EasingDirection.In)
+                TweenService:Create(card, tiOut, { BackgroundTransparency = 1 }):Play()
+                TweenService:Create(track, tiOut, { BackgroundTransparency = 1 }):Play()
+                TweenService:Create(bar, tiOut, { BackgroundTransparency = 1 }):Play()
+                for _, d in ipairs(card:GetDescendants()) do
+                    if d:IsA("TextLabel") then
+                        TweenService:Create(d, tiOut, { TextTransparency = 1 }):Play()
+                    elseif d:IsA("ImageLabel") then
+                        TweenService:Create(d, tiOut, { ImageTransparency = 1 }):Play()
+                    elseif d:IsA("UIStroke") then
+                        TweenService:Create(d, tiOut, { Transparency = 1 }):Play()
+                    end
+                end
+            end)
+            task.delay(0.34, function()
+                if card and card.Parent then
+                    pcall(function() card:Destroy() end)
+                end
+            end)
+        end)
+    end)
+end
+
 function EnsureKillLogContainer()
     if Cache.KillLogContainer and Cache.KillLogContainer.Parent then
         return Cache.KillLogContainer
@@ -23738,7 +25323,7 @@ function ShowKillLog(killerName, victimName)
     local order = Cache.KillLogOrder
     local card = Instance.new("Frame")
     card.Name = "KillLog"
-    card.Size = UDim2.new(0, 380, 0, 34)
+    card.Size = UDim2.new(0, 380, 0, 40)
     card.BackgroundColor3 = Color3.fromRGB(12, 14, 18)
     card.BackgroundTransparency = 0.22
     card.BorderSizePixel = 0
@@ -23813,25 +25398,7 @@ function ShowKillLog(killerName, victimName)
             end
         end
     end)
-    task.delay(3.2, function()
-        if not card or not card.Parent then return end
-        pcall(function()
-            local tiOut = TweenInfo.new(0.30, Enum.EasingStyle.Quart, Enum.EasingDirection.In)
-            TweenService:Create(card, tiOut, { BackgroundTransparency = 1 }):Play()
-            for _, d in ipairs(card:GetDescendants()) do
-                if d:IsA("TextLabel") then
-                    TweenService:Create(d, tiOut, { TextTransparency = 1 }):Play()
-                elseif d:IsA("ImageLabel") then
-                    TweenService:Create(d, tiOut, { ImageTransparency = 1 }):Play()
-                elseif d:IsA("UIStroke") then
-                    TweenService:Create(d, tiOut, { Transparency = 1 }):Play()
-                end
-            end
-        end)
-        task.delay(0.31, function()
-            pcall(function() card:Destroy() end)
-        end)
-    end)
+    AnxiumLog_AttachLifeBar(card, 3.0)
     
     local kids = {}
     for _, ch in ipairs(box:GetChildren()) do
@@ -23858,7 +25425,7 @@ function ShowHitLog(victimName, bodyPart, damage)
     local order = Cache.KillLogOrder
     local card = Instance.new("Frame")
     card.Name = "HitLog"
-    card.Size = UDim2.new(0, 380, 0, 34)
+    card.Size = UDim2.new(0, 380, 0, 40)
     card.BackgroundColor3 = Color3.fromRGB(12, 14, 18)
     card.BackgroundTransparency = 0.22
     card.BorderSizePixel = 0
@@ -23929,25 +25496,7 @@ function ShowHitLog(victimName, bodyPart, damage)
             end
         end
     end)
-    task.delay(2.6, function()
-        if not card or not card.Parent then return end
-        pcall(function()
-            local tiOut = TweenInfo.new(0.30, Enum.EasingStyle.Quart, Enum.EasingDirection.In)
-            TweenService:Create(card, tiOut, { BackgroundTransparency = 1 }):Play()
-            for _, d in ipairs(card:GetDescendants()) do
-                if d:IsA("TextLabel") then
-                    TweenService:Create(d, tiOut, { TextTransparency = 1 }):Play()
-                elseif d:IsA("ImageLabel") then
-                    TweenService:Create(d, tiOut, { ImageTransparency = 1 }):Play()
-                end
-            end
-        end)
-        task.delay(0.31, function()
-            if card and card.Parent then
-                card:Destroy()
-            end
-        end)
-    end)
+    AnxiumLog_AttachLifeBar(card, 2.6)
 end
 
 
@@ -24208,7 +25757,6 @@ UserInputService.InputBegan:Connect(function(input, gameProcessed)
         Cache.LastShotTime = tick()
         local target = CaptureCrosshairTarget()
         if target then
-            pcall(SpawnImmediateHitMarkerFromTarget, target)
         end
     end
 end)
@@ -24222,7 +25770,6 @@ function HookLocalTools(char)
             Cache.LastShotTime = tick()
             local target = CaptureCrosshairTarget()
             if target then
-                pcall(SpawnImmediateHitMarkerFromTarget, target)
             end
             FireBulletTracer()
         end)
@@ -24239,6 +25786,10 @@ end
 if LocalPlayer.Character then task.spawn(HookLocalTools, LocalPlayer.Character) end
 LocalPlayer.CharacterAdded:Connect(function(char)
     task.defer(function() HookLocalTools(char) end)
+    -- new character: drop old noclip collision cache (parts are gone)
+    Cache.NoclipOriginals = {}
+    Cache._noclipWasOn = Config.NoclipEnabled == true
+    Cache._noclipFrame = 0
 end)
 
 for _, p in ipairs((CachedPlayerList or Players:GetPlayers())) do
@@ -24303,12 +25854,14 @@ pcall(function()
     Cache.FeatureUI = Cache.FeatureUI or {}
     local map = {
         AimEnabled = { AimBg, AimKnob },
+        AimFull360 = { AimFull360Bg, AimFull360Knob },
         AimWallCheck = { AimWallBg, AimWallKnob },
         TriggerbotEnabled = { TriggerbotBg, TriggerbotKnob },
         BoxEspEnabled = { BoxEspBg, BoxEspKnob },
         BoxFillGradientEnabled = { BoxFillBg, BoxFillKnob },
         ChamsEnabled = { ChamsBg, ChamsKnob },
         NameEspEnabled = { NameEspBg, NameEspKnob },
+        IconEspEnabled = { IconEspBg, IconEspKnob },
         HealthbarEspEnabled = { HealthbarEspBg, HealthbarEspKnob },
         CameraFovEnabled = { CameraFovBg, CameraFovKnob },
         FpsBoostEnabled = { FpsBoostBg, FpsBoostKnob },
@@ -24319,8 +25872,8 @@ pcall(function()
         ThirdPersonEnabled = { ThirdPersonBg, ThirdPersonKnob },
         ForceFieldEnabled = { FFBg, FFKnob },
         BulletTracersEnabled = { BulletTracerBg, BulletTracerKnob },
-        AutowallEnabled = { AutowallBg, AutowallKnob },
-        AutowallShowInfo = { AutowallInfoBg, AutowallInfoKnob },
+        PenetrationEnabled = { PenetrationBg, PenetrationKnob },
+        PenetrationShowInfo = { PenetrationInfoBg, PenetrationInfoKnob },
         HitboxShow = { HitboxShowBg, HitboxShowKnob },
         SpeedHackEnabled = { SpeedBg, SpeedKnob },
         FlyEnabled = { FlyBg, FlyKnob },
@@ -24352,7 +25905,7 @@ pcall(function()
         AutoShiftEnabled = { AutoShiftBg, AutoShiftKnob },
         PeekAssistFillEnabled = { PeekAssistFillBg, PeekAssistFillKnob },
         FakeLagRandomize = { FakeLagRandBg, FakeLagRandKnob },
-        OrbitOrbsEnabled = { OrbitOrbsBg, OrbitOrbsKnob },
+        
         SkeletonEnabled = { SkelBg, SkelKnob },
         TracersEnabled = { TracerBg, TracerKnob },
         TracerGradientEnabled = { TracerGradBg, TracerGradKnob },
@@ -24498,10 +26051,7 @@ pcall(function()
         Config.DamageNumbersEnabled = not Config.DamageNumbersEnabled
         UpdateSwitch(Config.DamageNumbersEnabled, DmgNumBg, DmgNumKnob, "Damage Numbers")
     end)
-    _reg("SelfChamsEnabled", function()
-        Config.SelfChamsEnabled = not Config.SelfChamsEnabled
-        UpdateSwitch(Config.SelfChamsEnabled, SelfChamsBg, SelfChamsKnob, "Self Chams")
-    end)
+    _reg("SelfChamsEnabled", function() end)
     _reg("CloneChamsEnabled", function()
         Config.CloneChamsEnabled = not Config.CloneChamsEnabled
         UpdateSwitch(Config.CloneChamsEnabled, CloneChamsBg, CloneChamsKnob, "Clone player")
@@ -24556,10 +26106,7 @@ pcall(function()
         UpdateSwitch(Config.TargetMarkerEnabled, TargetMarkerBg, TargetMarkerKnob, "Target Marker")
         if not Config.TargetMarkerEnabled and TargetMarker_Hide then pcall(TargetMarker_Hide) end
     end)
-    _reg("OrbitOrbsEnabled", function()
-        Config.OrbitOrbsEnabled = not Config.OrbitOrbsEnabled
-        UpdateSwitch(Config.OrbitOrbsEnabled, OrbitOrbsBg, OrbitOrbsKnob, "Neon Orbit")
-    end)
+    _reg("OrbitOrbsEnabled", function() end)
     _reg("TrailEnabled", function()
         Config.TrailEnabled = not Config.TrailEnabled
         UpdateSwitch(Config.TrailEnabled, TrailBg, TrailKnob, "Motion Trail")
@@ -24589,7 +26136,7 @@ pcall(function()
     end)
     _reg("ForceFieldEnabled", function()
         Config.ForceFieldEnabled = not Config.ForceFieldEnabled
-        UpdateSwitch(Config.ForceFieldEnabled, FFBg, FFKnob, "Self ForceField")
+        UpdateSwitch(Config.SelfMaterialEnabled or Config.ForceFieldEnabled, FFBg, FFKnob, "Self Material")
         pcall(function()
             if SetForceFieldEnabled then SetForceFieldEnabled(Config.ForceFieldEnabled)
             elseif ApplyForceField then ApplyForceField(Config.ForceFieldEnabled) end
@@ -24616,10 +26163,10 @@ pcall(function()
         UpdateSwitch(Config.HitboxShow, HitboxShowBg, HitboxShowKnob, "Show Hitboxes")
         if not Config.HitboxShow and Hitbox_ClearAll then Hitbox_ClearAll() end
     end)
-    _reg("AutowallEnabled", function()
-        Config.AutowallEnabled = not Config.AutowallEnabled
-        if AutowallBg then UpdateSwitch(Config.AutowallEnabled, AutowallBg, AutowallKnob, "Autowall") end
-        if Cache.AutowallSetEnabled then Cache.AutowallSetEnabled(Config.AutowallEnabled) end
+    _reg("PenetrationEnabled", function()
+        Config.PenetrationEnabled = not Config.PenetrationEnabled
+        if PenetrationBg then UpdateSwitch(Config.PenetrationEnabled, PenetrationBg, PenetrationKnob, "Penetration") end
+        if Cache.PenetrationSetEnabled then Cache.PenetrationSetEnabled(Config.PenetrationEnabled) end
     end)
     _reg("BulletTracersEnabled", function()
         Config.BulletTracersEnabled = not Config.BulletTracersEnabled
@@ -24652,6 +26199,10 @@ pcall(function()
     _reg("NoclipEnabled", function()
         Config.NoclipEnabled = not Config.NoclipEnabled
         UpdateSwitch(Config.NoclipEnabled, NoclipBg, NoclipKnob, "Noclip")
+        if not Config.NoclipEnabled and Cache.NoclipRestore then
+            pcall(Cache.NoclipRestore)
+            Cache._noclipWasOn = false
+        end
     end)
     _reg("FakeLagEnabled", function()
         Config.FakeLagEnabled = not Config.FakeLagEnabled
@@ -24847,17 +26398,45 @@ end)
     rayParams.FilterType = Enum.RaycastFilterType.Exclude
     rayParams.IgnoreWater = true
 
-    local function VisibleCheck(part, cam)
+    local function VisibleCheck(part, cam, aimPos)
         if not part then return false end
         if not Config.SilentV2VisibleCheck then return true end
         cam = cam or Workspace.CurrentCamera
         if not cam then return false end
-        rayParams.FilterDescendantsInstances = { LocalPlayer.Character, cam }
+        local targetModel = part:FindFirstAncestorOfClass("Model")
         local origin = cam.CFrame.Position
-        local result = Workspace:Raycast(origin, part.Position - origin, rayParams)
-        if not result then return true end
-        local model = part.Parent and part:FindFirstAncestorOfClass("Model")
-        return model ~= nil and result.Instance:IsDescendantOf(model)
+        local targetPos = aimPos or part.Position
+        local dir = targetPos - origin
+        if dir.Magnitude < 0.05 then return true end
+        local filter = { LocalPlayer.Character, cam }
+        -- ignore own tools / viewmodels
+        pcall(function()
+            local bp = LocalPlayer:FindFirstChild("Backpack")
+            if bp then table.insert(filter, bp) end
+        end)
+        rayParams.FilterDescendantsInstances = filter
+        rayParams.FilterType = Enum.RaycastFilterType.Exclude
+        local result = Workspace:Raycast(origin, dir, rayParams)
+        if not result then
+            return true -- clear line
+        end
+        local hit = result.Instance
+        if not hit then return true end
+        -- visible if first solid hit belongs to the target character
+        if targetModel and hit:IsDescendantOf(targetModel) then
+            return true
+        end
+        -- also allow if hit is a non-collidable effect parented oddly
+        if hit:IsA("BasePart") and hit.CanCollide == false and hit.Transparency >= 0.95 then
+            -- try second ray past transparent junk
+            local push = dir.Unit * (result.Distance + 0.15)
+            local result2 = Workspace:Raycast(origin + push, targetPos - (origin + push), rayParams)
+            if not result2 then return true end
+            if targetModel and result2.Instance and result2.Instance:IsDescendantOf(targetModel) then
+                return true
+            end
+        end
+        return false
     end
 
     local function GetAimPosition(part)
@@ -24906,9 +26485,9 @@ end)
         local full360 = Config.SilentV2Full360 == true
         local function scorePart(part)
             if not part then return nil end
-            if visCheck and not VisibleCheck(part, cam) then return nil end
             local aimPos = GetAimPosition(part)
             if not aimPos then return nil end
+            if visCheck and not VisibleCheck(part, cam, aimPos) then return nil end
             if full360 then
                 local origin = cam.CFrame.Position
                 local d = (aimPos - origin).Magnitude
@@ -24946,20 +26525,38 @@ end)
             end
         end
 
-        local best, bestPart, bestPos, bestDistSq = nil, nil, nil, full360 and 1e18 or fovSq
+        local priority = Config.SilentTargetPriority or "Closest"
+        local best, bestPart, bestPos, bestScore = nil, nil, nil, math.huge
+        local myRoot = LocalPlayer.Character and GetRoot(LocalPlayer.Character)
         local list = CachedPlayerList or Players:GetPlayers()
         for i = 1, #list do
             local plr = list[i]
             if plr ~= LocalPlayer and IsAlive(plr) and not (teamCheck and IsTeammateV2(plr)) then
                 local parts = CollectSilentParts(plr.Character)
                 if parts then
+                    local plrBestPart, plrBestPos, plrBestDsq = nil, nil, math.huge
                     for j = 1, #parts do
                         local dsq, apos = scorePart(parts[j])
-                        if dsq and dsq <= bestDistSq then
-                            bestDistSq = dsq
+                        if dsq and dsq <= (full360 and 1e18 or fovSq) and dsq < plrBestDsq then
+                            plrBestDsq = dsq
+                            plrBestPart = parts[j]
+                            plrBestPos = apos
+                        end
+                    end
+                    if plrBestPart then
+                        local worldDist = 0
+                        if myRoot and plrBestPos then
+                            worldDist = (plrBestPos - myRoot.Position).Magnitude
+                        end
+                        local hum = plr.Character and plr.Character:FindFirstChildOfClass("Humanoid")
+                        local hp = hum and hum.Health or 100
+                        local screenDist = math.sqrt(plrBestDsq)
+                        local score = AimScoreCandidate(priority, screenDist, worldDist, hp)
+                        if score < bestScore then
+                            bestScore = score
                             best = plr
-                            bestPart = parts[j]
-                            bestPos = apos
+                            bestPart = plrBestPart
+                            bestPos = plrBestPos
                         end
                     end
                 end
@@ -24972,6 +26569,8 @@ end)
 
     local function ShouldSilent()
         if not Config.SilentAimV2Enabled then return false end
+        -- Autowall / world probes must not be redirected to silent target
+        if Cache.SilentAimBypassRay then return false end
         if not Cache.SilentV2Pos or not Cache.SilentV2Part then return false end
         if not Chance(Config.SilentV2HitChance) then return false end
         return true
@@ -24988,6 +26587,8 @@ end)
             if circle and circle.Visible then circle.Visible = false end
             local fill = Cache.SilentV2FovCircleFill
             if fill and fill.Visible then fill.Visible = false end
+            if Cache.SilentV2FovOutlineCircle then Cache.SilentV2FovOutlineCircle.Visible = false end
+            if Cache.SilentV2FovOutlineSquare then Cache.SilentV2FovOutlineSquare.Visible = false end
             return
         end
 
@@ -25023,6 +26624,7 @@ end)
                         circle.Position = Vector2.new(mousePos.X, mousePos.Y)
                         circle.Radius = r
                         circle.Color = col
+                        circle.Thickness = 1.5
                     end
                 end
                 if fill then
@@ -25041,6 +26643,49 @@ end)
                         sq.Size = Vector2.new(d, d)
                         sq.Position = Vector2.new(mousePos.X - r, mousePos.Y - r)
                         sq.Color = col
+                        sq.Thickness = 1.5
+                    end
+                end
+                -- outer outline around silent FOV
+                local showOutline = Config.SilentV2FovOutlineEnabled == true
+                local outlineCol = Config.Color_SilentV2FovOutline or Color3.fromRGB(180, 140, 255)
+                local outlineTh = math.clamp(tonumber(Config.SilentV2FovOutlineThickness) or 2, 0.5, 12)
+                -- contour outside silent FOV stroke
+                local rOut = r + (outlineTh * 0.5) + 0.75
+                local oc = Cache.SilentV2FovOutlineCircle
+                local osq = Cache.SilentV2FovOutlineSquare
+                if not oc then
+                    oc = Drawing.new("Circle")
+                    oc.Filled = false
+                    oc.NumSides = 96
+                    oc.Visible = false
+                    oc.ZIndex = 3
+                    Cache.SilentV2FovOutlineCircle = oc
+                end
+                if not osq then
+                    osq = Drawing.new("Square")
+                    osq.Filled = false
+                    osq.Visible = false
+                    osq.ZIndex = 3
+                    Cache.SilentV2FovOutlineSquare = osq
+                end
+                if oc then
+                    oc.Visible = showOutline and not isSquare and Config.SilentV2ShowFov == true
+                    if oc.Visible then
+                        oc.Position = Vector2.new(mousePos.X, mousePos.Y)
+                        oc.Radius = rOut
+                        oc.Color = outlineCol
+                        oc.Thickness = outlineTh
+                    end
+                end
+                if osq then
+                    osq.Visible = showOutline and isSquare and Config.SilentV2ShowFov == true
+                    if osq.Visible then
+                        local d = rOut * 2
+                        osq.Size = Vector2.new(d, d)
+                        osq.Position = Vector2.new(mousePos.X - rOut, mousePos.Y - rOut)
+                        osq.Color = outlineCol
+                        osq.Thickness = outlineTh
                     end
                 end
                 if sqf then
@@ -25296,35 +26941,41 @@ end)()
 ;(function()
     local function AWColors()
         return {
-            Pen = Config.Color_AutowallPen or Color3.fromRGB(60, 255, 90),
-            Block = Config.Color_AutowallBlock or Color3.fromRGB(255, 55, 55),
-            Mid = Config.Color_AutowallMid or Color3.fromRGB(255, 200, 60),
+            Pen = Config.Color_PenetrationPen or Color3.fromRGB(60, 255, 90),
+            Block = Config.Color_PenetrationBlock or Color3.fromRGB(255, 55, 55),
+            Mid = Config.Color_PenetrationMid or Color3.fromRGB(255, 200, 60),
             None = Color3.fromRGB(120, 120, 130),
         }
     end
+    -- material density weights (higher = harder to pen)
     local MaterialPen = {}
     local function addMat(name, weight)
         local ok, mat = pcall(function() return Enum.Material[name] end)
         if ok and mat then MaterialPen[mat] = weight end
     end
-    addMat("Wood", 0.35) addMat("WoodPlanks", 0.4) addMat("LeafyGrass", 0.25)
-    addMat("Grass", 0.45) addMat("Fabric", 0.3) addMat("Carpet", 0.3)
-    addMat("Plastic", 0.55) addMat("SmoothPlastic", 0.55) addMat("Glass", 0.25)
-    addMat("ForceField", 0.15) addMat("Neon", 0.4) addMat("Cardboard", 0.2)
-    addMat("Ice", 0.6) addMat("Snow", 0.4) addMat("Sand", 0.7) addMat("Foil", 0.7)
-    addMat("Rubber", 0.5) addMat("Concrete", 1.4) addMat("Brick", 1.35)
-    addMat("Cobblestone", 1.4) addMat("Rock", 1.5) addMat("Slate", 1.45)
-    addMat("Marble", 1.3) addMat("Granite", 1.5) addMat("Asphalt", 1.3)
-    addMat("Basalt", 1.5) addMat("CrackedLava", 1.4) addMat("Limestone", 1.35)
-    addMat("Pavement", 1.3) addMat("Salt", 0.9) addMat("Sandstone", 1.1)
-    addMat("Metal", 1.8) addMat("DiamondPlate", 1.9) addMat("CorrodedMetal", 1.6)
+    -- soft / thin
+    addMat("Glass", 0.18) addMat("ForceField", 0.08) addMat("Fabric", 0.22) addMat("Carpet", 0.22)
+    addMat("Cardboard", 0.15) addMat("LeafyGrass", 0.18) addMat("Grass", 0.35) addMat("Snow", 0.28)
+    addMat("Wood", 0.32) addMat("WoodPlanks", 0.38) addMat("Plastic", 0.48) addMat("SmoothPlastic", 0.48)
+    addMat("Neon", 0.35) addMat("Ice", 0.55) addMat("Rubber", 0.45)
+    -- medium
+    addMat("Sand", 0.65) addMat("Foil", 0.55) addMat("Salt", 0.75) addMat("Sandstone", 0.95)
+    addMat("Ground", 0.7) addMat("Mud", 0.55) addMat("Clay", 0.85) addMat("Pebble", 1.0)
+    -- hard
+    addMat("Concrete", 1.35) addMat("Brick", 1.3) addMat("Cobblestone", 1.35) addMat("Rock", 1.45)
+    addMat("Slate", 1.4) addMat("Marble", 1.25) addMat("Granite", 1.45) addMat("Asphalt", 1.25)
+    addMat("Basalt", 1.45) addMat("CrackedLava", 1.35) addMat("Limestone", 1.3) addMat("Pavement", 1.25)
+    addMat("Glacier", 1.1) addMat("Porcelain", 1.15)
+    -- very hard
+    addMat("Metal", 1.85) addMat("DiamondPlate", 1.95) addMat("CorrodedMetal", 1.65)
+    addMat("Titanium", 2.1) addMat("Steel", 1.9)
 
     local folder = Instance.new("Folder")
-    folder.Name = "AnxiumAutowallWorld"
+    folder.Name = "AnxiumPenetrationWorld"
     folder.Parent = Workspace
 
     local marker = Instance.new("Part")
-    marker.Name = "AutowallMarker"
+    marker.Name = "PenetrationMarker"
     marker.Anchored = true
     marker.CanCollide = false
     marker.CanQuery = false
@@ -25341,13 +26992,14 @@ end)()
     cornerMesh.Parent = marker
 
     local surf = Instance.new("SurfaceGui")
-    surf.Name = "AutowallSurface"
+    surf.Name = "PenetrationSurface"
     surf.Face = Enum.NormalId.Front
     surf.SizingMode = Enum.SurfaceGuiSizingMode.PixelsPerStud
     surf.PixelsPerStud = 64
-    surf.AlwaysOnTop = true
+    -- not AlwaysOnTop: otherwise marker draws through players and looks stuck on heads
+    surf.AlwaysOnTop = false
     surf.LightInfluence = 0
-    surf.ZOffset = 0.1
+    surf.ZOffset = 0.05
     surf.Enabled = false
     surf.Parent = marker
     local sqFrame = Instance.new("Frame")
@@ -25361,10 +27013,19 @@ end)()
     sqCorner.Name = "SquareCorner"
     sqCorner.CornerRadius = UDim.new(0, 3)
     sqCorner.Parent = sqFrame
+    -- outline: same color as fill status, never affected by PenetrationTransparency
+    local sqStroke = Instance.new("UIStroke")
+    sqStroke.Name = "SquareStroke"
+    sqStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+    sqStroke.LineJoinMode = Enum.LineJoinMode.Round
+    sqStroke.Thickness = 2
+    sqStroke.Transparency = 0
+    sqStroke.Color = AWColors().None
+    sqStroke.Parent = sqFrame
 
     local bill = Instance.new("BillboardGui")
-    bill.Name = "AutowallInfo"
-    bill.AlwaysOnTop = true
+    bill.Name = "PenetrationInfo"
+    bill.AlwaysOnTop = false
     bill.Size = UDim2.fromOffset(220, 28)
     bill.StudsOffset = Vector3.new(0, 0.55, 0)
     bill.MaxDistance = 400
@@ -25374,12 +27035,19 @@ end)()
     local infoLbl = Instance.new("TextLabel")
     infoLbl.BackgroundTransparency = 1
     infoLbl.Size = UDim2.fromScale(1, 1)
-    infoLbl.Font = SelectedFont
-    infoLbl.TextSize = 12
-    infoLbl.TextStrokeTransparency = 0.45
+    infoLbl.TextSize = 14
+    infoLbl.TextStrokeTransparency = 0.2
+    infoLbl.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
     infoLbl.TextColor3 = AWColors().None
     infoLbl.Text = ""
     infoLbl.Parent = bill
+    pcall(function()
+        if ApplyEspNameFontToLabel then
+            ApplyEspNameFontToLabel(infoLbl, 14)
+        else
+            infoLbl.Font = Enum.Font.Code
+        end
+    end)
 
     local lastCF = nil
     local lastColor = AWColors().None
@@ -25409,11 +27077,21 @@ end)()
         if LocalPlayer.Character then
             ignore[#ignore + 1] = LocalPlayer.Character
         end
-        for _, plr in ipairs(CachedPlayerList or Players:GetPlayers()) do
-            if plr.Character then
-                ignore[#ignore + 1] = plr.Character
+        -- always ignore every player character so marker never snaps onto heads/bodies
+        for _, plr in ipairs(Players:GetPlayers()) do
+            local ch = plr.Character
+            if ch then
+                ignore[#ignore + 1] = ch
             end
         end
+        -- also ignore any Humanoid models in workspace (NPCs / ragdolls)
+        pcall(function()
+            for _, inst in ipairs(Workspace:GetChildren()) do
+                if inst:IsA("Model") and inst:FindFirstChildOfClass("Humanoid") then
+                    ignore[#ignore + 1] = inst
+                end
+            end
+        end)
         local cam = Workspace.CurrentCamera
         if cam then ignore[#ignore + 1] = cam end
         return ignore
@@ -25437,22 +27115,27 @@ end)()
     end
 
     local function applyVisuals()
-        local sizePx = math.floor(tonumber(Config.AutowallSize) or 18)
+        local sizePx = math.floor(tonumber(Config.PenetrationSize) or 18)
         local stud = math.clamp(sizePx / 22, 0.35, 2.2)
         marker.Size = Vector3.new(stud, stud, 0.045)
         marker.Transparency = 1
-        local trans = tonumber(Config.AutowallTransparency)
+        local trans = tonumber(Config.PenetrationTransparency)
         if trans == nil then trans = 0.15 end
         trans = math.clamp(trans, 0, 0.9)
         sqFrame.BackgroundTransparency = trans
-        local cornerPx = math.clamp(math.floor(tonumber(Config.AutowallCorner) or 0), 0, 20)
+        -- stroke always fully visible (not tied to fill transparency)
+        if sqStroke then
+            sqStroke.Transparency = 0
+            sqStroke.Thickness = math.clamp(math.floor(stud * 2.2), 2, 5)
+        end
+        local cornerPx = math.clamp(math.floor(tonumber(Config.PenetrationCorner) or 0), 0, 20)
         local facePx = math.max(1, math.floor(stud * 64))
         if cornerPx <= 0 then
             sqCorner.CornerRadius = UDim.new(0, 0)
         else
             sqCorner.CornerRadius = UDim.new(0, math.clamp(math.floor(cornerPx * (facePx / 18)), 0, math.floor(facePx * 0.5)))
         end
-        if not Config.AutowallEnabled then
+        if not Config.PenetrationEnabled then
             marker.CFrame = CFrame.new(0, -500, 0)
             marker.Transparency = 1
             surf.Enabled = false
@@ -25462,10 +27145,10 @@ end)()
             holdFrames = 0
         end
     end
-    Cache.AutowallApply = applyVisuals
+    Cache.PenetrationApply = applyVisuals
 
-    Cache.AutowallSetEnabled = function(on)
-        Config.AutowallEnabled = on and true or false
+    Cache.PenetrationSetEnabled = function(on)
+        Config.PenetrationEnabled = on and true or false
         applyVisuals()
         if not on then
             marker.CFrame = CFrame.new(0, -500, 0)
@@ -25478,20 +27161,184 @@ end)()
         end
     end
 
-    local function measureThickness(hitPart, entryPos, dir)
-        local diag = hitPart.Size.Magnitude + 2
+    -- OBB width along world direction (accurate geometric thickness through a block)
+    local function obbThicknessAlongDir(part, dir)
+        if not part or not part:IsA("BasePart") then return 0.5 end
+        dir = dir.Unit
+        local cf = part.CFrame
+        local size = part.Size
+        local localDir = cf:VectorToObjectSpace(dir)
+        local hx, hy, hz = size.X * 0.5, size.Y * 0.5, size.Z * 0.5
+        -- projected half-extent sum * 2 = full width of box along dir
+        local half = hx * math.abs(localDir.X) + hy * math.abs(localDir.Y) + hz * math.abs(localDir.Z)
+        return math.max(0.02, half * 2)
+    end
+
+    -- exit-face ray: from past the part back toward entry, Include-filter the part
+    local function exitRayThickness(hitPart, entryPos, dir)
+        dir = dir.Unit
+        local maxDim = math.max(hitPart.Size.X, hitPart.Size.Y, hitPart.Size.Z) + 3
         local includeParams = RaycastParams.new()
         includeParams.FilterType = Enum.RaycastFilterType.Include
         includeParams.FilterDescendantsInstances = { hitPart }
         includeParams.IgnoreWater = true
-        local far = entryPos + dir.Unit * diag
-        local back = Workspace:Raycast(far, entryPos - far, includeParams)
-        if back then return (back.Position - entryPos).Magnitude end
-        local forward = entryPos + dir.Unit * 0.05
-        local back2 = Workspace:Raycast(forward + dir.Unit * diag, -dir.Unit * diag, includeParams)
-        if back2 then return (back2.Position - entryPos).Magnitude end
-        local n, s = dir.Unit, hitPart.Size
-        return math.clamp(math.abs(s.X * n.X) + math.abs(s.Y * n.Y) + math.abs(s.Z * n.Z) * 0.5, 0.05, diag)
+        local far = entryPos + dir * (maxDim + 1)
+        local back = Workspace:Raycast(far, -dir * (maxDim + 2), includeParams)
+        if back and back.Position then
+            local t = (back.Position - entryPos).Magnitude
+            if t > 0.01 and t < maxDim + 2 then
+                return t
+            end
+        end
+        -- forward probe from just inside the surface
+        local inside = entryPos + dir * 0.03
+        local out = Workspace:Raycast(inside + dir * maxDim, -dir * maxDim, includeParams)
+        if out and out.Position then
+            local t = (out.Position - entryPos).Magnitude
+            if t > 0.01 then return t end
+        end
+        return nil
+    end
+
+    local function measureThickness(hitPart, entryPos, dir, entryNormal)
+        dir = dir.Unit
+        local obb = obbThicknessAlongDir(hitPart, dir)
+        local exitT = exitRayThickness(hitPart, entryPos, dir)
+        if exitT then
+            -- blend exit-ray with OBB; trust exit more when close to OBB
+            if math.abs(exitT - obb) < obb * 0.85 or exitT < obb * 1.5 then
+                return math.clamp(exitT, 0.02, math.max(obb * 2, 8))
+            end
+        end
+        -- slab fallback using normal if available
+        if typeof(entryNormal) == "Vector3" and entryNormal.Magnitude > 0.01 then
+            local n = entryNormal.Unit
+            local cos = math.abs(dir:Dot(n))
+            if cos > 0.08 then
+                local along = obb
+                -- thinner when grazing; keep geometric OBB as primary
+                return math.clamp(obb, 0.02, 12)
+            end
+        end
+        return math.clamp(obb, 0.02, 12)
+    end
+
+    local function partPenWeight(part)
+        if not part or not part:IsA("BasePart") then return 1.0 end
+        -- non-solid / invisible: almost free
+        if part.CanCollide == false and part.Transparency >= 0.9 then
+            return 0.05
+        end
+        if part.Transparency >= 0.95 then
+            return 0.08
+        end
+        if part.CanCollide == false then
+            return 0.2
+        end
+        local weight = MaterialPen[part.Material] or 1.0
+        -- denser physical properties increase cost slightly
+        pcall(function()
+            local cpp = part.CustomPhysicalProperties
+            if cpp and typeof(cpp) == "PhysicalProperties" then
+                local dens = tonumber(cpp.Density) or 1
+                weight = weight * math.clamp(0.55 + dens * 0.45, 0.4, 2.2)
+            end
+        end)
+        -- very thin sheets (doors, glass panes)
+        local minAxis = math.min(part.Size.X, part.Size.Y, part.Size.Z)
+        if minAxis <= 0.2 then
+            weight = weight * 0.55
+        elseif minAxis <= 0.45 then
+            weight = weight * 0.75
+        end
+        return weight
+    end
+
+    local function isPenBlocker(part)
+        if not part or not part:IsA("BasePart") then return false end
+        if isCharacterPart(part) then return false end
+        if part.Transparency >= 0.99 then return false end
+        return true
+    end
+
+    -- accumulate pen cost through up to maxLayers surfaces along the look ray
+    local function scanPenLayers(origin, dir, firstResult, maxDist, maxLayers)
+        dir = dir.Unit
+        maxLayers = maxLayers or 3
+        maxDist = maxDist or 80
+        local layers = {}
+        local ignore = buildIgnore()
+        local params = RaycastParams.new()
+        params.FilterType = Enum.RaycastFilterType.Exclude
+        params.IgnoreWater = true
+
+        local traveled = 0
+        local from = origin
+        local budgetHits = maxLayers + 4
+        local firstHandled = false
+
+        if firstResult and firstResult.Instance then
+            -- seed with the primary crosshair hit
+            local part = firstResult.Instance
+            if isPenBlocker(part) then
+                local th = measureThickness(part, firstResult.Position, dir, firstResult.Normal)
+                local w = partPenWeight(part)
+                layers[#layers + 1] = {
+                    part = part,
+                    thickness = th,
+                    weight = w,
+                    effective = th * w,
+                    material = part.Material,
+                    pos = firstResult.Position,
+                    normal = firstResult.Normal,
+                }
+                firstHandled = true
+                -- advance past this wall
+                local step = math.max(th + 0.08, 0.15)
+                traveled = (firstResult.Position - origin).Magnitude + step
+                from = origin + dir * traveled
+                ignore[#ignore + 1] = part
+            end
+        end
+
+        while #layers < maxLayers and budgetHits > 0 do
+            budgetHits = budgetHits - 1
+            local remain = maxDist - traveled
+            if remain < 0.15 then break end
+            params.FilterDescendantsInstances = ignore
+            local res = Workspace:Raycast(from, dir * remain, params)
+            if not res then break end
+            if isCharacterPart(res.Instance) then
+                local model = res.Instance:FindFirstAncestorOfClass("Model")
+                ignore[#ignore + 1] = model or res.Instance
+                local step = math.max(0.6, (res.Position - from).Magnitude + 0.25)
+                traveled = traveled + step
+                from = origin + dir * traveled
+            elseif isPenBlocker(res.Instance) then
+                local part = res.Instance
+                local th = measureThickness(part, res.Position, dir, res.Normal)
+                local w = partPenWeight(part)
+                layers[#layers + 1] = {
+                    part = part,
+                    thickness = th,
+                    weight = w,
+                    effective = th * w,
+                    material = part.Material,
+                    pos = res.Position,
+                    normal = res.Normal,
+                }
+                ignore[#ignore + 1] = part
+                local step = math.max(th + 0.08, 0.15)
+                traveled = (res.Position - origin).Magnitude + step
+                from = origin + dir * traveled
+            else
+                ignore[#ignore + 1] = res.Instance
+                local step = math.max(0.4, (res.Position - from).Magnitude + 0.1)
+                traveled = traveled + step
+                from = origin + dir * traveled
+            end
+        end
+        return layers
     end
 
     local function evaluate(result, cam)
@@ -25509,39 +27356,62 @@ end)()
             end
         end
         if not part:IsA("BasePart") then
-            return Colors.Block, tostring(part.ClassName), true
+            local C = AWColors()
+            return C.Block, tostring(part.ClassName), true
         end
+
         local dir = result.Position - cam.CFrame.Position
         if dir.Magnitude < 1e-4 then dir = cam.CFrame.LookVector else dir = dir.Unit end
-        local thickness = measureThickness(part, result.Position, dir)
-        local mat = part.Material
-        local weight = MaterialPen[mat] or 1.0
-        local effective = thickness * weight
-        local softMax = tonumber(Config.AutowallSoftMax) or 2.2
-        local hardMax = tonumber(Config.AutowallHardMax) or 0.55
-        local limit = (weight >= 1.2) and hardMax or softMax
-        local label = string.format("%s  %.2f st", mat.Name, thickness)
-        if effective <= limit then
-            local C = AWColors(); return C.Pen, label .. "  PEN", true
-        elseif effective <= limit * 1.35 then
-            local C = AWColors(); return C.Mid, label .. "  MID", true
+
+        local layers = scanPenLayers(cam.CFrame.Position, dir, result, 90, 3)
+        if #layers == 0 then
+            return AWColors().None, "no solid", false
         end
-        local C = AWColors(); return C.Block, label .. "  BLOCK", true
+
+        local totalEff = 0
+        local totalTh = 0
+        local maxWeight = 0
+        for _, L in ipairs(layers) do
+            totalEff = totalEff + L.effective
+            totalTh = totalTh + L.thickness
+            if L.weight > maxWeight then maxWeight = L.weight end
+        end
+
+        local softMax = tonumber(Config.PenetrationSoftMax) or 2.2
+        local hardMax = tonumber(Config.PenetrationHardMax) or 0.55
+        -- hard materials use tighter budget; multi-layer stacks cost more
+        local baseLimit = (maxWeight >= 1.2) and hardMax or softMax
+        local layerPenalty = 1 + (#layers - 1) * 0.22
+        local limit = baseLimit / layerPenalty
+
+        local first = layers[1]
+        local matName = first.material and first.material.Name or "?"
+        local label
+        if #layers > 1 then
+            label = string.format("%s  %.2fst  x%d  e%.2f", matName, first.thickness, #layers, totalEff)
+        else
+            label = string.format("%s  %.2fst  e%.2f", matName, first.thickness, totalEff)
+        end
+
+        local C = AWColors()
+        if totalEff <= limit then
+            return C.Pen, label .. "  PEN", true
+        elseif totalEff <= limit * 1.45 then
+            return C.Mid, label .. "  MID", true
+        end
+        return C.Block, label .. "  BLOCK", true
     end
 
-    Config.AutowallEnabled = Config.AutowallEnabled == true
+    -- always start disabled unless user enables / loads config later
+    Config.PenetrationEnabled = false
     applyVisuals()
-    if Config.AutowallEnabled then
-        Cache.AutowallSetEnabled(true)
-    else
-        marker.Transparency = 1
-        surf.Enabled = false
-        bill.Enabled = false
-        infoLbl.Text = ""
-    end
+    marker.Transparency = 1
+    surf.Enabled = false
+    bill.Enabled = false
+    infoLbl.Text = ""
 
     RunService.RenderStepped:Connect(function(dt)
-        if not Config.AutowallEnabled then return end
+        if not Config.PenetrationEnabled then return end
         local cam = Workspace.CurrentCamera or Camera
         if not cam then return end
         dt = math.clamp(dt or 0.016, 0.001, 0.05)
@@ -25559,12 +27429,13 @@ end)()
             local dir = direction.Unit
             local traveled = 0
             local from = origin
-            for _ = 1, 10 do
+            for _ = 1, 12 do
                 params.FilterDescendantsInstances = ignore
                 local remain = maxDist - traveled
                 if remain < 0.2 then return nil end
                 local res = Workspace:Raycast(from, dir * remain, params)
                 if not res then return nil end
+                -- never place on characters: skip through and keep going along look ray
                 if isCharacterPart(res.Instance) then
                     local model = res.Instance:FindFirstAncestorOfClass("Model")
                     if model then
@@ -25572,7 +27443,8 @@ end)()
                     else
                         ignore[#ignore + 1] = res.Instance
                     end
-                    local step = math.max(0.4, (res.Position - from).Magnitude + 0.08)
+                    -- advance past the hit so we don't stick near head/body
+                    local step = math.max(0.75, (res.Position - from).Magnitude + 0.35)
                     traveled = traveled + step
                     from = origin + dir * traveled
                 else
@@ -25582,15 +27454,26 @@ end)()
             return nil
         end
 
-        local result = raycastWorldOnly(ray.Origin, ray.Direction, 900)
-
-        local color, label, valid = evaluate(result, cam)
-        local sizePx = math.floor(tonumber(Config.AutowallSize) or 18)
+        -- pure crosshair ray only; bypass silent-aim Raycast redirect so marker stays on look point
+        local result, color, label, valid = nil, nil, nil, false
+        Cache.SilentAimBypassRay = true
+        local okAW, errAW = pcall(function()
+            result = raycastWorldOnly(ray.Origin, ray.Direction, 900)
+            if result and isCharacterPart(result.Instance) then
+                result = nil
+            end
+            color, label, valid = evaluate(result, cam)
+        end)
+        Cache.SilentAimBypassRay = false
+        if not okAW then
+            result, color, label, valid = nil, nil, nil, false
+        end
+        local sizePx = math.floor(tonumber(Config.PenetrationSize) or 18)
         local stud = math.clamp(sizePx / 22, 0.35, 2.2)
-        local trans = tonumber(Config.AutowallTransparency)
+        local trans = tonumber(Config.PenetrationTransparency)
         if trans == nil then trans = 0.15 end
         trans = math.clamp(trans, 0, 0.9)
-        local cornerPx = math.clamp(math.floor(tonumber(Config.AutowallCorner) or 0), 0, 20)
+        local cornerPx = math.clamp(math.floor(tonumber(Config.PenetrationCorner) or 0), 0, 20)
         local facePx = math.max(1, math.floor(stud * 64))
         if cornerPx <= 0 then
             sqCorner.CornerRadius = UDim.new(0, 0)
@@ -25611,11 +27494,19 @@ end)()
             surf.Enabled = true
             sqFrame.BackgroundColor3 = color
             sqFrame.BackgroundTransparency = trans
-            if Config.AutowallShowInfo then
+            if sqStroke then
+                sqStroke.Color = color
+                sqStroke.Transparency = 0
+            end
+            if Config.PenetrationShowInfo then
                 bill.Enabled = true
                 infoLbl.Text = lastLabel
                 infoLbl.TextColor3 = color
-                infoLbl.Font = SelectedFont
+                pcall(function()
+                    if ApplyEspNameFontToLabel then
+                        ApplyEspNameFontToLabel(infoLbl, 14)
+                    end
+                end)
             else
                 bill.Enabled = false
                 infoLbl.Text = ""
@@ -25630,7 +27521,11 @@ end)()
                 surf.Enabled = true
                 sqFrame.BackgroundColor3 = lastColor
                 sqFrame.BackgroundTransparency = trans
-                if Config.AutowallShowInfo and lastLabel ~= "" then
+                if sqStroke then
+                    sqStroke.Color = lastColor
+                    sqStroke.Transparency = 0
+                end
+                if Config.PenetrationShowInfo and lastLabel ~= "" then
                     bill.Enabled = true
                     infoLbl.Text = lastLabel
                     infoLbl.TextColor3 = lastColor
@@ -25651,8 +27546,8 @@ end)()
 
 
 ;(function()
-    local STAR_URL = "https://raw.githubusercontent.com/AnxiumClient/png/main/white-star-1280-788-Photoroom.png"
-    local STAR_FILE = "Anxium_white_star_1280.png"
+    local STAR_URL = "https://raw.githubusercontent.com/AnxiumClient/png/main/israilIZBest.png"
+    local STAR_FILE = "Anxium_snow_particle.png"
     local starAsset, folder, particles, idx = nil, nil, {}, 1
     local groundCache, groundCacheT = {}, 0
     local rayParams = RaycastParams.new()
@@ -25700,7 +27595,8 @@ end)()
     end
 
     local function starColor()
-        return Config.Color_FallingStars or Color3.fromRGB(255, 255, 255)
+        -- texture has its own colors; do not tint
+        return Color3.fromRGB(255, 255, 255)
     end
     local function starSize()
         return math.clamp(math.floor(tonumber(Config.FallingStarsSize) or 28), 8, 90)
