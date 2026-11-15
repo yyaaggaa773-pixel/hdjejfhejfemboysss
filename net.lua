@@ -12,6 +12,48 @@ Camera = Workspace.CurrentCamera
 SelectedFont = Enum.Font.Ubuntu
 MenuFontId = "Ubuntu"
 
+-- Workspace layout for local files (created on first run)
+-- AnxiumHub/
+--   configs/  fonts/  sounds/  scripts/  assets/
+AnxiumFS = {
+    Root = "AnxiumHub",
+    Configs = "AnxiumHub/configs",
+    Fonts = "AnxiumHub/fonts",
+    Sounds = "AnxiumHub/sounds",
+    Scripts = "AnxiumHub/scripts",
+    Assets = "AnxiumHub/assets",
+    System = "AnxiumHub/system",
+    Ready = false,
+}
+
+function AnxiumFS_Ensure()
+    if AnxiumFS.Ready then return true end
+    if typeof(makefolder) ~= "function" then
+        AnxiumFS.Ready = true
+        return false
+    end
+    pcall(function()
+        makefolder(AnxiumFS.Root)
+        makefolder(AnxiumFS.Configs)
+        makefolder(AnxiumFS.Fonts)
+        makefolder(AnxiumFS.Sounds)
+        makefolder(AnxiumFS.Scripts)
+        makefolder(AnxiumFS.Assets)
+        makefolder(AnxiumFS.System)
+    end)
+    AnxiumFS.Ready = true
+    return true
+end
+
+function AnxiumFS_Path(sub, fileName)
+    AnxiumFS_Ensure()
+    local base = AnxiumFS[sub] or AnxiumFS.Root
+    if not fileName or fileName == "" then return base end
+    return base .. "/" .. tostring(fileName)
+end
+
+pcall(AnxiumFS_Ensure)
+
 EspNameFontFace = nil
 EspNameFontSize = 15
 EspNameFontReady = false
@@ -22,12 +64,12 @@ function LoadEspNameFont()
     if EspNameFontReady and EspNameFontFace then return EspNameFontFace end
     local okFace = false
     pcall(function()
-        local folder = "AnxiumHubFonts"
+        local folder = AnxiumFS.Fonts
         local fileName = "smallest_pixel-7.ttf"
         local path = folder .. "/" .. fileName
         local url = "https://raw.githubusercontent.com/i77lhm/storage/main/fonts/smallest_pixel-7.ttf"
         if typeof(makefolder) == "function" then
-            pcall(makefolder, "AnxiumHubFonts")
+            pcall(AnxiumFS_Ensure)
         end
         local bytes = nil
         if typeof(isfile) == "function" and typeof(readfile) == "function" and isfile(path) then
@@ -77,12 +119,12 @@ function LoadLogoFont()
     if LogoFontReady and LogoFontFace then return LogoFontFace end
     local okFace = false
     pcall(function()
-        local folder = "AnxiumHubFonts"
+        local folder = AnxiumFS.Fonts
         local fileName = "BloodclawPersonalUseOnlyReg-6RmgM.ttf"
         local path = folder .. "/" .. fileName
         local url = "https://raw.githubusercontent.com/AnxiumClient/lua/main/BloodclawPersonalUseOnlyReg-6RmgM.ttf"
         if typeof(makefolder) == "function" then
-            pcall(makefolder, "AnxiumHubFonts")
+            pcall(AnxiumFS_Ensure)
         end
         local bytes = nil
         if typeof(isfile) == "function" and typeof(readfile) == "function" and isfile(path) then
@@ -600,8 +642,8 @@ Config = {
     CloneFadeDelay = 1.5,
     CloneFadeTime = 1.2,
     CloneTransparency = 0.25,
-    CloneChamsStyle = "Chams",
-    DeathChamsStyle = "Chams",
+    CloneChamsStyle = "Glass",
+    DeathChamsStyle = "Glass",
     OffscreenArrowsEnabled = false,
     Color_OffscreenArrow = Color3.fromRGB(180, 140, 255), 
     Color_OffscreenArrowB = Color3.fromRGB(255, 255, 255), 
@@ -5610,10 +5652,120 @@ end)
 MainCorner = nil
 MainFrame.ClipsDescendants = true
 
+-- Two thin black lines + dark-gray fill between (not one thick bar)
+MainStroke = Instance.new("UIStroke")
+MainStroke.Name = "MainStroke"
+MainStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+MainStroke.LineJoinMode = Enum.LineJoinMode.Miter
+MainStroke.Thickness = 1.25
+MainStroke.Color = Color3.fromRGB(0, 0, 0)
+MainStroke.Transparency = 0
+MainStroke.Parent = MainFrame
 
+do
+    -- slightly dark gray fill between the two black lines
+    local gapColor = Color3.fromRGB(18, 18, 22)
+    local gapW = 5
+    local function edge(name, pos, size)
+        local f = Instance.new("Frame")
+        f.Name = name
+        f.BackgroundColor3 = gapColor
+        f.BackgroundTransparency = 0
+        f.BorderSizePixel = 0
+        f.ZIndex = 100
+        f.Position = pos
+        f.Size = size
+        f.Parent = MainFrame
+        return f
+    end
+    edge("MainBorderGapTop", UDim2.fromOffset(1, 1), UDim2.new(1, -2, 0, gapW))
+    edge("MainBorderGapBottom", UDim2.new(0, 1, 1, -(gapW + 1)), UDim2.new(1, -2, 0, gapW))
+    edge("MainBorderGapLeft", UDim2.fromOffset(1, 1 + gapW), UDim2.new(0, gapW, 1, -(2 + gapW * 2)))
+    edge("MainBorderGapRight", UDim2.new(1, -(gapW + 1), 0, 1 + gapW), UDim2.new(0, gapW, 1, -(2 + gapW * 2)))
+end
+
+MainInnerOutline = Instance.new("Frame")
+MainInnerOutline.Name = "MainInnerOutline"
+MainInnerOutline.Position = UDim2.fromOffset(6, 6)
+MainInnerOutline.Size = UDim2.new(1, -12, 1, -12)
+MainInnerOutline.BackgroundTransparency = 1
+MainInnerOutline.BorderSizePixel = 0
+MainInnerOutline.ZIndex = 101
+MainInnerOutline.Parent = MainFrame
+
+MainInnerStroke = Instance.new("UIStroke")
+MainInnerStroke.Name = "MainInnerStroke"
+MainInnerStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+MainInnerStroke.LineJoinMode = Enum.LineJoinMode.Miter
+MainInnerStroke.Thickness = 1.25
+MainInnerStroke.Color = Color3.fromRGB(0, 0, 0)
+MainInnerStroke.Transparency = 0
+MainInnerStroke.Parent = MainInnerOutline
+
+-- collect border pieces for open/close fade (strokes don't always follow GroupTransparency)
+Cache.MenuBorderParts = {}
+pcall(function()
+    if MainStroke then table.insert(Cache.MenuBorderParts, { kind = "stroke", obj = MainStroke, solid = 0 }) end
+    if MainInnerStroke then table.insert(Cache.MenuBorderParts, { kind = "stroke", obj = MainInnerStroke, solid = 0 }) end
+    if MainFrame then
+        for _, ch in ipairs(MainFrame:GetChildren()) do
+            if ch:IsA("Frame") and tostring(ch.Name):find("MainBorderGap", 1, true) == 1 then
+                table.insert(Cache.MenuBorderParts, { kind = "frame", obj = ch, solid = 0 })
+            end
+        end
+    end
+end)
+
+function AnxiumMenuBorder_SetVisible(visible, instant)
+    local list = Cache.MenuBorderParts
+    if not list then return end
+    local target = visible and 0 or 1
+    for _, e in ipairs(list) do
+        local o = e and e.obj
+        if o and o.Parent then
+            if instant then
+                pcall(function()
+                    if e.kind == "stroke" then
+                        o.Transparency = target
+                    else
+                        o.BackgroundTransparency = target
+                    end
+                end)
+            end
+        end
+    end
+end
+
+function AnxiumMenuBorder_Tween(visible, info, playTween)
+    local list = Cache.MenuBorderParts
+    if not list then return end
+    local target = visible and 0 or 1
+    for _, e in ipairs(list) do
+        local o = e and e.obj
+        if o and o.Parent then
+            pcall(function()
+                if e.kind == "stroke" then
+                    if playTween then
+                        playTween(o, info, { Transparency = target })
+                    else
+                        o.Transparency = target
+                    end
+                else
+                    if playTween then
+                        playTween(o, info, { BackgroundTransparency = target })
+                    else
+                        o.BackgroundTransparency = target
+                    end
+                end
+            end)
+        end
+    end
+end
+
+-- keep tab content inside the inner black line
 Sidebar = Instance.new("Frame")
-Sidebar.Size = UDim2.new(0, 168, 1, 0)
-Sidebar.Position = UDim2.new(0, 0, 0, 0)
+Sidebar.Size = UDim2.new(0, 168, 1, -12)
+Sidebar.Position = UDim2.new(0, 6, 0, 6)
 Sidebar.BackgroundColor3 = Theme.Sidebar
 Sidebar.BackgroundTransparency = 0
 Sidebar.BorderSizePixel = 0
@@ -5740,8 +5892,8 @@ end)
 
 
 Header = Instance.new("Frame")
-Header.Size = UDim2.new(1, -168, 0, 44)
-Header.Position = UDim2.new(0, 168, 0, 0)
+Header.Size = UDim2.new(1, -168 - 12, 0, 44)
+Header.Position = UDim2.new(0, 168 + 6, 0, 6)
 Header.BackgroundColor3 = Theme.Bg
 Header.BackgroundTransparency = 0
 Header.BorderSizePixel = 0
@@ -5792,7 +5944,7 @@ VersionTag = Instance.new("TextLabel")
 VersionTag.Size = UDim2.new(0, 120, 1, 0)
 VersionTag.Position = UDim2.new(1, -130, 0, 0)
 VersionTag.BackgroundTransparency = 1
-VersionTag.Text = "beta 1.0.2"
+VersionTag.Text = "beta 1.0.3"
 VersionTag.TextColor3 = Color3.fromRGB(255, 255, 255)
 VersionTag.TextSize = 11
 VersionTag.Font = SelectedFont
@@ -6150,8 +6302,8 @@ function CreateSidebarTab(name, order)
     end)
 
     local Scroll = Instance.new("ScrollingFrame")
-    Scroll.Size = UDim2.new(1, -184, 1, -56)
-    Scroll.Position = UDim2.new(0, 176, 0, 52)
+    Scroll.Size = UDim2.new(1, -184 - 12, 1, -56 - 12)
+    Scroll.Position = UDim2.new(0, 176 + 6, 0, 52 + 6)
     Scroll.BackgroundTransparency = 1
     Scroll.BorderSizePixel = 0
     Scroll.ScrollBarThickness = 4
@@ -7135,6 +7287,10 @@ CreateFeatureRow = function(name, layoutOrder, parentTab, colorKey, colorKey2)
                         end
                     elseif ck == "Color_AngelHalo" then
                     elseif ck == "Color_ChinaHat" then
+                    elseif ck == "Color_World" then
+                        if Config.WorldColorEnabled and ApplyWorldVisuals then
+                            pcall(ApplyWorldVisuals)
+                        end
                     elseif ck == "Color_Tracers" or ck == "Color_TracerGradientB" then
                     elseif ck == "Color_Skeleton" then
                     elseif ck == "Color_Crosshair" then
@@ -10129,8 +10285,9 @@ DeathChamsBtn, DeathChamsBg, DeathChamsKnob = CreateFeatureRow("Death player", 9
 
 
 do
-    local styles = { "Chams", "FF" }
-    local function makeMaterialList(label, layoutOrder, getStyle, setStyle, headerCacheKey)
+    local styles = { "Glass", "Ice", "Metal", "SmoothPlastic", "Foil", "Plastic" }
+
+    local function makeMaterialList(label, layoutOrder, getStyle, setStyle, headerCacheKey, refreshCacheKey, buttonsCacheKey)
         local Expanded = false
         local HeaderRow = Instance.new("TextButton")
         HeaderRow.Name = label:gsub("%s+", "") .. "ListHeader"
@@ -10141,106 +10298,145 @@ do
         HeaderRow.Text = ""
         HeaderRow.LayoutOrder = layoutOrder
         HeaderRow.Parent = ResolveUIParent(VisualsTab)
+
         local HeaderLbl = Instance.new("TextLabel")
         HeaderLbl.Size = UDim2.new(1, -40, 1, 0)
         HeaderLbl.Position = UDim2.new(0, 12, 0, 0)
         HeaderLbl.BackgroundTransparency = 1
-        HeaderLbl.Text = label .. "  ·  " .. tostring(getStyle() or "Chams")
+        HeaderLbl.Text = label .. "  ·  " .. tostring(getStyle() or "Glass")
         HeaderLbl.TextColor3 = Theme.Text
         HeaderLbl.TextSize = 12
         HeaderLbl.Font = SelectedFont
         HeaderLbl.TextXAlignment = Enum.TextXAlignment.Left
         HeaderLbl.Parent = HeaderRow
         if headerCacheKey then Cache[headerCacheKey] = HeaderLbl end
+
         local ArrowLbl = AnxiumMakeListArrow(HeaderRow)
 
         local ListFrame = Instance.new("Frame")
         ListFrame.Name = label:gsub("%s+", "") .. "List"
         ListFrame.Size = UDim2.new(1, 0, 0, 0)
         ListFrame.Visible = false
-        ListFrame.BackgroundColor3 = Theme.Card
+        ListFrame.BackgroundColor3 = Theme.BgSecondary
+        ListFrame.BackgroundTransparency = 0.15
         ListFrame.BorderSizePixel = 0
         ListFrame.ClipsDescendants = true
         ListFrame.LayoutOrder = layoutOrder + 0.001
         ListFrame.Parent = ResolveUIParent(VisualsTab)
-        AnxiumListFrameStroke(ListFrame)
+        pcall(AnxiumListFrameStroke, ListFrame)
+
+        local ListScroll = Instance.new("ScrollingFrame")
+        ListScroll.Size = UDim2.new(1, -8, 1, -8)
+        ListScroll.Position = UDim2.new(0, 4, 0, 4)
+        ListScroll.BackgroundTransparency = 1
+        ListScroll.BorderSizePixel = 0
+        ListScroll.ScrollBarThickness = 4
+        ListScroll.ScrollBarImageColor3 = Theme.Accent
+        ListScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+        ListScroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
+        ListScroll.Parent = ListFrame
+
         local listLay = Instance.new("UIListLayout")
         listLay.SortOrder = Enum.SortOrder.LayoutOrder
-        listLay.Padding = UDim.new(0, 2)
-        listLay.Parent = ListFrame
+        listLay.Padding = UDim.new(0, 4)
+        listLay.Parent = ListScroll
+
         local listPad = Instance.new("UIPadding")
         listPad.PaddingTop = UDim.new(0, 4)
         listPad.PaddingBottom = UDim.new(0, 4)
         listPad.PaddingLeft = UDim.new(0, 4)
         listPad.PaddingRight = UDim.new(0, 4)
-        listPad.Parent = ListFrame
+        listPad.Parent = ListScroll
+
+        local buttons = {}
+        if buttonsCacheKey then Cache[buttonsCacheKey] = buttons end
+
+        local function normalizeStyle()
+            local current = tostring(getStyle() or "Glass")
+            local valid = false
+            for _, styleName in ipairs(styles) do
+                if current == styleName then
+                    valid = true
+                    break
+                end
+            end
+            if not valid then
+                current = "Glass"
+                setStyle(current)
+            end
+            return current
+        end
 
         local function refreshHighlight()
-            local cur = getStyle() or "Chams"
-            for _, ch in ipairs(ListFrame:GetChildren()) do
-                if ch:IsA("TextButton") then
-                    local name = (ch:GetAttribute("StyleName") or ch.Text:gsub("^%s+", ""))
-                    if name == cur then
-                        ch.BackgroundColor3 = Theme.Accent or Color3.fromRGB(180, 140, 255)
-                        ch.TextColor3 = Color3.fromRGB(255, 255, 255)
+            local current = normalizeStyle()
+            HeaderLbl.Text = label .. "  ·  " .. current
+            for styleName, button in pairs(buttons) do
+                if button and button.Parent then
+                    if styleName == current then
+                        button.BackgroundColor3 = Theme.Accent or Color3.fromRGB(180, 140, 255)
+                        button.TextColor3 = Color3.fromRGB(255, 255, 255)
                     else
-                        ch.BackgroundColor3 = Theme.BgTertiary
-                        ch.TextColor3 = Theme.Text
+                        button.BackgroundColor3 = Theme.BgTertiary
+                        button.TextColor3 = Theme.Text
                     end
                 end
             end
-            HeaderLbl.Text = label .. "  ·  " .. tostring(cur)
         end
 
         for i, styleName in ipairs(styles) do
-            local btn = Instance.new("TextButton")
-            btn.Size = UDim2.new(1, -4, 0, 28)
-            btn.BackgroundColor3 = Theme.BgTertiary
-            btn.BorderSizePixel = 0
-            btn.Text = "  " .. styleName
-            btn.TextColor3 = Theme.Text
-            btn.TextSize = 13
-            btn.Font = SelectedFont
-            btn.TextXAlignment = Enum.TextXAlignment.Left
-            btn.LayoutOrder = i
-            btn.AutoButtonColor = true
-            btn:SetAttribute("StyleName", styleName)
-            btn.Parent = ListFrame
-            btn.MouseButton1Click:Connect(function()
+            local button = Instance.new("TextButton")
+            button.Size = UDim2.new(1, -4, 0, 28)
+            button.BackgroundColor3 = Theme.BgTertiary
+            button.BorderSizePixel = 0
+            button.Text = "  " .. styleName
+            button.TextColor3 = Theme.Text
+            button.TextSize = 13
+            button.Font = SelectedFont
+            button.TextXAlignment = Enum.TextXAlignment.Left
+            button.LayoutOrder = i
+            button.AutoButtonColor = true
+            button:SetAttribute("StyleName", styleName)
+            button.Parent = ListScroll
+            buttons[styleName] = button
+
+            button.MouseButton1Click:Connect(function()
                 setStyle(styleName)
                 refreshHighlight()
-                Notify("Visuals", label .. ": " .. styleName)
+                if Notify then Notify("Visuals", label .. ": " .. styleName) end
             end)
         end
+
+        if refreshCacheKey then Cache[refreshCacheKey] = refreshHighlight end
         refreshHighlight()
 
+        local listHeight = math.min(28 * #styles + 16, 200)
         HeaderRow.MouseButton1Click:Connect(function()
             Expanded = not Expanded
             if Expanded then
-                local h = #styles * 30 + 12
-                AnxiumSetListOpen(ListFrame, true, h, HeaderRow)
-                if ArrowLbl:IsA("ImageLabel") then
-                    ArrowLbl.Image = "rbxassetid://71457658246709"
-                    ArrowLbl.Rotation = 0
-                end
+                AnxiumSetListOpen(ListFrame, true, listHeight, HeaderRow)
             else
-                AnxiumSetListOpen(ListFrame, false, nil, HeaderRow)
-                if ArrowLbl:IsA("ImageLabel") then
-                    ArrowLbl.Image = "rbxassetid://98648581502859"
-                    ArrowLbl.Rotation = 0
-                end
+                AnxiumSetListOpen(ListFrame, false)
+            end
+            if ArrowLbl:IsA("ImageLabel") then
+                ArrowLbl.Image = Expanded and "rbxassetid://71457658246709" or "rbxassetid://98648581502859"
+                ArrowLbl.Rotation = 0
+            elseif ArrowLbl:IsA("TextLabel") then
+                ArrowLbl.Text = Expanded and "▲" or "▼"
             end
         end)
+
         AnxiumSetListOpen(ListFrame, false, nil, HeaderRow)
     end
 
-    makeMaterialList("Clone material", 9.925, function()
-        return Config.CloneChamsStyle or "Chams"
-    end, function(v) Config.CloneChamsStyle = v end, "CloneMaterialHeaderLbl")
+    makeMaterialList("Clone material", 9.925,
+        function() return Config.CloneChamsStyle or "Glass" end,
+        function(value) Config.CloneChamsStyle = value end,
+        "CloneMaterialHeaderLbl", "RefreshCloneStyleList", "CloneMaterialStyleButtons")
 
-    makeMaterialList("Death material", 9.945, function()
-        return Config.DeathChamsStyle or "Chams"
-    end, function(v) Config.DeathChamsStyle = v end, "DeathMaterialHeaderLbl")
+    makeMaterialList("Death material", 9.945,
+        function() return Config.DeathChamsStyle or "Glass" end,
+        function(value) Config.DeathChamsStyle = value end,
+        "DeathMaterialHeaderLbl", "RefreshDeathStyleList", "DeathMaterialStyleButtons")
 end
 DeathBurstBtn, DeathBurstBg, DeathBurstKnob = CreateFeatureRow("Death Burst", 9.95, VisualsTab, "Color_DeathBurst")
 KillDissolveBtn, KillDissolveBg, KillDissolveKnob = CreateFeatureRow("Kill Dissolve", 9.96, VisualsTab, "Color_KillDissolve")
@@ -13870,11 +14066,12 @@ end)
 
 CfgIO = {
     
-    Folder = "AnxiumHubConfigs",
-    IndexFile = "AnxiumHubConfigs/_index.json",
-    IndexFileAlt = "AnxiumHubConfigs_index.json",
-    LastFile = "AnxiumHubConfigs/_last.txt",
-    LastFileAlt = "AnxiumHubConfigs_last.txt",
+    Folder = AnxiumFS.Configs,
+    -- meta only in system/ so configs/ stays clean (only user .json configs)
+    IndexFile = AnxiumFS.System .. "/configs_index.json",
+    IndexFileAlt = AnxiumFS.System .. "/configs_index_alt.json",
+    LastFile = AnxiumFS.System .. "/configs_last.txt",
+    LastFileAlt = AnxiumFS.System .. "/configs_last_alt.txt",
     Marker = "__anxium_hub",
     Current = "",
     List = {},
@@ -13893,8 +14090,10 @@ function SanitizeConfigName(name)
 end
 
 function EnsureConfigFolder()
+    pcall(AnxiumFS_Ensure)
     if typeof(makefolder) == "function" then
         pcall(makefolder, CfgIO.Folder)
+        pcall(makefolder, AnxiumFS.System)
     end
 end
 
@@ -14621,11 +14820,11 @@ do
                 for _, fpath in ipairs(res) do
                     local s = tostring(fpath):gsub("\\", "/")
                     local base = s:match("([^/]+)$") or s
-                    if base == "_last.txt" or base == "_index.json" or base:find("_index") then
-                        
+                    if base:sub(1, 1) == "_" or not base:match("%.json$") then
+                        -- skip meta / non-config files; configs/ is only user configs
                     elseif base:match("%.json$") then
                         local name = base:match("(.+)%.json$")
-                        if name and name ~= "" and name ~= "_last" and name ~= "_index" then
+                        if name and name ~= "" and name:sub(1, 1) ~= "_" then
                             name = SanitizeConfigName(name)
                             local content = fsRead(fpath)
                             if content and isOurs(content) then
@@ -15311,7 +15510,7 @@ do
             return false
         end
         if setClipboardText(json) then
-            Notify("Config", "Code copied (" .. name .. ") - upload to GitHub")
+            Notify("Config", "Config JSON copied (" .. name .. ")")
             return true
         end
         Notify("Config", "Clipboard not available on this executor")
@@ -15419,90 +15618,8 @@ do
     end
 
     function CfgIO.LoadFromGitHub(url)
-        url = url or (CfgIO.GitHubBox and CfgIO.GitHubBox.Text) or ""
-        if type(url) ~= "string" then url = "" end
-        url = url:gsub("^%s+", ""):gsub("%s+$", "")
-
-        if url:sub(1, 1) == "{" then
-            local data = parseConfigJson(url)
-            if type(data) ~= "table" then
-                Notify("GitHub", "Invalid JSON")
-                return false
-            end
-            if not ApplyLoadedConfig(data) then
-                Notify("GitHub", "Apply failed (not an Anxium config?)")
-                return false
-            end
-            local name = SanitizeConfigName(
-                (type(data.name) == "string" and data.name)
-                or (CfgIO.NameBox and CfgIO.NameBox.Text)
-                or "github"
-            )
-            if name == "" or name == "default" then name = "github" end
-            CfgIO.Current = name
-            if CfgIO.NameBox then CfgIO.NameBox.Text = name end
-            postLoadApply(name)
-            Notify("GitHub", "Loaded: " .. name)
-            return true
-        end
-
-        local candidates = githubRawUrls(url)
-        if not candidates or #candidates == 0 then
-            Notify("GitHub", "Enter a public GitHub / raw link")
-            return false
-        end
-        Notify("GitHub", "Downloading...")
-        local body = nil
-        for _, rawUrl in ipairs(candidates) do
-            local got = httpGetBody(rawUrl)
-            if type(got) == "string" and #got >= 5 then
-                local head = got:sub(1, 200):lower()
-                if not head:find("<!doctype") and not head:find("<html") then
-                    body = got
-                    break
-                end
-            end
-        end
-        if type(body) ~= "string" or #body < 5 then
-            Notify("GitHub", "Download failed (private repo / bad link)")
-            return false
-        end
-        local data = parseConfigJson(body)
-        if type(data) ~= "table" then
-            Notify("GitHub", "Invalid config JSON")
-            return false
-        end
-        if not ApplyLoadedConfig(data) then
-            Notify("GitHub", "Apply failed (not an Anxium config?)")
-            return false
-        end
-        local name = SanitizeConfigName(
-            (type(data.name) == "string" and data.name)
-            or (CfgIO.NameBox and CfgIO.NameBox.Text)
-            or "github"
-        )
-        if name == "" or name == "default" then name = "github" end
-        CfgIO.Current = name
-        if CfgIO.NameBox then CfgIO.NameBox.Text = name end
-        pcall(function()
-            if typeof(writefile) == "function" then
-                local okSer, json = pcall(SerializeConfig)
-                if okSer and json then
-                    writeConfigFile(name, json)
-                    local found = false
-                    for _, n in ipairs(CfgIO.List) do if n == name then found = true break end end
-                    if not found then table.insert(CfgIO.List, name) end
-                    table.sort(CfgIO.List)
-                    for i, n in ipairs(CfgIO.List) do if n == name then CfgIO.Index = i break end end
-                    writeIndex(CfgIO.List)
-                    CfgIO.Remember(name)
-                    CfgIO.RefreshList()
-                end
-            end
-        end)
-        postLoadApply(name)
-        Notify("GitHub", "Loaded: " .. name)
-        return true
+        Notify("Config", "GitHub import removed — use AnxiumHub/configs only")
+        return false
     end
 
     function CfgIO.Create()
@@ -15729,130 +15846,10 @@ do
     MakeCfgBtn("Create", 2, Theme.BgSecondary, function() CfgIO.Create() end, "rbxassetid://74194167957081")
     MakeCfgBtn("Load", 3, Theme.BgSecondary, function() CfgIO.Load() end, "rbxassetid://132295854994374")
     MakeCfgBtn("Rename", 4, Theme.BgSecondary, function() CfgIO.Rename() end, "rbxassetid://82156880342025")
-    MakeCfgBtn("Code", 5, Theme.Accent, function() CfgIO.CopyCode() end, "rbxassetid://75851496262862")
+    MakeCfgBtn("Refresh", 5, Theme.Accent, function() CfgIO.RefreshList(); pcall(CfgIO.RebuildListUI); Notify("Config", "List refreshed") end, "rbxassetid://75851496262862")
     MakeCfgBtn("Delete", 6, Color3.fromRGB(90, 40, 45), function() CfgIO.Delete() end, "rbxassetid://115678228554812")
 end
 
-
-do
-    CreateSectionHeader("- GitHub configs -", 6, ConfigsTab)
-
-    local PbRow = Instance.new("Frame")
-    PbRow.Name = "GitHubRow"
-    PbRow.Size = UDim2.new(0.96, 0, 0, 36)
-    PbRow.BackgroundColor3 = Color3.fromRGB(36, 36, 42)
-    PbRow.BackgroundTransparency = 0.15
-    PbRow.BorderSizePixel = 0
-    PbRow.ClipsDescendants = true
-    PbRow.LayoutOrder = 7
-    PbRow.Parent = ResolveUIParent(ConfigsTab)
-    local pbc = Instance.new("UIStroke")
-    pbc.Color = Theme.Stroke
-    pbc.Thickness = 1
-    pbc.Transparency = 0.2
-    pbc.Parent = PbRow
-
-    local pbLabel = Instance.new("TextLabel")
-    pbLabel.Size = UDim2.new(0, 36, 1, 0)
-    pbLabel.Position = UDim2.new(0, 10, 0, 0)
-    pbLabel.BackgroundTransparency = 1
-    pbLabel.Text = "URL"
-    pbLabel.TextColor3 = Theme.TextDim
-    pbLabel.TextSize = 11
-    pbLabel.Font = SelectedFont
-    pbLabel.TextXAlignment = Enum.TextXAlignment.Left
-    pbLabel.Parent = PbRow
-
-    local pbBox = Instance.new("TextBox")
-    pbBox.Name = "GitHubBox"
-    
-    pbBox.Size = UDim2.new(1, -58, 0, 24)
-    pbBox.Position = UDim2.new(0, 46, 0.5, -12)
-    pbBox.BackgroundColor3 = Theme.BgTertiary
-    pbBox.BorderSizePixel = 0
-    pbBox.ClipsDescendants = true
-    pbBox.Text = ""
-    pbBox.PlaceholderText = "github.com/.../config.json"
-    pbBox.TextColor3 = Theme.Text
-    pbBox.PlaceholderColor3 = Theme.TextDim
-    pbBox.TextSize = 11
-    pbBox.Font = SelectedFont
-    pbBox.TextXAlignment = Enum.TextXAlignment.Left
-    pbBox.TextYAlignment = Enum.TextYAlignment.Center
-    pbBox.ClearTextOnFocus = false
-    pbBox.TextWrapped = false
-    pcall(function()
-        pbBox.TextTruncate = Enum.TextTruncate.AtEnd
-    end)
-    pbBox.Parent = PbRow
-    
-    local pbPad = Instance.new("UIPadding")
-    pbPad.PaddingLeft = UDim.new(0, 8)
-    pbPad.PaddingRight = UDim.new(0, 8)
-    pbPad.Parent = pbBox
-    CfgIO.GitHubBox = pbBox
-
-    local PbBtnRow = Instance.new("Frame")
-    PbBtnRow.Name = "GitHubBtnRow"
-    PbBtnRow.Size = UDim2.new(0.96, 0, 0, 36)
-    PbBtnRow.BackgroundTransparency = 1
-    PbBtnRow.BorderSizePixel = 0
-    PbBtnRow.LayoutOrder = 8
-    PbBtnRow.Parent = ResolveUIParent(ConfigsTab)
-
-    local loadPb = Instance.new("TextButton")
-    loadPb.Size = UDim2.new(0, 150, 0, 28)
-    loadPb.Position = UDim2.new(0, 0, 0.5, -14)
-    loadPb.BackgroundColor3 = Theme.Accent
-    loadPb.BorderSizePixel = 0
-    loadPb.Text = ""
-    loadPb.AutoButtonColor = true
-    loadPb.Parent = PbBtnRow
-    local lpc = Instance.new("UIStroke")
-    lpc.Color = Theme.Stroke
-    lpc.Thickness = 1
-    lpc.Transparency = 0.15
-    lpc.Parent = loadPb
-    local ghIcon = Instance.new("ImageLabel")
-    ghIcon.Name = "Icon"
-    ghIcon.BackgroundTransparency = 1
-    ghIcon.Size = UDim2.fromOffset(15, 15)
-    ghIcon.Position = UDim2.new(0, 10, 0.5, -7.5)
-    ghIcon.Image = "rbxassetid://140138081031269"
-    ghIcon.ScaleType = Enum.ScaleType.Fit
-    ghIcon.Parent = loadPb
-    local ghLbl = Instance.new("TextLabel")
-    ghLbl.Name = "Label"
-    ghLbl.BackgroundTransparency = 1
-    ghLbl.Size = UDim2.new(1, -30, 1, 0)
-    ghLbl.Position = UDim2.new(0, 28, 0, 0)
-    ghLbl.Text = "Load from GitHub"
-    ghLbl.TextColor3 = Color3.fromRGB(255, 255, 255)
-    ghLbl.TextSize = 12
-    ghLbl.Font = SelectedFont
-    ghLbl.TextXAlignment = Enum.TextXAlignment.Left
-    ghLbl.TextYAlignment = Enum.TextYAlignment.Center
-    ghLbl.Parent = loadPb
-    pcall(function() TrackThemeAccent(loadPb, "BackgroundColor3") end)
-    loadPb.MouseButton1Click:Connect(function()
-        pcall(function()
-            if CfgIO.LoadFromGitHub then
-                CfgIO.LoadFromGitHub(CfgIO.GitHubBox and CfgIO.GitHubBox.Text)
-            end
-        end)
-    end)
-
-    local hint = Instance.new("TextLabel")
-    hint.Size = UDim2.new(1, -160, 1, 0)
-    hint.Position = UDim2.new(0, 160, 0, 0)
-    hint.BackgroundTransparency = 1
-    hint.Text = "Public GitHub blob/raw JSON link"
-    hint.TextColor3 = Theme.TextDim
-    hint.TextSize = 10
-    hint.Font = SelectedFont
-    hint.TextXAlignment = Enum.TextXAlignment.Left
-    hint.Parent = PbBtnRow
-end
 
 
 
@@ -16515,8 +16512,8 @@ AnxiumPlugin_PublishEnv()
 
 
 LuaIO = {
-    Folder = "AnxiumHubScripts",
-    IndexFile = "AnxiumHubScripts/_index.json",
+    Folder = AnxiumFS.Scripts,
+    IndexFile = AnxiumFS.System .. "/scripts_index.json",
     Scripts = {}, 
     Order = {},
     ListFrame = nil,
@@ -16525,6 +16522,7 @@ LuaIO = {
 }
 
 function LuaIO_EnsureFolder()
+    pcall(AnxiumFS_Ensure)
     pcall(function()
         if typeof(makefolder) == "function" then
             makefolder(LuaIO.Folder)
@@ -16671,14 +16669,19 @@ end
 function LuaIO_ParseAuthorFromSource(source)
     if type(source) ~= "string" or source == "" then return "" end
     local patterns = {
-        "author%s*=%s*[\"']([^\"']+)[\"']",
-        "author%s*=%s*%[%[([^%]]+)%]%]",
+        'RegisterScript%s*%(%s*{.-author%s*=%s*["\']([^"\']+)["\']',
+        'RegisterPlugin%s*%(%s*{.-author%s*=%s*["\']([^"\']+)["\']',
+        'author%s*=%s*["\']([^"\']+)["\']',
+        'Author%s*=%s*["\']([^"\']+)["\']',
+        'author%s*=%s*%[%[([^%]]+)%]%]',
+        '%-%-%s*[Aa]uthor%s*:?%s*([%w_%-%.@]+)',
+        '%-%-%s*by%s+([%w_%-%.@]+)',
     }
     for _, pat in ipairs(patterns) do
         local a = source:match(pat)
         if a and a ~= "" then
             a = a:gsub("^%s+", ""):gsub("%s+$", "")
-            if a ~= "" then return a end
+            if a ~= "" and #a < 64 then return a end
         end
     end
     return ""
@@ -16937,7 +16940,14 @@ function LuaIO_UpdateRow(name)
     local entry = LuaIO.Scripts[name]
     if not entry or not LuaIO.ListFrame then return end
     local running = entry.running == true
-    local dateDisplay, hasAuthor = LuaIO_FormatDateAuthorDisplay(entry.loadedAt, entry.author)
+    local dateDisplay, hasAuthor = (function()
+                local auth = entry.author
+                if (not auth or auth == "") and type(entry.source) == "string" then
+                    auth = LuaIO_ParseAuthorFromSource(entry.source)
+                    if auth and auth ~= "" then entry.author = auth end
+                end
+                return LuaIO_FormatDateAuthorDisplay(entry.loadedAt, auth or entry.author)
+            end)()
     for _, row in ipairs(LuaIO.ListFrame:GetChildren()) do
         if row:IsA("Frame") and row.Name == "LuaScriptRow" then
             local match = false
@@ -16980,33 +16990,76 @@ function LuaIO_UpdateRow(name)
     end
 end
 
-function LuaIO_LoadFromGitHub(url)
-    url = tostring(url or (LuaIO.GitHubBox and LuaIO.GitHubBox.Text) or ""):gsub("^%s+", ""):gsub("%s+$", "")
-    if url == "" then
-        Notify("Scripts", "Enter a GitHub / raw .lua link")
-        return
+function LuaIO_LoadFromGitHub()
+    Notify("Scripts", "GitHub import removed — put .lua in AnxiumHub/scripts")
+end
+
+function LuaIO_ScanLocalFolder()
+    LuaIO_EnsureFolder()
+    LuaIO.Scripts = LuaIO.Scripts or {}
+    LuaIO.Order = LuaIO.Order or {}
+    local found = {}
+    pcall(function()
+        if typeof(listfiles) ~= "function" then return end
+        local files = listfiles(LuaIO.Folder)
+        if type(files) ~= "table" then return end
+        for _, f in ipairs(files) do
+            local base = tostring(f):match("([^/\\]+)$") or tostring(f)
+            if base:sub(1, 1) == "_" then
+            elseif base:lower():match("%.lua$") then
+                local name = base
+                found[name] = true
+                if not LuaIO.Scripts[name] then
+                    local src = nil
+                    pcall(function()
+                        if readfile then src = readfile(f) end
+                    end)
+                    local parsed = ""
+                    if type(src) == "string" and LuaIO_ParseAuthorFromSource then
+                        parsed = LuaIO_ParseAuthorFromSource(src) or ""
+                    end
+                    LuaIO.Scripts[name] = {
+                        name = name,
+                        source = src or "",
+                        running = false,
+                        loadedAt = os.time(),
+                        author = parsed,
+                        url = "",
+                    }
+                elseif not LuaIO.Scripts[name].running then
+                    pcall(function()
+                        if readfile then
+                            local src = readfile(f)
+                            if type(src) == "string" and #src > 0 then
+                                LuaIO.Scripts[name].source = src
+                                if LuaIO_ParseAuthorFromSource then
+                                    local a = LuaIO_ParseAuthorFromSource(src)
+                                    if a and a ~= "" then
+                                        LuaIO.Scripts[name].author = a
+                                    end
+                                end
+                            end
+                        end
+                    end)
+                end
+            end
+        end
+    end)
+    local newOrder, seen = {}, {}
+    for _, n in ipairs(LuaIO.Order) do
+        if found[n] and not seen[n] then
+            newOrder[#newOrder + 1] = n
+            seen[n] = true
+        end
     end
-    local candidates = LuaIO_GithubRawUrls(url)
-    Notify("Scripts", "Downloading...")
-    local body, used = nil, nil
-    for _, u in ipairs(candidates) do
-        body = LuaIO_HttpGet(u)
-        if body then used = u break end
+    for n, _ in pairs(found) do
+        if not seen[n] then
+            newOrder[#newOrder + 1] = n
+            seen[n] = true
+        end
     end
-    if not body then
-        Notify("Scripts", "Download failed (private / bad link)")
-        return
-    end
-    local name = LuaIO_NameFromUrl(used or url)
-    
-    local fromOrig = LuaIO_NameFromUrl(url)
-    if fromOrig and fromOrig ~= "script" then name = fromOrig end
-    LuaIO_AddScript(name, body)
-    if LuaIO.Scripts[name] then
-        LuaIO.Scripts[name].url = used or url
-    end
-    Notify("Scripts", "Added: " .. name)
-    LuaIO_RebuildListUI()
+    LuaIO.Order = newOrder
+    pcall(LuaIO_SaveIndex)
 end
 
 function LuaIO_RebuildListUI()
@@ -17033,7 +17086,7 @@ function LuaIO_RebuildListUI()
         empty.Name = "LuaEmptyLabel"
         empty.Size = UDim2.new(1, -8, 0, 28)
         empty.BackgroundTransparency = 1
-        empty.Text = "No scripts - load from GitHub"
+        empty.Text = "No scripts - put .lua in AnxiumHub/scripts"
         empty.TextColor3 = Theme.TextDim
         empty.TextSize = 12
         empty.Font = SelectedFont
@@ -17100,7 +17153,12 @@ function LuaIO_RebuildListUI()
         dateVal.TextColor3 = accent
         dateVal.TextXAlignment = Enum.TextXAlignment.Left
         do
-            local dateDisplay, hasAuthor = LuaIO_FormatDateAuthorDisplay(entry.loadedAt, entry.author)
+            local auth = entry.author
+            if (not auth or auth == "") and type(entry.source) == "string" and LuaIO_ParseAuthorFromSource then
+                auth = LuaIO_ParseAuthorFromSource(entry.source)
+                if auth and auth ~= "" then entry.author = auth end
+            end
+            local dateDisplay, hasAuthor = LuaIO_FormatDateAuthorDisplay(entry.loadedAt, auth or entry.author)
             dateVal.RichText = hasAuthor == true
             dateVal.Text = dateDisplay
         end
@@ -17189,97 +17247,63 @@ function LuaIO_RebuildListUI()
     end
 end
 
+CreateSectionHeader("- Lua Scripts -", 1, ScriptsTab)
+
 do
-    CreateSectionHeader("- Lua Scripts -", 1, ScriptsTab)
+    local BtnRow = Instance.new("Frame")
+    BtnRow.Name = "LuaLocalBtnRow"
+    BtnRow.Size = UDim2.new(1, -8, 0, 36)
+    BtnRow.BackgroundTransparency = 1
+    BtnRow.LayoutOrder = 2
+    BtnRow.Parent = ResolveUIParent(ScriptsTab)
 
-    local PbRow = Instance.new("Frame")
-    PbRow.Name = "LuaGitHubRow"
-    PbRow.Size = UDim2.new(1, -8, 0, 36)
-    PbRow.BackgroundColor3 = Theme.Card
-    PbRow.BackgroundTransparency = 0
-    PbRow.BorderSizePixel = 0
-    PbRow.ClipsDescendants = true
-    PbRow.LayoutOrder = 2
-    PbRow.Parent = ResolveUIParent(ScriptsTab)
-
-    local pbLabel = Instance.new("TextLabel")
-    pbLabel.Size = UDim2.new(0, 36, 1, 0)
-    pbLabel.Position = UDim2.fromOffset(10, 0)
-    pbLabel.BackgroundTransparency = 1
-    pbLabel.Text = "URL"
-    pbLabel.TextColor3 = Theme.TextDim
-    pbLabel.TextSize = 11
-    pbLabel.Font = SelectedFont
-    pbLabel.TextXAlignment = Enum.TextXAlignment.Left
-    pbLabel.Parent = PbRow
-
-    local pbBox = Instance.new("TextBox")
-    pbBox.Name = "LuaGitHubBox"
-    pbBox.Size = UDim2.new(1, -58, 0, 24)
-    pbBox.Position = UDim2.new(0, 46, 0.5, -12)
-    pbBox.BackgroundTransparency = 1
-    pbBox.BorderSizePixel = 0
-    pbBox.ClipsDescendants = true
-    pbBox.Text = ""
-    pbBox.PlaceholderText = "github.com/.../script.lua"
-    pbBox.TextColor3 = Theme.Text
-    pbBox.PlaceholderColor3 = Theme.TextDim
-    pbBox.TextSize = 11
-    pbBox.Font = SelectedFont
-    pbBox.TextXAlignment = Enum.TextXAlignment.Left
-    pbBox.ClearTextOnFocus = false
-    pbBox.Parent = PbRow
-    LuaIO.GitHubBox = pbBox
-
-    local PbBtnRow = Instance.new("Frame")
-    PbBtnRow.Size = UDim2.new(1, -8, 0, 36)
-    PbBtnRow.BackgroundTransparency = 1
-    PbBtnRow.LayoutOrder = 3
-    PbBtnRow.Parent = ResolveUIParent(ScriptsTab)
-
-    local loadPb = Instance.new("TextButton")
-    loadPb.Size = UDim2.new(0, 150, 0, 28)
-    loadPb.Position = UDim2.new(0, 0, 0.5, -14)
-    loadPb.BackgroundColor3 = Theme.Accent
-    loadPb.BorderSizePixel = 0
-    loadPb.Text = ""
-    loadPb.AutoButtonColor = true
-    loadPb.Parent = PbBtnRow
-    local ghIcon = Instance.new("ImageLabel")
-    ghIcon.BackgroundTransparency = 1
-    ghIcon.Size = UDim2.fromOffset(15, 15)
-    ghIcon.Position = UDim2.new(0, 10, 0.5, -7.5)
-    ghIcon.Image = "rbxassetid://140138081031269"
-    ghIcon.ScaleType = Enum.ScaleType.Fit
-    ghIcon.Parent = loadPb
-    local ghLbl = Instance.new("TextLabel")
-    ghLbl.BackgroundTransparency = 1
-    ghLbl.Size = UDim2.new(1, -30, 1, 0)
-    ghLbl.Position = UDim2.fromOffset(28, 0)
-    ghLbl.Text = "Load from GitHub"
-    ghLbl.TextColor3 = Color3.fromRGB(255, 255, 255)
-    ghLbl.TextSize = 12
-    ghLbl.Font = SelectedFont
-    ghLbl.TextXAlignment = Enum.TextXAlignment.Left
-    ghLbl.Parent = loadPb
-    pcall(function() TrackThemeAccent(loadPb, "BackgroundColor3") end)
-    loadPb.MouseButton1Click:Connect(function()
-        pcall(LuaIO_LoadFromGitHub)
+    local refreshBtn = Instance.new("TextButton")
+    refreshBtn.Size = UDim2.new(0, 120, 0, 30)
+    refreshBtn.Position = UDim2.fromOffset(0, 3)
+    refreshBtn.BackgroundColor3 = Theme.Accent
+    refreshBtn.BorderSizePixel = 0
+    refreshBtn.Text = ""
+    refreshBtn.AutoButtonColor = true
+    refreshBtn.Parent = BtnRow
+    local rIcon = Instance.new("ImageLabel")
+    rIcon.BackgroundTransparency = 1
+    rIcon.Size = UDim2.fromOffset(14, 14)
+    rIcon.Position = UDim2.new(0, 10, 0.5, -7)
+    rIcon.Image = "rbxassetid://75851496262862"
+    rIcon.ScaleType = Enum.ScaleType.Fit
+    rIcon.Parent = refreshBtn
+    local rLbl = Instance.new("TextLabel")
+    rLbl.BackgroundTransparency = 1
+    rLbl.Size = UDim2.new(1, -30, 1, 0)
+    rLbl.Position = UDim2.fromOffset(28, 0)
+    rLbl.Text = "Refresh"
+    rLbl.TextColor3 = Color3.fromRGB(255, 255, 255)
+    rLbl.TextSize = 12
+    rLbl.Font = SelectedFont
+    rLbl.TextXAlignment = Enum.TextXAlignment.Left
+    rLbl.Parent = refreshBtn
+    pcall(function() TrackThemeAccent(refreshBtn, "BackgroundColor3") end)
+    refreshBtn.MouseButton1Click:Connect(function()
+        pcall(LuaIO_ScanLocalFolder)
+        pcall(LuaIO_RebuildListUI)
+        Notify("Scripts", "List refreshed from AnxiumHub/scripts")
     end)
 
     local hint = Instance.new("TextLabel")
-    hint.Size = UDim2.new(1, -160, 1, 0)
-    hint.Position = UDim2.fromOffset(160, 0)
+    hint.Size = UDim2.new(1, -130, 1, 0)
+    hint.Position = UDim2.fromOffset(130, 0)
     hint.BackgroundTransparency = 1
-    hint.Text = "Public GitHub blob/raw .lua link"
+    hint.Text = "Put .lua files in AnxiumHub/scripts"
     hint.TextColor3 = Theme.TextDim
-    hint.TextSize = 10
+    hint.TextSize = 11
     hint.Font = SelectedFont
     hint.TextXAlignment = Enum.TextXAlignment.Left
-    hint.Parent = PbBtnRow
+    hint.Parent = BtnRow
+end
 
-    CreateSectionHeader("- My Scripts -", 4, ScriptsTab)
+CreateSectionHeader("- My Scripts -", 4, ScriptsTab)
 
+do
     local ListRow = Instance.new("Frame")
     ListRow.Name = "LuaListRow"
     ListRow.Size = UDim2.new(1, -8, 0, 220)
@@ -17309,11 +17333,14 @@ do
     pad.PaddingRight = UDim.new(0, 0)
     pad.Parent = scroll
     LuaIO.ListFrame = scroll
+    pcall(LuaIO_ScanLocalFolder)
+    pcall(LuaIO_RebuildListUI)
 end
 
 task.spawn(function()
     task.wait(0.15)
     pcall(LuaIO_LoadIndex)
+    pcall(LuaIO_ScanLocalFolder)
     pcall(LuaIO_RebuildListUI)
 end)
 
@@ -17382,6 +17409,7 @@ function SetMenuOpen(open)
         pcall(function()
             MainFrame.GroupTransparency = 1
         end)
+        pcall(function() AnxiumMenuBorder_SetVisible(false, true) end)
         BlurGradientOverlayGradient.Color = ColorSequence.new(Config.Color_BlurGradientA or Color3.fromRGB(130, 70, 255), Config.Color_BlurGradientB or Color3.fromRGB(180, 140, 255))
         BlurGradientOverlay.Visible = Config.BlurGradientEnabled == true
         BlurGradientOverlay.BackgroundTransparency = 1
@@ -17389,6 +17417,7 @@ function SetMenuOpen(open)
         local fadeIn = TweenInfo.new(0.28, Enum.EasingStyle.Quart, Enum.EasingDirection.Out)
         local menuTrans = math.clamp(tonumber(Config.MenuTransparency) or 0, 0, 0.95)
         PlayMenuTween(MainFrame, fadeIn, {GroupTransparency = menuTrans})
+        pcall(function() AnxiumMenuBorder_Tween(true, fadeIn, PlayMenuTween) end)
         PlayMenuTween(BlurEffect, TweenInfo.new(0.32, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Size = 18})
         if Config.BlurGradientEnabled then
             PlayMenuTween(BlurGradientOverlay, TweenInfo.new(0.32, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {BackgroundTransparency = (Config.BlurGradientTransparency or 0.28)})
@@ -17427,6 +17456,7 @@ function SetMenuOpen(open)
 
         local fadeOut = TweenInfo.new(0.30, Enum.EasingStyle.Quart, Enum.EasingDirection.In)
         PlayMenuTween(MainFrame, fadeOut, {GroupTransparency = 1})
+        pcall(function() AnxiumMenuBorder_Tween(false, fadeOut, PlayMenuTween) end)
         PlayMenuTween(BlurEffect, TweenInfo.new(0.30, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {Size = 0})
         PlayMenuTween(BlurGradientOverlay, TweenInfo.new(0.30, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {BackgroundTransparency = 1})
 
@@ -18532,7 +18562,7 @@ end
 -- When Aspect Ratio is on, camera is stretched each frame AFTER Roblox camera update,
 -- so WorldToViewportPoint matches the stretched view (and 3D Billboards / name tags follow it).
 function WorldToScreen(worldPos)
-    local cam = Workspace.CurrentCamera or Camera
+    local cam = Cache._cam or Workspace.CurrentCamera or Camera
     if not cam then
         return Vector3.new(0, 0, 0), false
     end
@@ -19905,6 +19935,12 @@ RunService.RenderStepped:Connect(function(dt)
     dt = (typeof(dt) == "number" and dt > 0 and dt < 0.1) and dt or 0.016
     Cache._lastDt = dt
     Camera = Workspace.CurrentCamera or Camera
+    Cache._cam = Camera
+    if Camera then
+        local vp0 = Camera.ViewportSize
+        Cache._vpX, Cache._vpY = vp0.X, vp0.Y
+        Cache._screenCenter = Vector2.new(vp0.X * 0.5, vp0.Y * 0.5)
+    end
 
     if not Config then return end
     
@@ -19928,17 +19964,23 @@ RunService.RenderStepped:Connect(function(dt)
     end
 
     -- Aspect Ratio applied in RenderStepped (AnxiumAspectRatio), not here
-    Camera = Workspace.CurrentCamera or Camera
-    local vp = Camera.ViewportSize
-    local screenCenter = Vector2.new(vp.X * 0.5, vp.Y * 0.5)
+    local vp = Camera and Camera.ViewportSize or Vector2.new(Cache._vpX or 1920, Cache._vpY or 1080)
+    local screenCenter = Cache._screenCenter or Vector2.new(vp.X * 0.5, vp.Y * 0.5)
     local myChar = LocalPlayer.Character
     local myHrp = myChar and myChar:FindFirstChild("HumanoidRootPart")
     local myHead = myChar and myChar:FindFirstChild("Head")
 
     local currentTarget = nil
     if Config.AimEnabled or Config.TargetHudEnabled or Config.TargetMarkerEnabled or Config.TargetRingEnabled then
-        if Config.AimEnabled or Config.TargetHudEnabled then
+        if Config.AimEnabled then
             currentTarget = GetClosestPlayerInFOV()
+        elseif Config.TargetHudEnabled then
+            -- HUD target can refresh every other frame (visual only)
+            if (frameN % 2) == 0 or not Cache.AimLockTarget then
+                currentTarget = GetClosestPlayerInFOV()
+            else
+                currentTarget = Cache.AimLockTarget
+            end
         end
     else
         Cache.AimLockTarget = nil
@@ -20188,34 +20230,40 @@ RunService.RenderStepped:Connect(function(dt)
 
             
             local hrpPos = hrp.Position
+            local cam = Cache._cam or Workspace.CurrentCamera or Camera
+            if not cam then hideBox() return end
+            -- cheap early out: if root is far off-screen, skip 8-corner projection
+            local rootSp, rootOn = cam:WorldToViewportPoint(hrpPos)
+            local vpX = Cache._vpX or cam.ViewportSize.X
+            local vpY = Cache._vpY or cam.ViewportSize.Y
+            if rootSp.Z <= 0 then hideBox() return end
+            if rootSp.X < -vpX * 0.35 or rootSp.X > vpX * 1.35 or rootSp.Y < -vpY * 0.35 or rootSp.Y > vpY * 1.35 then
+                hideBox()
+                return
+            end
             local isR15 = char:FindFirstChild("UpperTorso") ~= nil
             local center = hrpPos + Vector3.new(0, isR15 and 0.55 or 0.35, 0)
-            local half = Vector3.new(
-                isR15 and 1.35 or 1.25,
-                isR15 and 3.15 or 2.95,
-                isR15 and 1.35 or 1.25
-            )
+            local hx = isR15 and 1.35 or 1.25
+            local hy = isR15 and 3.15 or 2.95
+            local hz = isR15 and 1.35 or 1.25
 
             local minX, maxX = math.huge, -math.huge
             local minY, maxY = math.huge, -math.huge
             local anyFront = false
             local behindCount = 0
-            local cam = Workspace.CurrentCamera or Camera
-            if not cam then hideBox() return end
-            local vp = cam.ViewportSize
-            local vpX, vpY = vp.X, vp.Y
 
             for ox = -1, 1, 2 do
                 for oy = -1, 1, 2 do
                     for oz = -1, 1, 2 do
-                        local wp = center + Vector3.new(half.X * ox, half.Y * oy, half.Z * oz)
-                        local sp = WorldToScreen(wp)
+                        local wp = center + Vector3.new(hx * ox, hy * oy, hz * oz)
+                        local sp = cam:WorldToViewportPoint(wp)
                         if sp.Z > 0.05 then
                             anyFront = true
-                            if sp.X < minX then minX = sp.X end
-                            if sp.X > maxX then maxX = sp.X end
-                            if sp.Y < minY then minY = sp.Y end
-                            if sp.Y > maxY then maxY = sp.Y end
+                            local sx, sy = sp.X, sp.Y
+                            if sx < minX then minX = sx end
+                            if sx > maxX then maxX = sx end
+                            if sy < minY then minY = sy end
+                            if sy > maxY then maxY = sy end
                         else
                             behindCount = behindCount + 1
                         end
@@ -22802,22 +22850,44 @@ function EnsureGitSoundAsset(key, url, fileName)
         return Cache.FireSoundAssets[key]
     end
     if not url or not fileName then return nil end
+    AnxiumFS_Ensure()
+    local fn = tostring(fileName)
+    local diskPath
+    if fn:find("AnxiumHub/", 1, true) then
+        diskPath = fn
+    else
+        local baseName = fn:match("([^/\\]+)$") or fn
+        diskPath = AnxiumFS_Path("Sounds", baseName)
+    end
+    local baseName = fn:match("([^/\\]+)$") or fn
     local asset = nil
     pcall(function()
         if typeof(getcustomasset) ~= "function" then return end
         local onDisk = false
         if typeof(isfile) == "function" then
-            pcall(function() onDisk = isfile(fileName) == true end)
+            pcall(function() onDisk = isfile(diskPath) == true end)
+            -- migrate from old flat path if present
+            if not onDisk then
+                pcall(function()
+                    if isfile(baseName) then
+                        local okR, data = pcall(readfile, baseName)
+                        if okR and data and #data > 100 and writefile then
+                            pcall(writefile, diskPath, data)
+                            onDisk = true
+                        end
+                    end
+                end)
+            end
         end
         if not onDisk and typeof(writefile) == "function" then
             local ok, body = pcall(function() return game:HttpGet(url) end)
             if ok and type(body) == "string" and #body > 100 then
-                pcall(writefile, fileName, body)
+                pcall(writefile, diskPath, body)
                 onDisk = true
             end
         end
         if onDisk or typeof(isfile) ~= "function" then
-            local okA, a = pcall(function() return getcustomasset(fileName) end)
+            local okA, a = pcall(function() return getcustomasset(diskPath) end)
             if okA and a and a ~= "" then asset = a end
         end
     end)
@@ -23676,37 +23746,66 @@ function ApplyWorldVisuals()
         Cache.NoShadowsWasOn = wantShadow
     end
 
-    local wcOn = Config.WorldColorEnabled and not Config.FullbrightEnabled
+    local wcOn = Config.WorldColorEnabled == true
+        and not Config.FullbrightEnabled
+        and not Config.DarkModeEnabled
+
     if wcOn then
         local col = Config.Color_World or Theme.Accent or Color3.fromRGB(180, 140, 255)
-        local k = math.clamp((tonumber(Config.WorldColorIntensity) or 55) / 100, 0, 1)
-        local sig = string.format("%.3f_%.3f_%.3f_%.2f", col.R, col.G, col.B, k)
+        local intensity = math.clamp((tonumber(Config.WorldColorIntensity) or 55) / 100, 0, 1)
+        local sig = string.format("%.3f_%.3f_%.3f_%.3f", col.R, col.G, col.B, intensity)
+
         if Cache._WorldColorSig == sig and Cache.WorldColorWasOn then
-            return
+            local activeEffect = Cache.WorldColorEffect
+            if activeEffect and activeEffect.Parent == Lighting and activeEffect.Enabled then
+                return
+            end
         end
+
         Cache._WorldColorSig = sig
-        local base = 0.35 + (1 - k) * 0.45
-        local mul = 0.55 + k * 0.55
-        Lighting.Ambient = Color3.new(
-            math.clamp(col.R * mul + base * 0.25, 0, 1),
-            math.clamp(col.G * mul + base * 0.25, 0, 1),
-            math.clamp(col.B * mul + base * 0.25, 0, 1)
-        )
-        Lighting.OutdoorAmbient = Color3.new(
-            math.clamp(col.R * 0.7 + 0.15, 0, 1),
-            math.clamp(col.G * 0.7 + 0.15, 0, 1),
-            math.clamp(col.B * 0.7 + 0.2, 0, 1)
-        )
-        Lighting.ColorShift_Top = col
-        Lighting.ColorShift_Bottom = Color3.new(col.R * 0.55, col.G * 0.55, col.B * 0.65)
+
+        local effect = Cache.WorldColorEffect
+        if not effect or not effect:IsA("ColorCorrectionEffect") or effect.Parent ~= Lighting then
+            effect = Lighting:FindFirstChild("AnxiumWorldColorEffect")
+            if not effect or not effect:IsA("ColorCorrectionEffect") then
+                effect = Instance.new("ColorCorrectionEffect")
+                effect.Name = "AnxiumWorldColorEffect"
+                effect.Parent = Lighting
+            end
+            Cache.WorldColorEffect = effect
+        end
+
+        effect.Enabled = true
+        effect.TintColor = Color3.new(1, 1, 1):Lerp(col, intensity)
+        effect.Saturation = 0.12 * intensity
+        effect.Contrast = 0.04 * intensity
+        effect.Brightness = 0
+
+        local ambientStrength = intensity * 0.25
+        local shiftStrength = intensity * 0.30
+        Lighting.Ambient = LightingDefaults.Ambient:Lerp(col, ambientStrength)
+        Lighting.OutdoorAmbient = LightingDefaults.OutdoorAmbient:Lerp(col, ambientStrength)
+        Lighting.ColorShift_Top = LightingDefaults.ColorShift_Top:Lerp(col, shiftStrength)
+        Lighting.ColorShift_Bottom = LightingDefaults.ColorShift_Bottom:Lerp(col, shiftStrength)
+
         Cache.WorldColorWasOn = true
-    elseif Cache.WorldColorWasOn and not Config.FullbrightEnabled and not Config.DarkModeEnabled then
-        Lighting.Ambient = LightingDefaults.Ambient
-        Lighting.OutdoorAmbient = LightingDefaults.OutdoorAmbient
-        Lighting.ColorShift_Top = LightingDefaults.ColorShift_Top
-        Lighting.ColorShift_Bottom = LightingDefaults.ColorShift_Bottom
-        Cache.WorldColorWasOn = false
-        Cache._WorldColorSig = nil
+    else
+        local effect = Cache.WorldColorEffect
+        if effect and effect.Parent == Lighting then
+            effect.Enabled = false
+        end
+
+        if Cache.WorldColorWasOn and not Config.FullbrightEnabled and not Config.DarkModeEnabled then
+            Lighting.Ambient = LightingDefaults.Ambient
+            Lighting.OutdoorAmbient = LightingDefaults.OutdoorAmbient
+            Lighting.ColorShift_Top = LightingDefaults.ColorShift_Top
+            Lighting.ColorShift_Bottom = LightingDefaults.ColorShift_Bottom
+            Cache.WorldColorWasOn = false
+            Cache._WorldColorSig = nil
+        elseif not Config.WorldColorEnabled then
+            Cache.WorldColorWasOn = false
+            Cache._WorldColorSig = nil
+        end
     end
 end
 
@@ -24027,15 +24126,32 @@ function UV_CreateChamsClone(character, color, fadeDelay, fadeTime, transparency
     
     if not character or not character.Parent then return end
 
-    local materialMode = style or "Chams"
-    if materialMode == "ForceField" then materialMode = "FF" end
+    local materialMode = tostring(style or "Glass")
+    local materialMap = {
+        Glass = Enum.Material.Glass,
+        Ice = Enum.Material.Ice,
+        Metal = Enum.Material.Metal,
+        SmoothPlastic = Enum.Material.SmoothPlastic,
+        Foil = Enum.Material.Foil,
+        Plastic = Enum.Material.Plastic,
+    }
+    local cloneMaterial = materialMap[materialMode] or Enum.Material.Glass
+    if not materialMap[materialMode] then materialMode = "Glass" end
 
-    local fillT = 0.35
-    if materialMode == "Chams" then
-        fillT = math.clamp(tonumber(transparency) or 0.35, 0, 0.9)
-    elseif materialMode == "FF" then
-        fillT = 0.5
+    local materialTransparency = 0
+    local materialReflectance = 0
+    if materialMode == "Glass" then
+        materialTransparency = 0.35
+        materialReflectance = 0.35
+    elseif materialMode == "Ice" then
+        materialTransparency = 0.3
+        materialReflectance = 0.12
+    elseif materialMode == "Metal" then
+        materialReflectance = 0.25
+    elseif materialMode == "Foil" then
+        materialReflectance = 0.35
     end
+    local fillT = math.clamp(tonumber(transparency) or 0.35, 0, 0.9)
 
     local oldArchivable = character.Archivable
     character.Archivable = true
@@ -24090,14 +24206,13 @@ function UV_CreateChamsClone(character, color, fadeDelay, fadeTime, transparency
                     if object.Name == "HumanoidRootPart" then
                         object.Transparency = 1
                     else
-                        if materialMode == "FF" then
-                            object.Material = Enum.Material.ForceField
-                            object.Color = color
-                            object.Transparency = 0
-                            object.Reflectance = 0
-                        else
-                            
-                            object.Transparency = 0
+                        object.Material = cloneMaterial
+                        object.Color = color
+                        object.Transparency = materialTransparency
+                        object.Reflectance = materialReflectance
+                        pcall(function() object.MaterialVariant = "" end)
+                        if object:IsA("MeshPart") then
+                            pcall(function() object.UsePartColor = true end)
                         end
                     end
                 end)
@@ -24122,7 +24237,7 @@ function UV_CreateChamsClone(character, color, fadeDelay, fadeTime, transparency
     highlight.FillColor = color
     highlight.OutlineColor = color
     highlight.FillTransparency = fillT
-    highlight.OutlineTransparency = 0
+    highlight.OutlineTransparency = 1
     highlight.Enabled = true
     highlight.Parent = clone
 
@@ -24153,7 +24268,7 @@ function UV_CreateChamsClone(character, color, fadeDelay, fadeTime, transparency
             highlight.FillColor = color
             highlight.OutlineColor = color
             highlight.FillTransparency = fillT
-            highlight.OutlineTransparency = 0
+            highlight.OutlineTransparency = 1
             highlight.Enabled = true
             highlight.Parent = clone
             lockVisual()
@@ -24187,8 +24302,8 @@ task.spawn(function()
                 local fadeD = cfg.CloneFadeDelay or 1.5
                 local fadeT = cfg.CloneFadeTime or 1.2
                 local trans = cfg.CloneTransparency or 0.35
-                local style = cfg.CloneChamsStyle or "Chams"
-                if style == "ForceField" then style = "FF" end
+                local style = cfg.CloneChamsStyle or "Glass"
+                if style ~= "Glass" and style ~= "Ice" and style ~= "Metal" and style ~= "SmoothPlastic" and style ~= "Foil" and style ~= "Plastic" then style = "Glass" end
                 local list = CachedPlayerList
                 if not list or #list == 0 then list = Players:GetPlayers() end
                 local activeClones = 0
@@ -24236,15 +24351,13 @@ function JumpCircle_GetAsset()
     if Cache.JumpCircleAsset and Cache.JumpCircleAsset ~= "" then
         return Cache.JumpCircleAsset
     end
-    local folder = "AnxiumHubAssets"
+    local folder = AnxiumFS.Assets
     local fileName = "jumpcircle4.png"
     local path = folder .. "/" .. fileName
     local url = "https://raw.githubusercontent.com/AnxiumClient/png/main/jumpcircle4.png"
     local asset = nil
     pcall(function()
-        if typeof(makefolder) == "function" then
-            pcall(makefolder, folder)
-        end
+        pcall(AnxiumFS_Ensure)
         local bytes = nil
         if typeof(isfile) == "function" and typeof(readfile) == "function" and isfile(path) then
             bytes = readfile(path)
@@ -24278,15 +24391,13 @@ function UV_GetArrowAsset()
     if Cache.ArrowImageAsset and Cache.ArrowImageAsset ~= "" then
         return Cache.ArrowImageAsset
     end
-    local folder = "AnxiumHubAssets"
+    local folder = AnxiumFS.Assets
     local fileName = "arrow_offscreen_bddc6278.png"
     local path = folder .. "/" .. fileName
     local url = "https://raw.githubusercontent.com/AnxiumClient/png/main/bddc6278-be75-4d8d-97de-51608d76237d.png"
     local asset = nil
     pcall(function()
-        if typeof(makefolder) == "function" then
-            pcall(makefolder, folder)
-        end
+        pcall(AnxiumFS_Ensure)
         local bytes = nil
         if typeof(isfile) == "function" and typeof(readfile) == "function" and isfile(path) then
             bytes = readfile(path)
@@ -24717,7 +24828,7 @@ function UV_CreateKillDissolve(character)
     glow.FillColor = glowCol
     glow.OutlineColor = glowCol
     glow.FillTransparency = 0.3
-    glow.OutlineTransparency = 0.05
+    glow.OutlineTransparency = 1
     glow.DepthMode = Enum.HighlightDepthMode.Occluded
     glow.Parent = clone
 
@@ -24831,7 +24942,7 @@ function UV_CreateKillDissolve(character)
             end
             local ease = a * a
             glow.FillTransparency = 0.3 + ease * 0.7
-            glow.OutlineTransparency = 0.05 + ease * 0.95
+            glow.OutlineTransparency = 1
             for _, e in ipairs(entries) do
                 local p = e.part
                 if p and p.Parent then
@@ -24916,8 +25027,8 @@ function UV_SetupDeath(player)
             local root = character:FindFirstChild("HumanoidRootPart") or character.PrimaryPart
             local position = root and root.Position or character:GetPivot().Position
             if cfg.DeathChamsEnabled then
-                local dStyle = cfg.DeathChamsStyle or "Chams"
-                if dStyle == "ForceField" then dStyle = "FF" end
+                local dStyle = cfg.DeathChamsStyle or "Glass"
+                if dStyle ~= "Glass" and dStyle ~= "Ice" and dStyle ~= "Metal" and dStyle ~= "SmoothPlastic" and dStyle ~= "Foil" and dStyle ~= "Plastic" then dStyle = "Glass" end
                 pcall(UV_CreateChamsClone,
                     character,
                     cfg.Color_DeathChams or Color3.fromRGB(255, 170, 40),
@@ -25804,42 +25915,21 @@ Players.PlayerRemoving:Connect(function(p)
 end)
 
 task.spawn(function()
-    local hasWrite = typeof(writefile) == "function"
-    local hasGetCustom = typeof(getcustomasset) == "function"
-
-    if not hasWrite or not hasGetCustom then return end
-
-    local hasIsfile = typeof(isfile) == "function"
+    pcall(AnxiumFS_Ensure)
+    if typeof(getcustomasset) ~= "function" then return end
     local loaded = 0
-    local downloaded = 0
-
-    for name, data in pairs(FIRE_SOUND_FILES) do
-        local alreadyOnDisk = false
-        if hasIsfile then
-            pcall(function() alreadyOnDisk = isfile(data.file) end)
-        end
-
-        if alreadyOnDisk then
-            local okAsset, asset = pcall(function() return getcustomasset(data.file) end)
-            if okAsset and asset then
-                Cache.FireSoundAssets[name] = asset
-                loaded = loaded + 1
-            end
-        else
-            local okHttp, body = pcall(function() return game:HttpGet(data.url) end)
-            if okHttp and body and #body > 0 then
-                if pcall(writefile, data.file, body) then
-                    local okAsset, asset = pcall(function() return getcustomasset(data.file) end)
-                    if okAsset and asset then
-                        Cache.FireSoundAssets[name] = asset
-                        loaded = loaded + 1
-                        downloaded = downloaded + 1
-                    end
-                end
-            end
+    for name, data in pairs(FIRE_SOUND_FILES or {}) do
+        if data and data.url and data.file then
+            local asset = EnsureGitSoundAsset(name, data.url, data.file)
+            if asset then loaded = loaded + 1 end
         end
     end
-
+    -- scope sound into sounds folder too
+    pcall(function()
+        if SCOPE_SOUND_URL and SCOPE_SOUND_FILE then
+            EnsureGitSoundAsset("ScopeADS", SCOPE_SOUND_URL, SCOPE_SOUND_FILE)
+        end
+    end)
     if loaded > 0 then
         Cache.FireSoundsReady = true
     end
@@ -27547,7 +27637,7 @@ end)()
 
 ;(function()
     local STAR_URL = "https://raw.githubusercontent.com/AnxiumClient/png/main/israilIZBest.png"
-    local STAR_FILE = "Anxium_snow_particle.png"
+    local STAR_FILE = AnxiumFS_Path("Assets", "snow_particle.png")
     local starAsset, folder, particles, idx = nil, nil, {}, 1
     local groundCache, groundCacheT = {}, 0
     local rayParams = RaycastParams.new()
