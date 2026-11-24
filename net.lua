@@ -25503,7 +25503,8 @@ function AnxiumLog_AttachLifeBar(card, holdSec, accentCol)
         accentCol = Color3.fromRGB(120, 220, 140)
     end
 
-    local barH = 3
+    -- fill the full bottom gap between outer border line and inner outline line (inset 5)
+    local barH = 5
     local baseH = card.Size.Y.Offset
     if baseH < 42 then
         card.Size = UDim2.new(card.Size.X.Scale, card.Size.X.Offset, 0, math.max(baseH, 40) + 4)
@@ -25512,8 +25513,8 @@ function AnxiumLog_AttachLifeBar(card, holdSec, accentCol)
     local track = Instance.new("Frame")
     track.Name = "LogLifeTrack"
     track.AnchorPoint = Vector2.new(0, 1)
-    track.Position = UDim2.new(0, 4, 1, -3)
-    track.Size = UDim2.new(1, -8, 0, barH)
+    track.Position = UDim2.new(0, 5, 1, 0)
+    track.Size = UDim2.new(1, -10, 0, barH)
     track.BackgroundColor3 = Color3.fromRGB(8, 10, 12)
     track.BackgroundTransparency = 0.15
     track.BorderSizePixel = 0
