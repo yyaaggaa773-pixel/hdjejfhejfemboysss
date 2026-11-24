@@ -1353,8 +1353,9 @@ Notify = function(title, message, duration)
     Card.Size = UDim2.new(0, 268, 0, 52)
     Card.BackgroundColor3 = Theme.Bg or Color3.fromRGB(14, 14, 16)
     Card.BackgroundTransparency = 0
-    Card.BorderSizePixel = 0
-    Card.ClipsDescendants = true
+    Card.BorderSizePixel = 2
+    Card.BorderColor3 = Color3.fromRGB(0, 0, 0)
+    Card.ClipsDescendants = false
     Card.GroupTransparency = 1
 
     local IconBg = Instance.new("Frame")
@@ -1391,6 +1392,7 @@ Notify = function(title, message, duration)
     TitleLbl.TextTruncate = Enum.TextTruncate.AtEnd
     TitleLbl.Text = title
     TitleLbl.TextTransparency = 0
+    TitleLbl.TextStrokeTransparency = 1
     TitleLbl.Parent = Card
     pcall(function() TrackThemeAccent(TitleLbl, "TextColor3") end)
 
@@ -1407,6 +1409,7 @@ Notify = function(title, message, duration)
     MsgLbl.TextTruncate = Enum.TextTruncate.AtEnd
     MsgLbl.Text = message
     MsgLbl.TextTransparency = 0.12
+    MsgLbl.TextStrokeTransparency = 1
     MsgLbl.Parent = Card
 
     Card.Parent = NotifContainer
@@ -1416,20 +1419,28 @@ Notify = function(title, message, duration)
         elseif AnxiumAttachMenuStyleBorder then
             AnxiumAttachMenuStyleBorder(Card)
         end
+        if AnxiumLog_SetBorderVisible then
+            AnxiumLog_SetBorderVisible(Card, false)
+        end
     end)
 
-    
-    
-    
     local tiIn = TweenInfo.new(0.28, Enum.EasingStyle.Quart, Enum.EasingDirection.Out)
-    TweenService:Create(Card, tiIn, { GroupTransparency = 0 }):Play()
+    pcall(function()
+        TweenService:Create(Card, tiIn, { GroupTransparency = 0 }):Play()
+        if AnxiumLog_TweenBorder then
+            AnxiumLog_TweenBorder(Card, tiIn, true)
+        end
+    end)
 
     task.delay(duration, function()
         if not Card or not Card.Parent then return end
-        
-        
         local tiOut = TweenInfo.new(0.30, Enum.EasingStyle.Quart, Enum.EasingDirection.In)
-        TweenService:Create(Card, tiOut, { GroupTransparency = 1 }):Play()
+        pcall(function()
+            TweenService:Create(Card, tiOut, { GroupTransparency = 1 }):Play()
+            if AnxiumLog_TweenBorder then
+                AnxiumLog_TweenBorder(Card, tiOut, false)
+            end
+        end)
         task.wait(0.31)
         pcall(function() Card:Destroy() end)
     end)
@@ -25462,12 +25473,24 @@ end
 function AnxiumLog_SetBorderVisible(card, visible)
     if not card then return end
     local target = visible and 0 or 1
+    pcall(function()
+        card.BorderSizePixel = 2
+        card.BorderColor3 = Color3.fromRGB(0, 0, 0)
+    end)
     for _, d in ipairs(card:GetDescendants()) do
         if d:IsA("UIStroke") then
             d.Transparency = target
+            if d.Name == "AnxiumHudStroke" then
+                d.Color = Color3.fromRGB(68, 68, 68)
+            elseif d.Name == "HudInnerStroke" then
+                d.Color = Color3.fromRGB(0, 0, 0)
+            end
         elseif d:IsA("Frame") then
             local n = tostring(d.Name)
-            if n:find("HudBorderGap", 1, true) == 1
+            if n == "HudInnerOutline" then
+                d.BorderSizePixel = 2
+                d.BorderColor3 = Color3.fromRGB(68, 68, 68)
+            elseif n:find("HudBorderGap", 1, true) == 1
                 or n:find("HudEdge", 1, true) == 1
                 or n:find("HudInnerEdge", 1, true) == 1 then
                 d.BackgroundTransparency = target
@@ -25497,13 +25520,18 @@ end
 
 function AnxiumLog_PlayAppear(card)
     if not card then return end
-    
-    
-    
     card.GroupTransparency = 1
+    pcall(function()
+        if AnxiumLog_SetBorderVisible then
+            AnxiumLog_SetBorderVisible(card, false)
+        end
+    end)
     local tiIn = TweenInfo.new(0.28, Enum.EasingStyle.Quart, Enum.EasingDirection.Out)
     pcall(function()
         TweenService:Create(card, tiIn, { GroupTransparency = 0 }):Play()
+        if AnxiumLog_TweenBorder then
+            AnxiumLog_TweenBorder(card, tiIn, true)
+        end
     end)
 end
 
@@ -25554,6 +25582,9 @@ function AnxiumLog_AttachLifeBar(card, holdSec, accentCol)
                 
                 local tiOut = TweenInfo.new(0.30, Enum.EasingStyle.Quart, Enum.EasingDirection.In)
                 TweenService:Create(card, tiOut, { GroupTransparency = 1 }):Play()
+                if AnxiumLog_TweenBorder then
+                    AnxiumLog_TweenBorder(card, tiOut, false)
+                end
             end)
             task.delay(0.31, function()
                 if card and card.Parent then
@@ -25614,7 +25645,9 @@ function ShowKillLog(killerName, victimName)
     card.Size = UDim2.new(0, 380, 0, 40)
     card.BackgroundColor3 = Color3.fromRGB(12, 14, 18)
     card.BackgroundTransparency = 0
-    card.BorderSizePixel = 0
+    card.BorderSizePixel = 2
+    card.BorderColor3 = Color3.fromRGB(0, 0, 0)
+    card.ClipsDescendants = false
     card.GroupTransparency = 1
     card.LayoutOrder = order
     card.ZIndex = 51
@@ -25659,6 +25692,8 @@ function ShowKillLog(killerName, victimName)
             else
                 l.Font = SelectedFont or Enum.Font.Code
             end
+            l.TextStrokeTransparency = 1
+            l.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
         end)
         return l
     end
@@ -25686,7 +25721,9 @@ function ShowHitLog(victimName, bodyPart, damage)
     card.Size = UDim2.new(0, 380, 0, 40)
     card.BackgroundColor3 = Color3.fromRGB(12, 14, 18)
     card.BackgroundTransparency = 0
-    card.BorderSizePixel = 0
+    card.BorderSizePixel = 2
+    card.BorderColor3 = Color3.fromRGB(0, 0, 0)
+    card.ClipsDescendants = false
     card.GroupTransparency = 1
     card.LayoutOrder = order
     card.ZIndex = 51
@@ -25731,6 +25768,8 @@ function ShowHitLog(victimName, bodyPart, damage)
             else
                 l.Font = SelectedFont or Enum.Font.Code
             end
+            l.TextStrokeTransparency = 1
+            l.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
         end)
         return l
     end
