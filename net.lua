@@ -6914,56 +6914,16 @@ function OpenRGBPicker(currentColor, onApply, previewBtn)
         ColorPickerFrame.Size = UDim2.new(0, 230, 0, 228)
         ColorPickerFrame.Position = UDim2.new(0.5, -115, 0.5, -114)
         ColorPickerFrame.BackgroundColor3 = Color3.fromRGB(22, 22, 26)
-        ColorPickerFrame.BorderSizePixel = 0
+        ColorPickerFrame.BorderSizePixel = 2
+        ColorPickerFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
         ColorPickerFrame.ZIndex = 400
-        ColorPickerFrame.ClipsDescendants = true
+        ColorPickerFrame.ClipsDescendants = false
         ColorPickerFrame.Parent = ScreenGui
-        local pc = Instance.new("UICorner")
-        pc.CornerRadius = UDim.new(0, 0)
-        pc.Parent = ColorPickerFrame
-
-        do
-            local outer = Instance.new("UIStroke")
-            outer.Name = "PickerOuterStroke"
-            outer.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-            outer.LineJoinMode = Enum.LineJoinMode.Miter
-            outer.Thickness = 1.25
-            outer.Color = Color3.fromRGB(0, 0, 0)
-            outer.Transparency = 0
-            outer.Parent = ColorPickerFrame
-            local gapColor = Color3.fromRGB(18, 18, 22)
-            local gapW = 3
-            local function edge(name, pos, size)
-                local f = Instance.new("Frame")
-                f.Name = name
-                f.BackgroundColor3 = gapColor
-                f.BorderSizePixel = 0
-                f.ZIndex = 401
-                f.Position = pos
-                f.Size = size
-                f.Parent = ColorPickerFrame
-                return f
+        pcall(function()
+            if AnxiumAttachMenuStyleBorder then
+                AnxiumAttachMenuStyleBorder(ColorPickerFrame)
             end
-            edge("PickerGapTop", UDim2.fromOffset(1, 1), UDim2.new(1, -2, 0, gapW))
-            edge("PickerGapBottom", UDim2.new(0, 1, 1, -(gapW + 1)), UDim2.new(1, -2, 0, gapW))
-            edge("PickerGapLeft", UDim2.fromOffset(1, 1 + gapW), UDim2.new(0, gapW, 1, -(2 + gapW * 2)))
-            edge("PickerGapRight", UDim2.new(1, -(gapW + 1), 0, 1 + gapW), UDim2.new(0, gapW, 1, -(2 + gapW * 2)))
-            local inner = Instance.new("Frame")
-            inner.Name = "PickerInnerOutline"
-            inner.Position = UDim2.fromOffset(4, 4)
-            inner.Size = UDim2.new(1, -8, 1, -8)
-            inner.BackgroundTransparency = 1
-            inner.BorderSizePixel = 0
-            inner.ZIndex = 402
-            inner.Parent = ColorPickerFrame
-            local ist = Instance.new("UIStroke")
-            ist.Name = "PickerInnerStroke"
-            ist.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-            ist.LineJoinMode = Enum.LineJoinMode.Miter
-            ist.Thickness = 1.25
-            ist.Color = Color3.fromRGB(0, 0, 0)
-            ist.Parent = inner
-        end
+        end)
 
         local satFrame = Instance.new("TextButton")
         satFrame.Name = "SatFrame"
