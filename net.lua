@@ -297,6 +297,7 @@ Config = {
     NameEspFillEnabled = false,
     Color_NameEspFill = Color3.fromRGB(0, 0, 0),
     NameEspFillCorner = 4,
+    EspMaxDistance = 700,
     DistanceEspEnabled = false,
     DistanceEspPosition = "Top",
     DistanceEspGradientEnabled = false,
@@ -374,6 +375,10 @@ Config = {
     BindListEnabled = false,
     ActiveListTransparency = 0.05,
     BindListTransparency = 0.05,
+    ActiveListWidth = 180,
+    ActiveListHeight = 148,
+    BindListWidth = 180,
+    BindListHeight = 148,
     MenuKey = "RightShift", 
     MenuFont = "Ubuntu",
     MenuTransparency = 0,
@@ -382,6 +387,7 @@ Config = {
     MenuSoundPack = 1,
     WatermarkPosition = "Center",
     HideWatermarkEnabled = false,
+    NotifyEnabled = true,
     WatermarkCustomPos = false,
     WatermarkPosXScale = 0.5,
     WatermarkPosXOffset = 0,
@@ -599,6 +605,11 @@ Config = {
     AntiAimManualArrowsEnabled = false,
     AntiAimManualArrowSize = 28,
     AntiAimManualArrowGap = 42,
+    AntiAimManualArrowTransparency = 0,
+    Color_AAManualArrow = Color3.fromRGB(180, 140, 255),
+    Color_AAManualArrowActive = Color3.fromRGB(255, 255, 255),
+    AntiAimRandomManualEnabled = false,
+    AntiAimRandomManualMs = 120,
     AntiAimJitter = 35,
     AntiAimSpinSpeed = 720,
     AntiAimTPRadius = 5,  
@@ -622,6 +633,8 @@ Config = {
     KillFlashEnabled = false,
     KillLogsEnabled = false,
     HitLogsEnabled = false,
+    Color_KillLog = Color3.fromRGB(180, 140, 255),
+    Color_HitLog = Color3.fromRGB(180, 140, 255),
     KillFlashDuration = 0.85,
     Color_KillFlash = Color3.fromRGB(255, 255, 255),
     KillLightningEnabled = false,
@@ -919,6 +932,149 @@ function AnxiumAttachAnimatedHudStroke(frame)
     return st
 end
 
+function Anxium_SaveListSize(prefix, frame)
+    if not frame or not Config then return end
+    local sz = frame.AbsoluteSize
+    local w = math.floor(sz.X + 0.5)
+    local h = math.floor(sz.Y + 0.5)
+    w = math.clamp(w, 120, 480)
+    h = math.clamp(h, 80, 520)
+    if prefix == "ActiveList" then
+        Config.ActiveListWidth = w
+        Config.ActiveListHeight = h
+    elseif prefix == "BindList" then
+        Config.BindListWidth = w
+        Config.BindListHeight = h
+    end
+end
+
+function Anxium_ApplyListSize(prefix, frame)
+    if not frame or not Config then return end
+    local w, h = 180, 148
+    if prefix == "ActiveList" then
+        w = math.clamp(math.floor(tonumber(Config.ActiveListWidth) or 180), 120, 480)
+        h = math.clamp(math.floor(tonumber(Config.ActiveListHeight) or 148), 80, 520)
+    elseif prefix == "BindList" then
+        w = math.clamp(math.floor(tonumber(Config.BindListWidth) or 180), 120, 480)
+        h = math.clamp(math.floor(tonumber(Config.BindListHeight) or 148), 80, 520)
+    end
+    frame.Size = UDim2.fromOffset(w, h)
+end
+
+function AnxiumMakeResizeHandle(frame, prefix)
+    if not frame then return end
+    local old = frame:FindFirstChild("AnxiumResizeHandle")
+    if old then old:Destroy() end
+    local handle = Instance.new("TextButton")
+    handle.Name = "AnxiumResizeHandle"
+    handle.Size = UDim2.fromOffset(16, 16)
+    handle.Position = UDim2.new(1, -16, 1, -16)
+    handle.BackgroundColor3 = Color3.fromRGB(40, 40, 48)
+    handle.BackgroundTransparency = 0.35
+    handle.BorderSizePixel = 0
+    handle.Text = ""
+    handle.AutoButtonColor = false
+    handle.ZIndex = (frame.ZIndex or 1) + 20
+    handle.Parent = frame
+    local c = Instance.new("UICorner")
+    c.CornerRadius = UDim.new(0, 3)
+    c.Parent = handle
+    local dragging = false
+    local start = Vector2.zero
+    local startSize = Vector2.zero
+    handle.InputBegan:Connect(function(input)
+        if input.UserInputType ~= Enum.UserInputType.MouseButton1 and input.UserInputType ~= Enum.UserInputType.Touch then return end
+        dragging = true
+        start = Vector2.new(input.Position.X, input.Position.Y)
+        startSize = Vector2.new(frame.AbsoluteSize.X, frame.AbsoluteSize.Y)
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                dragging = false
+                Anxium_SaveListSize(prefix, frame)
+            end
+        end)
+    end)
+    UserInputService.InputChanged:Connect(function(input)
+        if not dragging then return end
+        if input.UserInputType ~= Enum.UserInputType.MouseMovement and input.UserInputType ~= Enum.UserInputType.Touch then return end
+        local delta = Vector2.new(input.Position.X, input.Position.Y) - start
+        local w = math.clamp(math.floor(startSize.X + delta.X + 0.5), 120, 480)
+        local h = math.clamp(math.floor(startSize.Y + delta.Y + 0.5), 80, 520)
+        frame.Size = UDim2.fromOffset(w, h)
+    end)
+    return handle
+end
+
+function AnxiumAttachLogCardBorder(frame)
+    return AnxiumAttachMenuStyleBorder(frame)
+end
+
+function AnxiumAttachMenuStyleBorder(frame)
+    if not frame then return end
+    pcall(function()
+        local old = frame:FindFirstChild("AnxiumHudStroke")
+        if old then old:Destroy() end
+        for _, ch in ipairs(frame:GetChildren()) do
+            local n = tostring(ch.Name)
+            if n == "HudInnerOutline" or n == "MainInnerOutline"
+                or n:find("HudBorderGap", 1, true) == 1
+                or n:find("MainBorderGap", 1, true) == 1
+                or n:find("HudEdge", 1, true) == 1
+                or n:find("HudInnerEdge", 1, true) == 1 then
+                ch:Destroy()
+            end
+        end
+        for _, ch in ipairs(frame:GetChildren()) do
+            if ch:IsA("UIStroke") and (ch.Name == "MainStroke" or ch.Name == "AnxiumHudStroke" or ch.Name == "WatermarkStroke") then
+                ch:Destroy()
+            end
+        end
+        local c = frame:FindFirstChildOfClass("UICorner")
+        if c then c:Destroy() end
+    end)
+
+    -- NeverFix / samet UI border:
+    -- outer BorderSize 2 black + UIStroke gray (68,68,68)
+    -- inner inset 5 with BorderSize 2 gray + UIStroke black
+    local outlineCol = Color3.fromRGB(0, 0, 0)
+    local borderCol = Color3.fromRGB(68, 68, 68)
+
+    pcall(function()
+        frame.BorderSizePixel = 2
+        frame.BorderColor3 = outlineCol
+    end)
+
+    local outer = Instance.new("UIStroke")
+    outer.Name = "AnxiumHudStroke"
+    outer.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+    outer.LineJoinMode = Enum.LineJoinMode.Miter
+    outer.Thickness = 1
+    outer.Color = borderCol
+    outer.Transparency = 0
+    outer.Parent = frame
+
+    local inner = Instance.new("Frame")
+    inner.Name = "HudInnerOutline"
+    inner.Position = UDim2.fromOffset(5, 5)
+    inner.Size = UDim2.new(1, -10, 1, -10)
+    inner.BackgroundTransparency = 1
+    inner.BorderSizePixel = 2
+    inner.BorderColor3 = borderCol
+    inner.ZIndex = (frame.ZIndex or 1) + 6
+    inner.Parent = frame
+
+    local ist = Instance.new("UIStroke")
+    ist.Name = "HudInnerStroke"
+    ist.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+    ist.LineJoinMode = Enum.LineJoinMode.Miter
+    ist.Thickness = 1
+    ist.Color = outlineCol
+    ist.Transparency = 0
+    ist.Parent = inner
+
+    return outer
+end
+
 function AnxiumHudStrokes_UpdateTheme()
     local list = Cache.HudAnimatedStrokes
     if not list then return end
@@ -1173,7 +1329,7 @@ end
 NotifContainer = Instance.new("Frame")
 NotifContainer.Name = "NotifContainer"
 NotifContainer.Size = UDim2.new(0, 280, 1, -24)
-NotifContainer.Position = UDim2.new(1, -296, 0, 12)
+NotifContainer.Position = UDim2.new(1, -316, 0, 12)
 NotifContainer.BackgroundTransparency = 1
 NotifContainer.Parent = ScreenGui
 
@@ -1185,15 +1341,18 @@ NotifLayout.Padding = UDim.new(0, 8)
 NotifLayout.Parent = NotifContainer
 
 Notify = function(title, message, duration)
+    if Config and Config.NotifyEnabled == false then
+        return
+    end
     duration = duration or 2.6
     title = tostring(title or "Anxium")
     message = tostring(message or "")
 
     local Card = Instance.new("CanvasGroup")
     Card.Name = "NotifCard"
-    Card.Size = UDim2.new(0, 268, 0, 48)
-    Card.BackgroundColor3 = Theme.BgSecondary or Color3.fromRGB(20, 22, 28)
-    Card.BackgroundTransparency = 0.08
+    Card.Size = UDim2.new(0, 268, 0, 52)
+    Card.BackgroundColor3 = Theme.Bg or Color3.fromRGB(14, 14, 16)
+    Card.BackgroundTransparency = 0
     Card.BorderSizePixel = 0
     Card.ClipsDescendants = true
     Card.GroupTransparency = 1
@@ -1251,12 +1410,24 @@ Notify = function(title, message, duration)
     MsgLbl.Parent = Card
 
     Card.Parent = NotifContainer
+    pcall(function()
+        if AnxiumAttachLogCardBorder then
+            AnxiumAttachLogCardBorder(Card)
+        elseif AnxiumAttachMenuStyleBorder then
+            AnxiumAttachMenuStyleBorder(Card)
+        end
+    end)
 
+    
+    
+    
     local tiIn = TweenInfo.new(0.28, Enum.EasingStyle.Quart, Enum.EasingDirection.Out)
     TweenService:Create(Card, tiIn, { GroupTransparency = 0 }):Play()
 
     task.delay(duration, function()
         if not Card or not Card.Parent then return end
+        
+        
         local tiOut = TweenInfo.new(0.30, Enum.EasingStyle.Quart, Enum.EasingDirection.In)
         TweenService:Create(Card, tiOut, { GroupTransparency = 1 }):Play()
         task.wait(0.31)
@@ -1272,12 +1443,13 @@ ActiveListFrame.Size = UDim2.new(0, HUD_W, 0, HUD_H)
 ActiveListFrame.Position = UDim2.new(0, 16, 0.38, -100)
 ActiveListFrame.BackgroundColor3 = Theme.Bg
 ActiveListFrame.BackgroundTransparency = tonumber(Config.ActiveListTransparency) or 0.05
-ActiveListFrame.BorderSizePixel = 0
-ActiveListFrame.ClipsDescendants = true
+ActiveListFrame.BorderSizePixel = 2
+ActiveListFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
+ActiveListFrame.ClipsDescendants = false
 ActiveListFrame.Visible = Config.ActiveListEnabled == true
 ActiveListFrame.Parent = ScreenGui
 do
-    AnxiumAttachAnimatedHudStroke(ActiveListFrame)
+    AnxiumAttachMenuStyleBorder(ActiveListFrame)
 end
 
 ActiveHeader = Instance.new("Frame")
@@ -1320,7 +1492,7 @@ ActiveContainer.Position = UDim2.new(0, 0, 0, 28)
 ActiveContainer.BackgroundColor3 = Theme.BgSecondary
 ActiveContainer.BackgroundTransparency = 0.15
 ActiveContainer.BorderSizePixel = 0
-ActiveContainer.ScrollBarThickness = 3
+ActiveContainer.ScrollBarThickness = 0
 ActiveContainer.ScrollBarImageColor3 = Theme.Accent
 ActiveContainer.CanvasSize = UDim2.new(0, 0, 0, 0)
 ActiveContainer.AutomaticCanvasSize = Enum.AutomaticSize.Y
@@ -1334,13 +1506,16 @@ ActiveLayout.Parent = ActiveContainer
 do
     local pad = Instance.new("UIPadding")
     pad.PaddingLeft = UDim.new(0, 10)
+    pad.PaddingRight = UDim.new(0, 14)
     pad.PaddingTop = UDim.new(0, 4)
-    pad.PaddingBottom = UDim.new(0, 4)
+    pad.PaddingBottom = UDim.new(0, 10)
     pad.Parent = ActiveContainer
 end
 
 MakeDraggable(ActiveListFrame, ActiveHeader, function(fr) Anxium_SaveFramePos("ActiveList", fr) end)
 Anxium_ApplyFramePos("ActiveList", ActiveListFrame, UDim2.new(0, 16, 0.38, -100))
+pcall(Anxium_ApplyListSize, "ActiveList", ActiveListFrame)
+pcall(AnxiumMakeResizeHandle, ActiveListFrame, "ActiveList")
 
 FeatureNamesMapping = {
     BoxEspEnabled = "2D Box ESP",
@@ -1365,6 +1540,7 @@ FeatureNamesMapping = {
     FovDynamicEnabled = "FOV Dynamic",
     AntiAimResolveEnabled = "AA Shoot Resolve",
     AntiAimRandomPitchEnabled = "AA Random Pitch",
+    AntiAimRandomManualEnabled = "AA Random Manual",
     AntiAimRandomYawEnabled = "AA Random Yaw",
     SilentV2FovDynamicEnabled = "Silent FOV Dynamic",
     FullbrightEnabled = "Fullbright",
@@ -1455,6 +1631,7 @@ FeatureNamesMapping = {
     ActiveListEnabled = "Active Modules HUD",
     BindListEnabled = "Binds HUD",
     HideWatermarkEnabled = "Hide Watermark",
+    NotifyEnabled = "Notify",
     FakeFpsEnabled = "Fake FPS",
 }
 
@@ -1469,9 +1646,27 @@ function ApplyHudPanelTransparency()
         if container then
             container.BackgroundTransparency = math.clamp(0.15 + amount * 0.7, 0.15, 0.95)
         end
-        local stroke = frame:FindFirstChild("MenuStroke")
-        if stroke and stroke:IsA("UIStroke") then
-            stroke.Transparency = math.clamp(0.35 + amount * 0.5, 0.35, 0.92)
+        local borderT = math.clamp(amount * 0.25, 0, 0.5)
+        pcall(function()
+            frame.BorderSizePixel = 2
+            frame.BorderColor3 = Color3.fromRGB(0, 0, 0)
+        end)
+        for _, ch in ipairs(frame:GetChildren()) do
+            local n = tostring(ch.Name)
+            if ch:IsA("UIStroke") and (n == "AnxiumHudStroke" or n == "MenuStroke") then
+                ch.Transparency = borderT
+                ch.Color = Color3.fromRGB(68, 68, 68)
+            elseif ch:IsA("Frame") and n:find("HudBorderGap", 1, true) == 1 then
+                ch.BackgroundTransparency = borderT
+            elseif ch:IsA("Frame") and n == "HudInnerOutline" then
+                ch.BorderSizePixel = 2
+                ch.BorderColor3 = Color3.fromRGB(68, 68, 68)
+                local ist = ch:FindFirstChild("HudInnerStroke")
+                if ist and ist:IsA("UIStroke") then
+                    ist.Transparency = borderT
+                    ist.Color = Color3.fromRGB(0, 0, 0)
+                end
+            end
         end
     end
     pcall(function()
@@ -1507,7 +1702,7 @@ UpdateActiveList = function()
             lbl.Parent = ActiveContainer
         end
     end
-    ActiveListFrame.Size = UDim2.new(0, HUD_W or 180, 0, HUD_H or 148)
+    pcall(Anxium_ApplyListSize, "ActiveList", ActiveListFrame)
 end
 
 Config.Keybinds = Config.Keybinds or {}
@@ -1760,12 +1955,13 @@ BindListFrame.Size = UDim2.new(0, HUD_W, 0, HUD_H)
 BindListFrame.Position = UDim2.new(0, 16, 0.38, 80)
 BindListFrame.BackgroundColor3 = Theme.Bg
 BindListFrame.BackgroundTransparency = tonumber(Config.BindListTransparency) or 0.05
-BindListFrame.BorderSizePixel = 0
-BindListFrame.ClipsDescendants = true
+BindListFrame.BorderSizePixel = 2
+BindListFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
+BindListFrame.ClipsDescendants = false
 BindListFrame.Visible = Config.BindListEnabled == true
 BindListFrame.Parent = ScreenGui
 do
-    AnxiumAttachAnimatedHudStroke(BindListFrame)
+    AnxiumAttachMenuStyleBorder(BindListFrame)
 end
 
 BindHeader = Instance.new("Frame")
@@ -1820,7 +2016,7 @@ BindListContainer.Position = UDim2.new(0, 0, 0, 28)
 BindListContainer.BackgroundColor3 = Theme.BgSecondary
 BindListContainer.BackgroundTransparency = 0.15
 BindListContainer.BorderSizePixel = 0
-BindListContainer.ScrollBarThickness = 3
+BindListContainer.ScrollBarThickness = 0
 BindListContainer.ScrollBarImageColor3 = Theme.Accent
 BindListContainer.CanvasSize = UDim2.new(0, 0, 0, 0)
 BindListContainer.AutomaticCanvasSize = Enum.AutomaticSize.Y
@@ -1832,15 +2028,18 @@ BindLayout.Padding = UDim.new(0, 0)
 BindLayout.Parent = BindListContainer
 do
     local pad = Instance.new("UIPadding")
-    pad.PaddingLeft = UDim.new(0, 8)
-    pad.PaddingTop = UDim.new(0, 0)
-    pad.PaddingBottom = UDim.new(0, 0)
+    pad.PaddingLeft = UDim.new(0, 10)
+    pad.PaddingRight = UDim.new(0, 14)
+    pad.PaddingTop = UDim.new(0, 2)
+    pad.PaddingBottom = UDim.new(0, 10)
     pad.Parent = BindListContainer
 end
 
 pcall(ApplyHudPanelTransparency)
 MakeDraggable(BindListFrame, BindHeader, function(fr) Anxium_SaveFramePos("BindList", fr) end)
 Anxium_ApplyFramePos("BindList", BindListFrame, UDim2.new(0, 16, 0.38, 80))
+pcall(Anxium_ApplyListSize, "BindList", BindListFrame)
+pcall(AnxiumMakeResizeHandle, BindListFrame, "BindList")
 
 UpdateBindList = function()
     if not Config.BindListEnabled then
@@ -1871,13 +2070,14 @@ UpdateBindList = function()
         count = count + 1
         local row = Instance.new("Frame")
         row.Name = "BindRow"
-        row.Size = UDim2.new(1, -4, 0, 16)
+        row.Size = UDim2.new(1, -14, 0, 16)
         row.BackgroundTransparency = 1
         row.BorderSizePixel = 0
+        row.ClipsDescendants = true
         row.Parent = BindListContainer
 
         local left = Instance.new("TextLabel")
-        left.Size = UDim2.new(1, -52, 1, 0)
+        left.Size = UDim2.new(1, -46, 1, 0)
         left.Position = UDim2.new(0, 0, 0, 0)
         left.BackgroundTransparency = 1
         left.BorderSizePixel = 0
@@ -1891,8 +2091,8 @@ UpdateBindList = function()
         left.Parent = row
 
         local right = Instance.new("TextLabel")
-        right.Size = UDim2.new(0, 52, 1, 0)
-        right.Position = UDim2.new(1, -52, 0, 0)
+        right.Size = UDim2.new(0, 42, 1, 0)
+        right.Position = UDim2.new(1, -42, 0, 0)
         right.BackgroundTransparency = 1
         right.BorderSizePixel = 0
         right.Text = tostring(keyName)
@@ -1900,7 +2100,9 @@ UpdateBindList = function()
         right.TextSize = 11
         right.Font = SelectedFont
         right.TextXAlignment = Enum.TextXAlignment.Right
+        right.TextTruncate = Enum.TextTruncate.AtEnd
         right.TextStrokeTransparency = 1
+        right.ClipsDescendants = true
         right.Parent = row
     end
 
@@ -1931,7 +2133,7 @@ UpdateBindList = function()
         lbl.Parent = BindListContainer
         count = 1
     end
-    BindListFrame.Size = UDim2.new(0, HUD_W or 180, 0, HUD_H or 148)
+    pcall(Anxium_ApplyListSize, "BindList", BindListFrame)
 end
 
 local function GetInputBindName(input)
@@ -2193,72 +2395,51 @@ UpdateBindList = function()
     RefreshBindKeyLabels()
 end
 
-Cache.WM_LOGO_ASSET = "rbxassetid://119051552929078"
-Cache.WM_H = 34
-Cache.WM_PAD = 8
-Cache.WM_LOGO = 18
-Cache.WM_ICON = 16
-Cache.WM_W = 340
-Cache.WM_TITLE_W = 62
-Cache.WM_FPS_W = 72
-Cache.WM_TG_W = 120
-Cache.WM_SEP_W = 10
+Cache.WM_H = 36
+Cache.WM_PAD = 13
+Cache.WM_W = 320
+Cache.WM_TITLE_W = 90
+Cache.WM_FPS_W = 84
+Cache.WM_TG_W = 74
+Cache.WM_SEP_W = 12
 Cache.WM_TEXT_SIZE = 13
 
 WatermarkFrame = Instance.new("Frame")
 WatermarkFrame.Name = "WatermarkFrame"
 WatermarkFrame.Size = UDim2.fromOffset(Cache.WM_W, Cache.WM_H)
 WatermarkFrame.Position = UDim2.new(0.5, -math.floor(Cache.WM_W / 2), 0, 10)
-WatermarkFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-WatermarkFrame.BackgroundTransparency = 0.05
-WatermarkFrame.BorderSizePixel = 0
-WatermarkFrame.ClipsDescendants = false 
+WatermarkFrame.BackgroundColor3 = Color3.fromRGB(12, 12, 12)
+WatermarkFrame.BackgroundTransparency = 0
+WatermarkFrame.BorderSizePixel = 2
+WatermarkFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
+WatermarkFrame.ClipsDescendants = false
 WatermarkFrame.Parent = ScreenGui
 
-WatermarkStroke = Instance.new("UIStroke")
-WatermarkStroke.Color = Color3.fromRGB(0, 0, 0)
-WatermarkStroke.Thickness = 1
-WatermarkStroke.Transparency = 0.35
-WatermarkStroke.Parent = WatermarkFrame
+pcall(function()
+    if AnxiumAttachMenuStyleBorder then
+        AnxiumAttachMenuStyleBorder(WatermarkFrame)
+    end
+end)
 
+WatermarkStroke = nil
 WatermarkAccentBar = Instance.new("Frame")
 WatermarkAccentBar.Name = "AccentBar"
-
-WatermarkAccentBar.AnchorPoint = Vector2.new(0, 1)
-WatermarkAccentBar.Size = UDim2.new(1, 0, 0, 3)
-WatermarkAccentBar.Position = UDim2.new(0, 0, 0, 0)
-WatermarkAccentBar.BackgroundColor3 = Theme.Accent or Color3.fromRGB(180, 140, 255)
+WatermarkAccentBar.AnchorPoint = Vector2.new(0, 0)
+WatermarkAccentBar.Position = UDim2.fromOffset(0, 0)
+WatermarkAccentBar.Size = UDim2.new(1, 0, 0, 2)
+WatermarkAccentBar.BackgroundColor3 = (Theme and Theme.Accent) or Color3.fromRGB(160, 120, 255)
 WatermarkAccentBar.BorderSizePixel = 0
-WatermarkAccentBar.ZIndex = 20
+WatermarkAccentBar.ZIndex = (WatermarkFrame.ZIndex or 1) + 20
 WatermarkAccentBar.Parent = WatermarkFrame
-pcall(function() TrackThemeAccent(WatermarkAccentBar, "BackgroundColor3") end)
-
-WatermarkCorner = nil
-
-WatermarkLogo = Instance.new("ImageLabel")
-WatermarkLogo.Name = "Logo"
-WatermarkLogo.Size = UDim2.fromOffset(Cache.WM_LOGO, Cache.WM_LOGO)
-WatermarkLogo.Position = UDim2.new(0, Cache.WM_PAD, 0.5, -math.floor(Cache.WM_LOGO / 2))
-WatermarkLogo.BackgroundTransparency = 1
-WatermarkLogo.BorderSizePixel = 0
-WatermarkLogo.ScaleType = Enum.ScaleType.Fit
-WatermarkLogo.Image = Cache.WM_LOGO_ASSET or "rbxassetid://119051552929078"
-WatermarkLogo.Parent = WatermarkFrame
 pcall(function()
-    
-    WatermarkLogo.ResampleMode = Enum.ResamplerMode.Default
+    if TrackThemeAccent then TrackThemeAccent(WatermarkAccentBar, "BackgroundColor3") end
 end)
-WatermarkLogo.ScaleType = Enum.ScaleType.Fit
-do
-    local lc = Instance.new("UICorner")
-    lc.CornerRadius = UDim.new(0, 4)
-    lc.Parent = WatermarkLogo
-end
+WatermarkCorner = nil
 
 WatermarkLabel = Instance.new("TextLabel")
 WatermarkLabel.Name = "WatermarkTitle"
 WatermarkLabel.BackgroundTransparency = 1
-WatermarkLabel.Text = "Anxium"
+WatermarkLabel.Text = "@AnxiumHub"
 WatermarkLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 WatermarkLabel.TextSize = 13
 WatermarkLabel.Font = SelectedFont
@@ -2280,7 +2461,7 @@ WatermarkSep.Parent = WatermarkFrame
 WatermarkFpsLabel = Instance.new("TextLabel")
 WatermarkFpsLabel.Name = "WatermarkFps"
 WatermarkFpsLabel.BackgroundTransparency = 1
-WatermarkFpsLabel.Text = "fps: --"
+WatermarkFpsLabel.Text = "-- fps"
 WatermarkFpsLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 WatermarkFpsLabel.TextSize = 13
 WatermarkFpsLabel.Font = SelectedFont
@@ -2302,7 +2483,7 @@ WatermarkSep2.Parent = WatermarkFrame
 WatermarkTgLabel = Instance.new("TextLabel")
 WatermarkTgLabel.Name = "WatermarkTg"
 WatermarkTgLabel.BackgroundTransparency = 1
-WatermarkTgLabel.Text = "t.me/AnxiumHub"
+WatermarkTgLabel.Text = "--:--:--"
 WatermarkTgLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 WatermarkTgLabel.TextSize = 13
 WatermarkTgLabel.Font = SelectedFont
@@ -2310,151 +2491,88 @@ WatermarkTgLabel.TextXAlignment = Enum.TextXAlignment.Left
 WatermarkTgLabel.TextYAlignment = Enum.TextYAlignment.Center
 WatermarkTgLabel.Parent = WatermarkFrame
 
-function WatermarkGrad_FromTheme()
-    local a = (Theme and Theme.Accent) or Color3.fromRGB(160, 120, 255)
-    local mid = Color3.new(
-        a.R + (1 - a.R) * 0.45,
-        a.G + (1 - a.G) * 0.45,
-        a.B + (1 - a.B) * 0.45
-    )
-    return ColorSequence.new({
-        ColorSequenceKeypoint.new(0, a),
-        ColorSequenceKeypoint.new(0.55, mid),
-        ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 255, 255)),
-    })
+function WatermarkTimeText()
+    return os.date("!%H:%M:%S", os.time() + 3 * 3600)
 end
-
-WatermarkGrad = Instance.new("UIGradient")
-WatermarkGrad.Color = WatermarkGrad_FromTheme()
-WatermarkGrad.Parent = WatermarkTgLabel
-
-WatermarkFpsIcon = Instance.new("ImageLabel")
-WatermarkFpsIcon.Name = "FpsIcon"
-WatermarkFpsIcon.BackgroundTransparency = 1
-WatermarkFpsIcon.Size = UDim2.fromOffset(16, 16)
-WatermarkFpsIcon.Image = "rbxassetid://137527339160230"
-WatermarkFpsIcon.ScaleType = Enum.ScaleType.Fit
-WatermarkFpsIcon.Parent = WatermarkFrame
-
-WatermarkTgIcon = Instance.new("ImageLabel")
-WatermarkTgIcon.Name = "TgIcon"
-WatermarkTgIcon.BackgroundTransparency = 1
-WatermarkTgIcon.Size = UDim2.fromOffset(16, 16)
-WatermarkTgIcon.Image = "rbxassetid://86131768436965"
-WatermarkTgIcon.ScaleType = Enum.ScaleType.Fit
-WatermarkTgIcon.Parent = WatermarkFrame
-
-WatermarkCfgIcon = Instance.new("ImageLabel")
-WatermarkCfgIcon.Name = "CfgIcon"
-WatermarkCfgIcon.BackgroundTransparency = 1
-WatermarkCfgIcon.Size = UDim2.fromOffset(16, 16)
-WatermarkCfgIcon.Image = "rbxassetid://98868866618869"
-WatermarkCfgIcon.ScaleType = Enum.ScaleType.Fit
-WatermarkCfgIcon.Parent = WatermarkFrame
-
-WatermarkCfgLabel = Instance.new("TextLabel")
-WatermarkCfgLabel.Name = "WatermarkCfg"
-WatermarkCfgLabel.BackgroundTransparency = 1
-WatermarkCfgLabel.Text = "default"
-WatermarkCfgLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-WatermarkCfgLabel.TextSize = 13
-WatermarkCfgLabel.Font = SelectedFont
-WatermarkCfgLabel.TextXAlignment = Enum.TextXAlignment.Left
-WatermarkCfgLabel.TextYAlignment = Enum.TextYAlignment.Center
-WatermarkCfgLabel.Parent = WatermarkFrame
 
 function LayoutWatermark()
     if not WatermarkFrame then return end
-    local h = Cache.WM_H or 34
-    local pad = Cache.WM_PAD or 8
+    local h = Cache.WM_H or 36
+    local pad = Cache.WM_PAD or 13
     local ts = Cache.WM_TEXT_SIZE or 13
-    local logo = Cache.WM_LOGO or Cache.WM_ICON or 16
-    local icon = Cache.WM_ICON or logo or 16
     local gap = 8
-    local iconGap = 4
-    
+    local titleW = Cache.WM_TITLE_W or 90
+    local fpsW = Cache.WM_FPS_W or 84
+    local timeW = Cache.WM_TG_W or 74
+    local sepW = Cache.WM_SEP_W or 12
+    local textColor = (Theme and Theme.Text) or Color3.fromRGB(235, 235, 240)
+    local separatorColor = (Theme and Theme.TextDim) or Color3.fromRGB(130, 130, 140)
+
     for _, lbl in ipairs({
         WatermarkLabel, WatermarkSep, WatermarkSep2,
-        WatermarkFpsLabel, WatermarkTgLabel, WatermarkCfgLabel,
+        WatermarkFpsLabel, WatermarkTgLabel,
     }) do
         if lbl then
             lbl.TextSize = ts
             lbl.Font = SelectedFont or lbl.Font
             lbl.TextYAlignment = Enum.TextYAlignment.Center
             lbl.TextXAlignment = Enum.TextXAlignment.Left
+            lbl.TextColor3 = textColor
         end
     end
-    
-    local function placeIcon(img, px)
-        if not img then return px end
-        img.Size = UDim2.fromOffset(icon, icon)
-        img.Position = UDim2.new(0, px, 0.5, -math.floor(icon / 2))
-        img.Visible = true
-        return px + icon + iconGap
-    end
+
     local x = pad
-    if WatermarkLogo then
-        WatermarkLogo.Size = UDim2.fromOffset(logo, logo)
-        WatermarkLogo.Position = UDim2.new(0, pad, 0.5, -math.floor(logo / 2))
-        x = pad + logo + 6
-    end
     if WatermarkLabel then
-        WatermarkLabel.Size = UDim2.fromOffset(60, h)
+        WatermarkLabel.Text = "@AnxiumHub"
+        WatermarkLabel.Size = UDim2.fromOffset(titleW, h)
         WatermarkLabel.Position = UDim2.fromOffset(x, 0)
-        WatermarkLabel.Text = "Anxium"
-        WatermarkLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+        x = x + titleW + gap
     end
-    x = x + 60 + gap
-    
-    if WatermarkSep then WatermarkSep.Visible = false end
-    if WatermarkSep2 then WatermarkSep2.Visible = false end
-    x = placeIcon(WatermarkFpsIcon, x)
+    if WatermarkSep then
+        WatermarkSep.Text = "|"
+        WatermarkSep.TextColor3 = separatorColor
+        WatermarkSep.TextXAlignment = Enum.TextXAlignment.Center
+        WatermarkSep.Visible = true
+        WatermarkSep.Size = UDim2.fromOffset(sepW, h)
+        WatermarkSep.Position = UDim2.fromOffset(x, 0)
+        x = x + sepW + gap
+    end
     if WatermarkFpsLabel then
-        WatermarkFpsLabel.Size = UDim2.fromOffset(68, h)
+        
+        WatermarkFpsLabel.Size = UDim2.fromOffset(fpsW, h)
         WatermarkFpsLabel.Position = UDim2.fromOffset(x, 0)
-        WatermarkFpsLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+        x = x + fpsW + gap
     end
-    x = x + 68 + gap
-    x = placeIcon(WatermarkTgIcon, x)
+    if WatermarkSep2 then
+        WatermarkSep2.Text = "|"
+        WatermarkSep2.TextColor3 = separatorColor
+        WatermarkSep2.TextXAlignment = Enum.TextXAlignment.Center
+        WatermarkSep2.Visible = true
+        WatermarkSep2.Size = UDim2.fromOffset(sepW, h)
+        WatermarkSep2.Position = UDim2.fromOffset(x, 0)
+        x = x + sepW + gap
+    end
     if WatermarkTgLabel then
-        WatermarkTgLabel.Size = UDim2.fromOffset(118, h)
+        
+        WatermarkTgLabel.Text = WatermarkTimeText()
+        WatermarkTgLabel.Size = UDim2.fromOffset(timeW, h)
         WatermarkTgLabel.Position = UDim2.fromOffset(x, 0)
-        WatermarkTgLabel.Text = "t.me/AnxiumHub"
-        WatermarkTgLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+        x = x + timeW
     end
-    x = x + 118 + gap
-    x = placeIcon(WatermarkCfgIcon, x)
-    local cfgName = "none"
-    pcall(function()
-        if CfgIO and CfgIO.Current and tostring(CfgIO.Current) ~= "" then
-            cfgName = tostring(CfgIO.Current)
-        elseif Config.CurrentConfigName then
-            cfgName = tostring(Config.CurrentConfigName)
-        end
-    end)
-    if WatermarkCfgLabel then
-        WatermarkCfgLabel.Text = cfgName
-        WatermarkCfgLabel.Size = UDim2.fromOffset(math.clamp(#cfgName * 7 + 8, 40, 140), h)
-        WatermarkCfgLabel.Position = UDim2.fromOffset(x, 0)
-        WatermarkCfgLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-        x = x + WatermarkCfgLabel.Size.X.Offset + pad
-    else
-        x = x + 50 + pad
-    end
+
     if WatermarkAccentBar then
-        WatermarkAccentBar.AnchorPoint = Vector2.new(0, 1)
-        WatermarkAccentBar.Size = UDim2.new(1, 0, 0, 3)
-        WatermarkAccentBar.Position = UDim2.new(0, 0, 0, 0)
-        WatermarkAccentBar.BackgroundColor3 = (Theme and Theme.Accent) or Color3.fromRGB(180, 140, 255)
-        WatermarkAccentBar.ZIndex = 20
+        WatermarkAccentBar.Position = UDim2.fromOffset(0, 0)
+        WatermarkAccentBar.Size = UDim2.new(1, 0, 0, 2)
+        WatermarkAccentBar.BackgroundColor3 = (Theme and Theme.Accent) or Color3.fromRGB(160, 120, 255)
+        WatermarkAccentBar.ZIndex = (WatermarkFrame.ZIndex or 1) + 20
     end
-    Cache.WM_W = math.max(x, 280)
+
+    Cache.WM_W = math.max(x + pad, 280)
     WatermarkFrame.Size = UDim2.fromOffset(Cache.WM_W, h)
-    WatermarkFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-    WatermarkFrame.BackgroundTransparency = 0.05
-    if WatermarkGrad then
-        WatermarkGrad.Color = WatermarkGrad_FromTheme and WatermarkGrad_FromTheme() or ColorSequence.new(Theme.Accent, Color3.fromRGB(255, 255, 255))
-    end
+    WatermarkFrame.BackgroundColor3 = Color3.fromRGB(12, 12, 12)
+    WatermarkFrame.BackgroundTransparency = 0
+    WatermarkFrame.BorderSizePixel = 2
+    WatermarkFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
 end
 Cache.LayoutWatermark = LayoutWatermark
 
@@ -2541,14 +2659,11 @@ RunService.RenderStepped:Connect(function()
             if Config.FakeFpsEnabled then
                 shown = tonumber(Config.FakeFpsValue) or realFps
             end
-            WatermarkFpsLabel.Text = "fps: " .. tostring(shown)
+            WatermarkFpsLabel.Text = tostring(shown) .. " fps"
         end
-    end
-end)
-
-task.spawn(function()
-    if WatermarkLogo then
-        WatermarkLogo.Image = Cache.WM_LOGO_ASSET or "rbxassetid://119051552929078"
+        if WatermarkTgLabel then
+            WatermarkTgLabel.Text = WatermarkTimeText()
+        end
     end
 end)
 
@@ -2618,11 +2733,11 @@ end)
 function UpdateFakeFpsDisplay()
     if WatermarkFpsLabel then
         if Config.FakeFpsEnabled then
-            WatermarkFpsLabel.Text = "fps: " .. tostring(Config.FakeFpsValue or 67)
+            WatermarkFpsLabel.Text = tostring(Config.FakeFpsValue or 67) .. " fps"
         else
             local real = Cache.WmFpsValue
             if type(real) == "number" and real > 0 then
-                WatermarkFpsLabel.Text = "fps: " .. tostring(real)
+                WatermarkFpsLabel.Text = tostring(real) .. " fps"
             end
         end
     end
@@ -3204,6 +3319,36 @@ function GetVisualAimTargetHrp()
     local hrp = plr.Character:FindFirstChild("HumanoidRootPart")
         or plr.Character:FindFirstChild("Head")
         or plr.Character.PrimaryPart
+    return hrp, plr
+end
+
+function GetVisualAimTargetPart()
+    local plr = GetVisualAimTargetPlayer and GetVisualAimTargetPlayer() or nil
+    if not plr or not plr.Character then return nil, nil end
+    local char = plr.Character
+    local silentOn = Config and Config.SilentAimV2Enabled == true
+    local aimOn = Config and Config.AimEnabled == true
+    if silentOn then
+        local sp = Cache and Cache.SilentV2Part
+        if sp and sp.Parent and sp:IsDescendantOf(char) and sp:IsA("BasePart") then
+            return sp, plr
+        end
+        local mode = (Config and Config.SilentV2TargetPart) or "Head"
+        if typeof(ResolveAimPart) == "function" then
+            local p = ResolveAimPart(char, mode)
+            if p then return p, plr end
+        end
+        return char:FindFirstChild("Head") or char:FindFirstChild("HumanoidRootPart") or char.PrimaryPart, plr
+    end
+    if aimOn then
+        local mode = (Config and Config.AimTargetPart) or "Head"
+        if typeof(ResolveAimPart) == "function" then
+            local p = ResolveAimPart(char, mode)
+            if p then return p, plr end
+        end
+        return char:FindFirstChild("Head") or char:FindFirstChild("HumanoidRootPart") or char.PrimaryPart, plr
+    end
+    local hrp = char:FindFirstChild("HumanoidRootPart") or char:FindFirstChild("Head") or char.PrimaryPart
     return hrp, plr
 end
 
@@ -5870,63 +6015,26 @@ end)
 MainCorner = nil
 MainFrame.ClipsDescendants = true
 
-MainStroke = Instance.new("UIStroke")
-MainStroke.Name = "MainStroke"
-MainStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-MainStroke.LineJoinMode = Enum.LineJoinMode.Miter
-MainStroke.Thickness = 1.25
-MainStroke.Color = Color3.fromRGB(0, 0, 0)
-MainStroke.Transparency = 0
-MainStroke.Parent = MainFrame
-
-do
-    
-    local gapColor = Color3.fromRGB(18, 18, 22)
-    local gapW = 5
-    local function edge(name, pos, size)
-        local f = Instance.new("Frame")
-        f.Name = name
-        f.BackgroundColor3 = gapColor
-        f.BackgroundTransparency = 0
-        f.BorderSizePixel = 0
-        f.ZIndex = 100
-        f.Position = pos
-        f.Size = size
-        f.Parent = MainFrame
-        return f
+MainStroke = nil
+MainInnerOutline = nil
+MainInnerStroke = nil
+pcall(function()
+    if AnxiumAttachMenuStyleBorder then
+        MainStroke = AnxiumAttachMenuStyleBorder(MainFrame)
     end
-    edge("MainBorderGapTop", UDim2.fromOffset(1, 1), UDim2.new(1, -2, 0, gapW))
-    edge("MainBorderGapBottom", UDim2.new(0, 1, 1, -(gapW + 1)), UDim2.new(1, -2, 0, gapW))
-    edge("MainBorderGapLeft", UDim2.fromOffset(1, 1 + gapW), UDim2.new(0, gapW, 1, -(2 + gapW * 2)))
-    edge("MainBorderGapRight", UDim2.new(1, -(gapW + 1), 0, 1 + gapW), UDim2.new(0, gapW, 1, -(2 + gapW * 2)))
-end
-
-MainInnerOutline = Instance.new("Frame")
-MainInnerOutline.Name = "MainInnerOutline"
-MainInnerOutline.Position = UDim2.fromOffset(6, 6)
-MainInnerOutline.Size = UDim2.new(1, -12, 1, -12)
-MainInnerOutline.BackgroundTransparency = 1
-MainInnerOutline.BorderSizePixel = 0
-MainInnerOutline.ZIndex = 101
-MainInnerOutline.Parent = MainFrame
-
-MainInnerStroke = Instance.new("UIStroke")
-MainInnerStroke.Name = "MainInnerStroke"
-MainInnerStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-MainInnerStroke.LineJoinMode = Enum.LineJoinMode.Miter
-MainInnerStroke.Thickness = 1.25
-MainInnerStroke.Color = Color3.fromRGB(0, 0, 0)
-MainInnerStroke.Transparency = 0
-MainInnerStroke.Parent = MainInnerOutline
+end)
 
 Cache.MenuBorderParts = {}
 pcall(function()
-    if MainStroke then table.insert(Cache.MenuBorderParts, { kind = "stroke", obj = MainStroke, solid = 0 }) end
-    if MainInnerStroke then table.insert(Cache.MenuBorderParts, { kind = "stroke", obj = MainInnerStroke, solid = 0 }) end
     if MainFrame then
         for _, ch in ipairs(MainFrame:GetChildren()) do
-            if ch:IsA("Frame") and tostring(ch.Name):find("MainBorderGap", 1, true) == 1 then
-                table.insert(Cache.MenuBorderParts, { kind = "frame", obj = ch, solid = 0 })
+            if ch:IsA("UIStroke") and (ch.Name == "AnxiumHudStroke" or ch.Name == "MainStroke") then
+                table.insert(Cache.MenuBorderParts, { kind = "stroke", obj = ch, solid = 0 })
+            elseif ch:IsA("Frame") and ch.Name == "HudInnerOutline" then
+                local ist = ch:FindFirstChild("HudInnerStroke")
+                if ist then
+                    table.insert(Cache.MenuBorderParts, { kind = "stroke", obj = ist, solid = 0 })
+                end
             end
         end
     end
@@ -6152,7 +6260,7 @@ VersionTag = Instance.new("TextLabel")
 VersionTag.Size = UDim2.new(0, 120, 1, 0)
 VersionTag.Position = UDim2.new(1, -130, 0, 0)
 VersionTag.BackgroundTransparency = 1
-VersionTag.Text = "beta 1.0.4"
+VersionTag.Text = "beta 1.0.5"
 VersionTag.TextColor3 = Color3.fromRGB(255, 255, 255)
 VersionTag.TextSize = 11
 VersionTag.Font = SelectedFont
@@ -6554,7 +6662,7 @@ function CreateSidebarTab(name, order)
     Scroll.Position = UDim2.new(0, 176 + 6, 0, 52 + 6)
     Scroll.BackgroundTransparency = 1
     Scroll.BorderSizePixel = 0
-    Scroll.ScrollBarThickness = 4
+    Scroll.ScrollBarThickness = 0
     Scroll.ScrollBarImageColor3 = Theme.Accent
     Scroll.ScrollBarImageTransparency = 0
     Scroll.CanvasSize = UDim2.new(0, 0, 0, 0)
@@ -6699,7 +6807,7 @@ do
     ResultsList.Position = UDim2.new(0, 8, 0, 30)
     ResultsList.BackgroundTransparency = 1
     ResultsList.BorderSizePixel = 0
-    ResultsList.ScrollBarThickness = 3
+    ResultsList.ScrollBarThickness = 0
     ResultsList.ScrollBarImageColor3 = Theme.Accent
     ResultsList.CanvasSize = UDim2.new(0, 0, 0, 0)
     ResultsList.AutomaticCanvasSize = Enum.AutomaticSize.Y
@@ -7296,6 +7404,11 @@ function AnxiumRefreshAllListStrokes()
             elseif d:IsA("Frame") and d.Name == "SelectBar" and d.Visible then
                 d.BackgroundColor3 = accent
                 d.BackgroundTransparency = 0
+                local btn = d.Parent
+                if btn and (btn:IsA("TextButton") or btn:IsA("TextLabel") or btn:IsA("ImageButton")) then
+                    btn.BackgroundColor3 = accent
+                    btn.BackgroundTransparency = 0.72
+                end
             end
         end
     end)
@@ -7561,7 +7674,7 @@ end
 if not Cache._AnxiumListShellLoop then
     Cache._AnxiumListShellLoop = true
     Cache._ListShellLast = nil
-    RunService.Heartbeat:Connect(function()
+    RunService.RenderStepped:Connect(function()
         if not MenuOpen then
             local shell = Cache.AnxiumListShell
             if shell and shell.Visible then shell.Visible = false end
@@ -7584,17 +7697,7 @@ if not Cache._AnxiumListShellLoop then
                     lf.ClipsDescendants = true
                 end)
             end
-            local ap = an.AbsolutePosition
-            local asz = an.AbsoluteSize
-            local lp = lf.AbsolutePosition
-            local lsz = lf.AbsoluteSize
-            local sig = string.format("%d:%d:%d:%d:%d:%d:%d:%d",
-                math.floor(ap.X), math.floor(ap.Y), math.floor(asz.X), math.floor(asz.Y),
-                math.floor(lp.X), math.floor(lp.Y), math.floor(lsz.X), math.floor(lsz.Y))
-            if Cache._ListShellLast ~= sig then
-                Cache._ListShellLast = sig
-                AnxiumUpdateListShell(an, lf)
-            end
+            AnxiumUpdateListShell(an, lf)
         else
             local shell = Cache.AnxiumListShell
             if shell and shell.Visible then shell.Visible = false end
@@ -7614,6 +7717,15 @@ task.spawn(function()
         end
     end
 end)
+
+if ScreenGui and not Cache._AnxiumScrollBarHook then
+    Cache._AnxiumScrollBarHook = true
+    ScreenGui.DescendantAdded:Connect(function(d)
+        if d and d:IsA("ScrollingFrame") then
+            pcall(function() d.ScrollBarThickness = 0 end)
+        end
+    end)
+end
 
 if ScreenGui and not Cache._AnxiumListStrokeHook then
     Cache._AnxiumListStrokeHook = true
@@ -7708,6 +7820,8 @@ CreateFeatureRow = function(name, layoutOrder, parentTab, colorKey, colorKey2, c
                         
                     elseif ck == "Color_OffscreenArrow" or ck == "Color_OffscreenArrowB" then
                         if UV_RefreshArrowGradients then pcall(UV_RefreshArrowGradients) end
+                    elseif ck == "Color_AAManualArrow" or ck == "Color_AAManualArrowActive" then
+                        if AAManualArrows_Update then pcall(AAManualArrows_Update) end
                     elseif ck == "Color_DistanceEsp" or ck == "Color_DistanceEspB" then
                         if DistanceEsp_RefreshStyles then pcall(DistanceEsp_RefreshStyles) end
                     elseif ck == "Color_NameEsp" or ck == "Color_NameEspB"
@@ -7959,7 +8073,7 @@ function AnxiumCreateSettingsPopup(id, title, width, height)
     body.BackgroundColor3 = Theme.BgSecondary or Color3.fromRGB(18, 18, 22)
     body.BackgroundTransparency = 0.05
     body.BorderSizePixel = 0
-    body.ScrollBarThickness = 3
+    body.ScrollBarThickness = 0
     body.ScrollBarImageColor3 = Theme.Accent
     body.CanvasSize = UDim2.new(0, 0, 0, 0)
     body.AutomaticCanvasSize = Enum.AutomaticSize.Y
@@ -8020,6 +8134,9 @@ function AnxiumPopupToggle(parent, name, layoutOrder, configKey, colorKey, onTog
             OpenRGBPicker(Config[colorKey] or Theme.Accent, function(col)
                 Config[colorKey] = col
                 colBtn.BackgroundColor3 = col
+                if (colorKey == "Color_AAManualArrow" or colorKey == "Color_AAManualArrowActive") and AAManualArrows_Update then
+                    pcall(AAManualArrows_Update)
+                end
                 if onToggle then pcall(onToggle, Config[configKey], true) end
                 Notify("Color", name .. " color set")
             end, colBtn)
@@ -8250,17 +8367,17 @@ function AnxiumPopupDropdown(parent, name, options, layoutOrder, getValue, setVa
     pcall(AnxiumListFrameStroke, ListFrame)
 
     local ListScroll = Instance.new("ScrollingFrame")
-    ListScroll.Size = UDim2.new(1, -8, 1, -6)
-    ListScroll.Position = UDim2.fromOffset(4, 3)
+    ListScroll.Size = UDim2.new(1, -12, 1, -8)
+    ListScroll.Position = UDim2.fromOffset(6, 4)
     ListScroll.BackgroundTransparency = 1
     ListScroll.BorderSizePixel = 0
-    ListScroll.ScrollBarThickness = 3
+    ListScroll.ScrollBarThickness = 0
     ListScroll.ScrollBarImageColor3 = Theme.Accent
     ListScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
     ListScroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
     ListScroll.Parent = ListFrame
     local lay = Instance.new("UIListLayout")
-    lay.Padding = UDim.new(0, 2)
+    lay.Padding = UDim.new(0, 3)
     lay.Parent = ListScroll
 
     local optButtons = {}
@@ -8274,7 +8391,7 @@ function AnxiumPopupDropdown(parent, name, options, layoutOrder, getValue, setVa
 
     for i, opt in ipairs(options or {}) do
         local btn = Instance.new("TextButton")
-        btn.Size = UDim2.new(1, 0, 0, 26)
+        btn.Size = UDim2.new(1, 0, 0, 28)
         btn.BackgroundColor3 = Theme.BgTertiary
         btn.BorderSizePixel = 0
         btn.Text = "  " .. tostring(opt)
@@ -8300,7 +8417,7 @@ function AnxiumPopupDropdown(parent, name, options, layoutOrder, getValue, setVa
     end
 
     local open = false
-    local LIST_H = #(options or {}) * 28 + 10
+    local LIST_H = #(options or {}) * 31 + 12
     HeaderRow.MouseButton1Click:Connect(function()
         open = not open
         if open then
@@ -8558,22 +8675,7 @@ CreateSliderRow = function(name, minVal, maxVal, defaultVal, layoutOrder, parent
     Label.Size = UDim2.new(0.7, 0, 0, 18)
     Label.Position = UDim2.new(0, 12, 0, 6)
     Label.BackgroundTransparency = 1
-    do
-        local dv = tonumber(defaultVal) or 0
-        local span = maxVal - minVal
-        local needFloat = (minVal % 1 ~= 0) or (maxVal % 1 ~= 0) or span <= 10
-        if needFloat then
-            if span <= 1 then
-                Label.Text = name .. "  " .. string.format("%.3f", dv)
-            elseif span <= 20 then
-                Label.Text = name .. "  " .. string.format("%.2f", dv)
-            else
-                Label.Text = name .. "  " .. string.format("%.1f", dv)
-            end
-        else
-            Label.Text = name .. "  " .. tostring(math.floor(dv + 0.5))
-        end
-    end
+    Label.Text = tostring(name or "")
     Label.TextColor3 = Theme.Text
     Label.TextSize = 12
     Label.Font = SelectedFont
@@ -8587,10 +8689,6 @@ CreateSliderRow = function(name, minVal, maxVal, defaultVal, layoutOrder, parent
     SliderBar.BorderSizePixel = 0
     SliderBar.Parent = Row
 
-    local BarCorner = Instance.new("UICorner")
-    BarCorner.CornerRadius = UDim.new(1, 0)
-    BarCorner.Parent = SliderBar
-
     local SliderFill = Instance.new("Frame")
     SliderFill.Size = UDim2.new((defaultVal - minVal) / (maxVal - minVal), 0, 1, 0)
     SliderFill.BackgroundColor3 = Theme.Accent
@@ -8599,26 +8697,35 @@ CreateSliderRow = function(name, minVal, maxVal, defaultVal, layoutOrder, parent
     Cache.SliderFills = Cache.SliderFills or {}
     table.insert(Cache.SliderFills, SliderFill)
 
-    local FillCorner = Instance.new("UICorner")
-    FillCorner.CornerRadius = UDim.new(1, 0)
-    FillCorner.Parent = SliderFill
-
     pcall(function() TrackThemeAccent(SliderFill, "BackgroundColor3") end)
 
-    local Knob = Instance.new("Frame")
-    Knob.Name = "SliderKnob"
-    Knob.Size = UDim2.fromOffset(9, 9)
-    Knob.AnchorPoint = Vector2.new(0.5, 0.5)
-    Knob.Position = UDim2.new((defaultVal - minVal) / math.max(maxVal - minVal, 1e-6), 0, 0.5, 0)
-    Knob.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-    Knob.BorderSizePixel = 0
-    Knob.ZIndex = 2
-    Knob.Parent = SliderBar
-    local KnobCorner = Instance.new("UICorner")
-    KnobCorner.CornerRadius = UDim.new(1, 0)
-    KnobCorner.Parent = Knob
+    local ValueLbl = Instance.new("TextLabel")
+    ValueLbl.Name = "SliderValue"
+    ValueLbl.AnchorPoint = Vector2.new(0.5, 0.5)
+    ValueLbl.Position = UDim2.new(math.clamp((defaultVal - minVal) / math.max(maxVal - minVal, 1e-6), 0.06, 0.94), 0, 0.5, 0)
+    ValueLbl.Size = UDim2.fromOffset(42, 14)
+    ValueLbl.BackgroundTransparency = 1
+    ValueLbl.BorderSizePixel = 0
+    ValueLbl.ZIndex = 3
+    ValueLbl.TextColor3 = Color3.fromRGB(255, 255, 255)
+    ValueLbl.TextXAlignment = Enum.TextXAlignment.Center
+    ValueLbl.TextYAlignment = Enum.TextYAlignment.Center
+    ValueLbl.TextStrokeTransparency = 0.25
+    ValueLbl.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
+    ValueLbl.Parent = SliderBar
+    pcall(function()
+        if ApplyEspNameFontToLabel then
+            ApplyEspNameFontToLabel(ValueLbl, 12)
+        else
+            ValueLbl.Font = Enum.Font.Code
+            ValueLbl.TextSize = 12
+        end
+    end)
 
     local isDragging = false
+    local dragConn = nil
+    local fillTween = nil
+
     local function formatSliderValue(v)
         if typeof(v) ~= "number" then return tostring(v) end
         local span = maxVal - minVal
@@ -8655,46 +8762,118 @@ CreateSliderRow = function(name, minVal, maxVal, defaultVal, layoutOrder, parent
         return v
     end
 
-    local function UpdateSlider(input)
+    local function setSliderVisual(shownRel, value)
+        shownRel = math.clamp(shownRel, 0, 1)
+        pcall(function()
+            if fillTween then fillTween:Cancel() end
+        end)
+        fillTween = TweenService:Create(
+            SliderFill,
+            TweenInfo.new(0.06, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+            { Size = UDim2.new(shownRel, 0, 1, 0) }
+        )
+        fillTween:Play()
+        local tip = math.clamp(shownRel, 0.06, 0.94)
+        if ValueLbl then
+            ValueLbl.Position = UDim2.new(tip, 0, 0.5, 0)
+            ValueLbl.Text = formatSliderValue(value)
+            pcall(function()
+                if ApplyEspNameFontToLabel then ApplyEspNameFontToLabel(ValueLbl, 12) end
+            end)
+        end
+        Label.Text = tostring(name)
+    end
+
+    local function valueFromAbsX(absX)
         local barSize = SliderBar.AbsoluteSize.X
         if barSize < 1 then barSize = 1 end
-        local relX = math.clamp((input.Position.X - SliderBar.AbsolutePosition.X) / barSize, 0, 1)
+        local relX = math.clamp((absX - SliderBar.AbsolutePosition.X) / barSize, 0, 1)
         local raw = minVal + (maxVal - minVal) * relX
         local value = quantizeSliderValue(raw)
         local shownRel = math.clamp((value - minVal) / (maxVal - minVal), 0, 1)
-        SliderFill.Size = UDim2.new(shownRel, 0, 1, 0)
-        if Knob then
-            Knob.Position = UDim2.new(shownRel, 0, 0.5, 0)
-        end
-        Label.Text = name .. "  " .. formatSliderValue(value)
-        callback(value)
+        return value, shownRel
     end
 
+    local function UpdateSliderFromX(absX, fireCallback)
+        local value, shownRel = valueFromAbsX(absX)
+        setSliderVisual(shownRel, value)
+        if fireCallback ~= false then
+            callback(value)
+        end
+        return value
+    end
+
+    local function stopDrag()
+        isDragging = false
+        if dragConn then
+            pcall(function() dragConn:Disconnect() end)
+            dragConn = nil
+        end
+    end
+
+    local function startDrag(absX)
+        isDragging = true
+        UpdateSliderFromX(absX, true)
+        if dragConn then
+            pcall(function() dragConn:Disconnect() end)
+            dragConn = nil
+        end
+        dragConn = RunService.RenderStepped:Connect(function()
+            if not isDragging then return end
+            local pos = UserInputService:GetMouseLocation()
+            UpdateSliderFromX(pos.X, true)
+        end)
+    end
+
+    
+    local Hit = Instance.new("TextButton")
+    Hit.Name = "SliderHit"
+    Hit.Size = UDim2.new(1, 0, 0, 22)
+    Hit.Position = UDim2.new(0, 0, 0.5, -11)
+    Hit.BackgroundTransparency = 1
+    Hit.Text = ""
+    Hit.AutoButtonColor = false
+    Hit.ZIndex = 4
+    Hit.Parent = SliderBar
+
+    Hit.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            startDrag(input.Position.X)
+        end
+    end)
     SliderBar.InputBegan:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-            isDragging = true
-            UpdateSlider(input)
+            startDrag(input.Position.X)
         end
     end)
     UserInputService.InputEnded:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-            isDragging = false
+            stopDrag()
         end
     end)
     UserInputService.InputChanged:Connect(function(input)
-        if isDragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
-            UpdateSlider(input)
+        if not isDragging then return end
+        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+            UpdateSliderFromX(input.Position.X, true)
         end
     end)
 
     local function applyVisual(newVal)
         newVal = quantizeSliderValue(tonumber(newVal) or minVal)
         local relX = math.clamp((newVal - minVal) / (maxVal - minVal), 0, 1)
+        pcall(function()
+            if fillTween then fillTween:Cancel() end
+        end)
         SliderFill.Size = UDim2.new(relX, 0, 1, 0)
-        if Knob then
-            Knob.Position = UDim2.new(relX, 0, 0.5, 0)
+        local tip = math.clamp(relX, 0.06, 0.94)
+        if ValueLbl then
+            ValueLbl.Position = UDim2.new(tip, 0, 0.5, 0)
+            ValueLbl.Text = formatSliderValue(newVal)
+            pcall(function()
+                if ApplyEspNameFontToLabel then ApplyEspNameFontToLabel(ValueLbl, 12) end
+            end)
         end
-        Label.Text = name .. "  " .. formatSliderValue(newVal)
+        Label.Text = tostring(name)
         return newVal
     end
     Cache.SliderBinds = Cache.SliderBinds or {}
@@ -8704,6 +8883,7 @@ CreateSliderRow = function(name, minVal, maxVal, defaultVal, layoutOrder, parent
         max = maxVal,
         apply = applyVisual,
     }
+    applyVisual(defaultVal)
     return function(newVal, skipCallback)
         local v = applyVisual(newVal)
         if not skipCallback then
@@ -8733,6 +8913,7 @@ function RefreshAllSliders()
         ['Hat Radius'] = function() return math.floor((Config.ChinaHatRadius or 2.3) * 10) end,
         ['Aspect Scale (%)'] = function() return math.floor((Config.AspectRatioValue or 1.333) * 100) end,
         ['Arrow Pulse Speed'] = function() return Config.ArrowPulseSpeed or 3 end,
+        ['Arrow Transparency'] = function() return math.floor((tonumber(Config.ArrowTransparency) or 0.05) * 100) end,
         ['Scope Thickness'] = function() return math.clamp(math.floor(tonumber(Config.ScopeThickness) or 2), 1, 10) end,
         ['Fill Rot Speed'] = function() return Config.BoxFillRotationSpeed or 2 end,
         ['Spin Speed'] = function() return Config.SpinCrosshairSpeed or 180 end,
@@ -8769,6 +8950,7 @@ function RefreshAllSliders()
         ['Marker Size'] = function() return Config.TargetMarkerSize or 90 end,
         ['Marker Trans'] = function() return math.floor((Config.TargetMarkerTransparency or 0.15) * 100) end,
         ['Marker Spin Speed'] = function() return Config.TargetMarkerRotateSpeed or 90 end,
+        ['ESP Render Distance'] = function() return math.floor(math.clamp(tonumber(Config.EspMaxDistance) or 700, 50, 700)) end,
         ['Fog Distance'] = function() return Config.FogDistanceValue end,
         ['Self Transparency Amount'] = function() return math.floor((tonumber(Config.SelfTransparency) or 0.4) * 100) end,
         ['Time of Day'] = function() return Config.DayCycleTime or 14 end,
@@ -8784,6 +8966,7 @@ function RefreshAllSliders()
         ['Tracer Size'] = function() return math.floor(tonumber(Config.BulletTracerSize) or 5) end,
         ['AA Arrow Size'] = function() return math.floor(tonumber(Config.AntiAimManualArrowSize) or 28) end,
         ['AA Arrow Gap'] = function() return math.floor(tonumber(Config.AntiAimManualArrowGap) or 42) end,
+        ['AA Arrow Transparency'] = function() return math.floor((tonumber(Config.AntiAimManualArrowTransparency) or 0) * 100) end,
         ['Penetration Size'] = function() return math.floor(tonumber(Config.PenetrationSize) or 18) end,
         ['Penetration Corner'] = function() return math.floor(tonumber(Config.PenetrationCorner) or 3) end,
         ['Penetration Transparency'] = function() return math.floor((tonumber(Config.PenetrationTransparency) or 0.15) * 100) end,
@@ -8962,11 +9145,11 @@ do
     ListFrame.Parent = ResolveUIParent(VisualsTab)
     pcall(AnxiumListFrameStroke, ListFrame)
     local ListScroll = Instance.new("ScrollingFrame")
-    ListScroll.Size = UDim2.new(1, -8, 1, -8)
-    ListScroll.Position = UDim2.new(0, 4, 0, 4)
+    ListScroll.Size = UDim2.new(1, -12, 1, -8)
+    ListScroll.Position = UDim2.fromOffset(6, 4)
     ListScroll.BackgroundTransparency = 1
     ListScroll.BorderSizePixel = 0
-    ListScroll.ScrollBarThickness = 3
+    ListScroll.ScrollBarThickness = 0
     ListScroll.ScrollBarImageColor3 = Theme.Accent
     ListScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
     ListScroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
@@ -8975,12 +9158,6 @@ do
     lay.SortOrder = Enum.SortOrder.LayoutOrder
     lay.Padding = UDim.new(0, 3)
     lay.Parent = ListScroll
-    local pad = Instance.new("UIPadding")
-    pad.PaddingTop = UDim.new(0, 4)
-    pad.PaddingBottom = UDim.new(0, 4)
-    pad.PaddingLeft = UDim.new(0, 4)
-    pad.PaddingRight = UDim.new(0, 4)
-    pad.Parent = ListScroll
     Cache.BoxStyleButtons = {}
     local function RefreshHighlight()
         local cur = Config.EspBoxStyle or "Full"
@@ -9015,7 +9192,7 @@ do
         end)
     end
     RefreshHighlight()
-    local listH = 28 * #styles + 16
+    local listH = #styles * 31 + 12
     HeaderRow.MouseButton1Click:Connect(function()
         Expanded = not Expanded
         if Expanded then AnxiumSetListOpen(ListFrame, true, listH, HeaderRow) else AnxiumSetListOpen(ListFrame, false) end
@@ -9067,8 +9244,8 @@ do
     lc.Parent = ListFrame
     pcall(AnxiumListFrameStroke, ListFrame)
     local ListScroll = Instance.new("Frame")
-    ListScroll.Size = UDim2.new(1, -8, 1, -8)
-    ListScroll.Position = UDim2.fromOffset(4, 4)
+    ListScroll.Size = UDim2.new(1, -12, 1, -8)
+    ListScroll.Position = UDim2.fromOffset(6, 4)
     ListScroll.BackgroundTransparency = 1
     ListScroll.Parent = ListFrame
     local ListLayout = Instance.new("UIListLayout")
@@ -9109,7 +9286,7 @@ do
         end)
     end
     RefreshHealthbarStyleHighlight()
-    local listH = 28 * #styles + 16
+    local listH = #styles * 31 + 12
     HeaderRow.MouseButton1Click:Connect(function()
         Expanded = not Expanded
         if Expanded then AnxiumSetListOpen(ListFrame, true, listH, HeaderRow) else AnxiumSetListOpen(ListFrame, false) end
@@ -9154,11 +9331,11 @@ do
     ListFrame.Parent = ResolveUIParent(VisualsTab)
     pcall(AnxiumListFrameStroke, ListFrame)
     local ListScroll = Instance.new("ScrollingFrame")
-    ListScroll.Size = UDim2.new(1, -8, 1, -8)
-    ListScroll.Position = UDim2.new(0, 4, 0, 4)
+    ListScroll.Size = UDim2.new(1, -12, 1, -8)
+    ListScroll.Position = UDim2.fromOffset(6, 4)
     ListScroll.BackgroundTransparency = 1
     ListScroll.BorderSizePixel = 0
-    ListScroll.ScrollBarThickness = 3
+    ListScroll.ScrollBarThickness = 0
     ListScroll.ScrollBarImageColor3 = Theme.Accent
     ListScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
     ListScroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
@@ -9167,12 +9344,6 @@ do
     lay.SortOrder = Enum.SortOrder.LayoutOrder
     lay.Padding = UDim.new(0, 3)
     lay.Parent = ListScroll
-    local pad = Instance.new("UIPadding")
-    pad.PaddingTop = UDim.new(0, 4)
-    pad.PaddingBottom = UDim.new(0, 4)
-    pad.PaddingLeft = UDim.new(0, 4)
-    pad.PaddingRight = UDim.new(0, 4)
-    pad.Parent = ListScroll
     Cache.ChamsStyleButtons = {}
     local function RefreshChamsStyleHighlight()
         local cur = Config.ChamsStyle or "Flat"
@@ -9208,7 +9379,7 @@ do
         end)
     end
     RefreshChamsStyleHighlight()
-    local listH = 28 * #styles + 16
+    local listH = #styles * 31 + 12
     HeaderRow.MouseButton1Click:Connect(function()
         Expanded = not Expanded
         if Expanded then AnxiumSetListOpen(ListFrame, true, listH, HeaderRow) else AnxiumSetListOpen(ListFrame, false) end
@@ -9237,6 +9408,9 @@ CreateSliderRow("Icon ESP Corner", 0, 12, math.floor(tonumber(Config.IconEspCorn
     end)
 end)
 DistEspBtn, DistEspBg, DistEspKnob = CreateFeatureRow("Distance ESP", 6, VisualsTab, "Color_DistanceEsp")
+CreateSliderRow("ESP Render Distance", 50, 700, math.floor(math.clamp(tonumber(Config.EspMaxDistance) or 700, 50, 700)), 6.005, VisualsTab, function(val)
+    Config.EspMaxDistance = math.clamp(math.floor(val + 0.5), 50, 700)
+end)
 do
     local opts = { "Top", "Bottom", "Left", "Right" }
     local HeaderRow = Instance.new("TextButton")
@@ -9278,7 +9452,7 @@ do
     ListScroll.Position = UDim2.fromOffset(6, 4)
     ListScroll.BackgroundTransparency = 1
     ListScroll.BorderSizePixel = 0
-    ListScroll.ScrollBarThickness = 3
+    ListScroll.ScrollBarThickness = 0
     ListScroll.ScrollBarImageColor3 = Theme.Accent
     ListScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
     ListScroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
@@ -9375,7 +9549,7 @@ do
     ListScroll.Position = UDim2.fromOffset(6, 4)
     ListScroll.BackgroundTransparency = 1
     ListScroll.BorderSizePixel = 0
-    ListScroll.ScrollBarThickness = 3
+    ListScroll.ScrollBarThickness = 0
     ListScroll.ScrollBarImageColor3 = Theme.Accent
     ListScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
     ListScroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
@@ -9799,7 +9973,7 @@ do
     ListScroll.Position = UDim2.fromOffset(6, 4)
     ListScroll.BackgroundTransparency = 1
     ListScroll.BorderSizePixel = 0
-    ListScroll.ScrollBarThickness = 3
+    ListScroll.ScrollBarThickness = 0
     ListScroll.ScrollBarImageColor3 = Theme.Accent
     ListScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
     ListScroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
@@ -9949,11 +10123,11 @@ do
     ListFrame.Parent = ResolveUIParent(VisualsTab)
     pcall(AnxiumListFrameStroke, ListFrame)
     local ListScroll = Instance.new("ScrollingFrame")
-    ListScroll.Size = UDim2.new(1, -8, 1, -8)
-    ListScroll.Position = UDim2.new(0, 4, 0, 4)
+    ListScroll.Size = UDim2.new(1, -12, 1, -8)
+    ListScroll.Position = UDim2.fromOffset(6, 4)
     ListScroll.BackgroundTransparency = 1
     ListScroll.BorderSizePixel = 0
-    ListScroll.ScrollBarThickness = 3
+    ListScroll.ScrollBarThickness = 0
     ListScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
     ListScroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
     ListScroll.Parent = ListFrame
@@ -10115,11 +10289,11 @@ do
     pcall(AnxiumListFrameStroke, ListFrame)
 
     local ListScroll = Instance.new("ScrollingFrame")
-    ListScroll.Size = UDim2.new(1, -8, 1, -8)
-    ListScroll.Position = UDim2.new(0, 4, 0, 4)
+    ListScroll.Size = UDim2.new(1, -12, 1, -8)
+    ListScroll.Position = UDim2.fromOffset(6, 4)
     ListScroll.BackgroundTransparency = 1
     ListScroll.BorderSizePixel = 0
-    ListScroll.ScrollBarThickness = 3
+    ListScroll.ScrollBarThickness = 0
     ListScroll.ScrollBarImageColor3 = Theme.Accent
     ListScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
     ListScroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
@@ -10190,9 +10364,12 @@ end)
 CreateSliderRow("Arrow Grad Speed", 0, 50, math.floor((Config.ArrowGradientSpeed or 0.35) * 10), 9.937, VisualsTab, function(val)
     Config.ArrowGradientSpeed = val / 10
 end)
+CreateSliderRow("Arrow Transparency", 0, 100, math.floor((tonumber(Config.ArrowTransparency) or 0.05) * 100), 9.9375, VisualsTab, function(val)
+    Config.ArrowTransparency = math.clamp((val or 0) / 100, 0, 1)
+end)
 ArrowPulseBtn, ArrowPulseBg, ArrowPulseKnob = CreateFeatureRow("Arrow Pulse", 9.938, VisualsTab)
-CreateSliderRow("Arrow Pulse Speed", 0.5, 12, Config.ArrowPulseSpeed or 3, 9.939, VisualsTab, function(val)
-    Config.ArrowPulseSpeed = val
+CreateSliderRow("Arrow Pulse Speed", 0.05, 12, Config.ArrowPulseSpeed or 3, 9.939, VisualsTab, function(val)
+    Config.ArrowPulseSpeed = math.clamp(tonumber(val) or 3, 0.05, 12)
 end)
 
 DeathChamsBtn, DeathChamsBg, DeathChamsKnob = CreateFeatureRow("Death player", 9.94, VisualsTab, "Color_DeathChams")
@@ -10239,11 +10416,11 @@ do
         pcall(AnxiumListFrameStroke, ListFrame)
 
         local ListScroll = Instance.new("ScrollingFrame")
-        ListScroll.Size = UDim2.new(1, -8, 1, -8)
-        ListScroll.Position = UDim2.new(0, 4, 0, 4)
+        ListScroll.Size = UDim2.new(1, -12, 1, -8)
+        ListScroll.Position = UDim2.fromOffset(6, 4)
         ListScroll.BackgroundTransparency = 1
         ListScroll.BorderSizePixel = 0
-        ListScroll.ScrollBarThickness = 4
+        ListScroll.ScrollBarThickness = 0
         ListScroll.ScrollBarImageColor3 = Theme.Accent
         ListScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
         ListScroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
@@ -10251,15 +10428,8 @@ do
 
         local listLay = Instance.new("UIListLayout")
         listLay.SortOrder = Enum.SortOrder.LayoutOrder
-        listLay.Padding = UDim.new(0, 4)
+        listLay.Padding = UDim.new(0, 3)
         listLay.Parent = ListScroll
-
-        local listPad = Instance.new("UIPadding")
-        listPad.PaddingTop = UDim.new(0, 4)
-        listPad.PaddingBottom = UDim.new(0, 4)
-        listPad.PaddingLeft = UDim.new(0, 4)
-        listPad.PaddingRight = UDim.new(0, 4)
-        listPad.Parent = ListScroll
 
         local buttons = {}
         if buttonsCacheKey then Cache[buttonsCacheKey] = buttons end
@@ -10292,7 +10462,7 @@ do
 
         for i, styleName in ipairs(styles) do
             local button = Instance.new("TextButton")
-            button.Size = UDim2.new(1, -4, 0, 28)
+            button.Size = UDim2.new(1, 0, 0, 28)
             button.BackgroundColor3 = Theme.BgTertiary
             button.BorderSizePixel = 0
             button.Text = "  " .. styleName
@@ -10358,8 +10528,8 @@ end)
 CreateSliderRow("Lightning Duration", 10, 300, math.floor((tonumber(Config.KillLightningDuration) or 0.55) * 100), 9.976, VisualsTab, function(val)
     Config.KillLightningDuration = math.clamp((val or 55) / 100, 0.1, 3)
 end)
-KillLogsBtn, KillLogsBg, KillLogsKnob = CreateFeatureRow("Kill Logs", 9.977, VisualsTab)
-HitLogsBtn, HitLogsBg, HitLogsKnob = CreateFeatureRow("Hit Logs", 9.978, VisualsTab)
+KillLogsBtn, KillLogsBg, KillLogsKnob = CreateFeatureRow("Kill Logs", 9.977, VisualsTab, "Color_KillLog")
+HitLogsBtn, HitLogsBg, HitLogsKnob = CreateFeatureRow("Hit Logs", 9.978, VisualsTab, "Color_HitLog")
 CreateGroupPanel("Camera", 9.8, VisualsTab)
 CameraFovBtn, CameraFovBg, CameraFovKnob = CreateFeatureRow("Camera FOV", 9.9, VisualsTab)
 CreateSliderRow("FOV Value", 1, 120, Config.CameraFovValue or 120, 9.95, VisualsTab, function(val)
@@ -10440,11 +10610,11 @@ do
     pcall(AnxiumListFrameStroke, ListFrame)
 
     local ListScroll = Instance.new("ScrollingFrame")
-    ListScroll.Size = UDim2.new(1, -8, 1, -8)
-    ListScroll.Position = UDim2.new(0, 4, 0, 4)
+    ListScroll.Size = UDim2.new(1, -12, 1, -8)
+    ListScroll.Position = UDim2.fromOffset(6, 4)
     ListScroll.BackgroundTransparency = 1
     ListScroll.BorderSizePixel = 0
-    ListScroll.ScrollBarThickness = 3
+    ListScroll.ScrollBarThickness = 0
     ListScroll.ScrollBarImageColor3 = Theme.Accent
     ListScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
     ListScroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
@@ -10545,11 +10715,11 @@ do
     ListFrame.Parent = ResolveUIParent(VisualsTab)
     pcall(AnxiumListFrameStroke, ListFrame)
     local ListScroll = Instance.new("ScrollingFrame")
-    ListScroll.Size = UDim2.new(1, -8, 1, -8)
-    ListScroll.Position = UDim2.new(0, 4, 0, 4)
+    ListScroll.Size = UDim2.new(1, -12, 1, -8)
+    ListScroll.Position = UDim2.fromOffset(6, 4)
     ListScroll.BackgroundTransparency = 1
     ListScroll.BorderSizePixel = 0
-    ListScroll.ScrollBarThickness = 3
+    ListScroll.ScrollBarThickness = 0
     ListScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
     ListScroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
     ListScroll.Parent = ListFrame
@@ -10756,18 +10926,18 @@ do
     ListFrame.Parent = ResolveUIParent(VisualsTab)
     pcall(AnxiumListFrameStroke, ListFrame)
     local ListScroll = Instance.new("ScrollingFrame")
-    ListScroll.Size = UDim2.new(1, -8, 1, -8)
-    ListScroll.Position = UDim2.new(0, 4, 0, 4)
+    ListScroll.Size = UDim2.new(1, -12, 1, -8)
+    ListScroll.Position = UDim2.fromOffset(6, 4)
     ListScroll.BackgroundTransparency = 1
     ListScroll.BorderSizePixel = 0
-    ListScroll.ScrollBarThickness = 4
+    ListScroll.ScrollBarThickness = 0
     ListScroll.ScrollBarImageColor3 = Theme.Accent
     ListScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
     ListScroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
     ListScroll.Parent = ListFrame
     local lay = Instance.new("UIListLayout")
     lay.SortOrder = Enum.SortOrder.LayoutOrder
-    lay.Padding = UDim.new(0, 4)
+    lay.Padding = UDim.new(0, 3)
     lay.Parent = ListScroll
     Cache.SelfMaterialStyleButtons = {}
     local function RefreshSelfMatHighlight()
@@ -10784,7 +10954,7 @@ do
     Cache.RefreshSelfMaterialStyleList = RefreshSelfMatHighlight
     for i, styleName in ipairs(styles) do
         local b = Instance.new("TextButton")
-        b.Size = UDim2.new(1, -4, 0, 28)
+        b.Size = UDim2.new(1, 0, 0, 28)
         b.BackgroundColor3 = Theme.BgTertiary
         b.BorderSizePixel = 0
         b.Text = "  " .. styleName
@@ -10811,7 +10981,7 @@ do
         end)
     end
     RefreshSelfMatHighlight()
-    local listH = math.min(28 * #styles + 16, 200)
+    local listH = math.min(#styles * 31 + 12, 200)
     HeaderRow.MouseButton1Click:Connect(function()
         Expanded = not Expanded
         if Expanded then AnxiumSetListOpen(ListFrame, true, listH, HeaderRow) else AnxiumSetListOpen(ListFrame, false) end
@@ -10862,18 +11032,18 @@ do
     ListFrame.Parent = ResolveUIParent(VisualsTab)
     pcall(AnxiumListFrameStroke, ListFrame)
     local ListScroll = Instance.new("ScrollingFrame")
-    ListScroll.Size = UDim2.new(1, -8, 1, -8)
-    ListScroll.Position = UDim2.new(0, 4, 0, 4)
+    ListScroll.Size = UDim2.new(1, -12, 1, -8)
+    ListScroll.Position = UDim2.fromOffset(6, 4)
     ListScroll.BackgroundTransparency = 1
     ListScroll.BorderSizePixel = 0
-    ListScroll.ScrollBarThickness = 4
+    ListScroll.ScrollBarThickness = 0
     ListScroll.ScrollBarImageColor3 = Theme.Accent
     ListScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
     ListScroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
     ListScroll.Parent = ListFrame
     local lay = Instance.new("UIListLayout")
     lay.SortOrder = Enum.SortOrder.LayoutOrder
-    lay.Padding = UDim.new(0, 4)
+    lay.Padding = UDim.new(0, 3)
     lay.Parent = ListScroll
     Cache.WeaponStyleButtons = {}
     local function RefreshHighlight()
@@ -10890,7 +11060,7 @@ do
     Cache.RefreshWeaponStyleList = RefreshHighlight
     for i, styleName in ipairs(styles) do
         local b = Instance.new("TextButton")
-        b.Size = UDim2.new(1, -4, 0, 28)
+        b.Size = UDim2.new(1, 0, 0, 28)
         b.BackgroundColor3 = Theme.BgTertiary
         b.BorderSizePixel = 0
         b.Text = "  " .. styleName
@@ -10914,7 +11084,7 @@ do
         end)
     end
     RefreshHighlight()
-    local listH = math.min(28 * #styles + 16, 200)
+    local listH = math.min(#styles * 31 + 12, 200)
     HeaderRow.MouseButton1Click:Connect(function()
         Expanded = not Expanded
         if Expanded then AnxiumSetListOpen(ListFrame, true, listH, HeaderRow) else AnxiumSetListOpen(ListFrame, false) end
@@ -10958,11 +11128,11 @@ do
     ListFrame.Parent = ResolveUIParent(VisualsTab)
     pcall(AnxiumListFrameStroke, ListFrame)
     local ListScroll = Instance.new("ScrollingFrame")
-    ListScroll.Size = UDim2.new(1, -8, 1, -8)
-    ListScroll.Position = UDim2.new(0, 4, 0, 4)
+    ListScroll.Size = UDim2.new(1, -12, 1, -8)
+    ListScroll.Position = UDim2.fromOffset(6, 4)
     ListScroll.BackgroundTransparency = 1
     ListScroll.BorderSizePixel = 0
-    ListScroll.ScrollBarThickness = 3
+    ListScroll.ScrollBarThickness = 0
     ListScroll.ScrollBarImageColor3 = Theme.Accent
     ListScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
     ListScroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
@@ -11008,7 +11178,7 @@ do
         end)
     end
     RefreshTracerStyleHighlight()
-    local listH = math.min(28 * #styles + 16, 220)
+    local listH = math.min(#styles * 31 + 12, 220)
     HeaderRow.MouseButton1Click:Connect(function()
         Expanded = not Expanded
         if Expanded then AnxiumSetListOpen(ListFrame, true, listH, HeaderRow) else AnxiumSetListOpen(ListFrame, false) end
@@ -11105,11 +11275,11 @@ do
     ListFrame.Parent = ResolveUIParent(CombatTab)
     pcall(AnxiumListFrameStroke, ListFrame)
     local ListScroll = Instance.new("ScrollingFrame")
-    ListScroll.Size = UDim2.new(1, -8, 1, -8)
-    ListScroll.Position = UDim2.fromOffset(4, 4)
+    ListScroll.Size = UDim2.new(1, -12, 1, -8)
+    ListScroll.Position = UDim2.fromOffset(6, 4)
     ListScroll.BackgroundTransparency = 1
     ListScroll.BorderSizePixel = 0
-    ListScroll.ScrollBarThickness = 3
+    ListScroll.ScrollBarThickness = 0
     ListScroll.ScrollBarImageColor3 = Theme.Accent
     ListScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
     ListScroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
@@ -11118,12 +11288,6 @@ do
     lay.SortOrder = Enum.SortOrder.LayoutOrder
     lay.Padding = UDim.new(0, 3)
     lay.Parent = ListScroll
-    local pad = Instance.new("UIPadding")
-    pad.PaddingTop = UDim.new(0, 4)
-    pad.PaddingBottom = UDim.new(0, 4)
-    pad.PaddingLeft = UDim.new(0, 4)
-    pad.PaddingRight = UDim.new(0, 4)
-    pad.Parent = ListScroll
     local optButtons = {}
     local function refreshFovStyleList()
         local cur = tostring(Config.FovStyle or "Circle")
@@ -11136,7 +11300,7 @@ do
     end
     for i, name in ipairs(opts) do
         local btn = Instance.new("TextButton")
-        btn.Size = UDim2.new(1, -4, 0, 28)
+        btn.Size = UDim2.new(1, 0, 0, 28)
         btn.BackgroundColor3 = Theme.BgTertiary
         btn.BorderSizePixel = 0
         btn.Text = "  " .. name
@@ -11246,11 +11410,11 @@ CreateBodyPartList = function(title, layoutOrder, getPart, setPart, parentTab)
     pcall(AnxiumListFrameStroke, ListFrame)
 
     local ListScroll = Instance.new("ScrollingFrame")
-    ListScroll.Size = UDim2.new(1, -8, 1, -8)
-    ListScroll.Position = UDim2.new(0, 4, 0, 4)
+    ListScroll.Size = UDim2.new(1, -12, 1, -8)
+    ListScroll.Position = UDim2.fromOffset(6, 4)
     ListScroll.BackgroundTransparency = 1
     ListScroll.BorderSizePixel = 0
-    ListScroll.ScrollBarThickness = 3
+    ListScroll.ScrollBarThickness = 0
     ListScroll.ScrollBarImageColor3 = Theme.Accent
     ListScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
     ListScroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
@@ -11261,13 +11425,6 @@ CreateBodyPartList = function(title, layoutOrder, getPart, setPart, parentTab)
     ListLayout.Padding = UDim.new(0, 3)
     ListLayout.SortOrder = Enum.SortOrder.LayoutOrder
     ListLayout.Parent = ListScroll
-
-    local ListPad = Instance.new("UIPadding")
-    ListPad.PaddingTop = UDim.new(0, 4)
-    ListPad.PaddingBottom = UDim.new(0, 4)
-    ListPad.PaddingLeft = UDim.new(0, 4)
-    ListPad.PaddingRight = UDim.new(0, 4)
-    ListPad.Parent = ListScroll
 
     local buttons = {}
     local function refresh()
@@ -11356,11 +11513,11 @@ do
         ListFrame.Parent = ResolveUIParent(parentTab)
         pcall(AnxiumListFrameStroke, ListFrame)
         local ListScroll = Instance.new("ScrollingFrame")
-        ListScroll.Size = UDim2.new(1, -8, 1, -8)
-        ListScroll.Position = UDim2.new(0, 4, 0, 4)
+        ListScroll.Size = UDim2.new(1, -12, 1, -8)
+        ListScroll.Position = UDim2.fromOffset(6, 4)
         ListScroll.BackgroundTransparency = 1
         ListScroll.BorderSizePixel = 0
-        ListScroll.ScrollBarThickness = 3
+        ListScroll.ScrollBarThickness = 0
         ListScroll.ScrollBarImageColor3 = Theme.Accent
         ListScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
         ListScroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
@@ -11490,7 +11647,7 @@ do
     ListScroll.Position = UDim2.fromOffset(6, 4)
     ListScroll.BackgroundTransparency = 1
     ListScroll.BorderSizePixel = 0
-    ListScroll.ScrollBarThickness = 3
+    ListScroll.ScrollBarThickness = 0
     ListScroll.ScrollBarImageColor3 = Theme.Accent
     ListScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
     ListScroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
@@ -11592,11 +11749,11 @@ do
     pcall(AnxiumListFrameStroke, ListFrame)
 
     local ListScroll = Instance.new("ScrollingFrame")
-    ListScroll.Size = UDim2.new(1, -8, 1, -8)
-    ListScroll.Position = UDim2.new(0, 4, 0, 4)
+    ListScroll.Size = UDim2.new(1, -12, 1, -8)
+    ListScroll.Position = UDim2.fromOffset(6, 4)
     ListScroll.BackgroundTransparency = 1
     ListScroll.BorderSizePixel = 0
-    ListScroll.ScrollBarThickness = 3
+    ListScroll.ScrollBarThickness = 0
     ListScroll.ScrollBarImageColor3 = Theme.Accent
     ListScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
     ListScroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
@@ -11606,13 +11763,6 @@ do
     listLay.SortOrder = Enum.SortOrder.LayoutOrder
     listLay.Padding = UDim.new(0, 3)
     listLay.Parent = ListScroll
-
-    local listPad = Instance.new("UIPadding")
-    listPad.PaddingTop = UDim.new(0, 4)
-    listPad.PaddingBottom = UDim.new(0, 4)
-    listPad.PaddingLeft = UDim.new(0, 4)
-    listPad.PaddingRight = UDim.new(0, 4)
-    listPad.Parent = ListScroll
 
     Cache.AAManualButtons = {}
 
@@ -11793,7 +11943,7 @@ CreateSliderRow("AA Random Yaw (ms)", 20, 1000, math.floor(tonumber(Config.AntiA
     Config.AntiAimRandomYawMs = math.floor(val + 0.5)
 end)
 
-AAManualArrowsBtn, AAManualArrowsBg, AAManualArrowsKnob = CreateFeatureRow("AA Manual Arrows", 8.805, CombatTab)
+AAManualArrowsBtn, AAManualArrowsBg, AAManualArrowsKnob = CreateFeatureRow("AA Manual Arrows", 8.805, CombatTab, "Color_AAManualArrow", "Color_AAManualArrowActive")
 CreateSliderRow("AA Arrow Size", 14, 72, math.floor(tonumber(Config.AntiAimManualArrowSize) or 28), 8.806, CombatTab, function(val)
     Config.AntiAimManualArrowSize = math.floor(val + 0.5)
     if AAManualArrows_Update then pcall(AAManualArrows_Update) end
@@ -11801,6 +11951,14 @@ end)
 CreateSliderRow("AA Arrow Gap", 10, 120, math.floor(tonumber(Config.AntiAimManualArrowGap) or 42), 8.807, CombatTab, function(val)
     Config.AntiAimManualArrowGap = math.floor(val + 0.5)
     if AAManualArrows_Update then pcall(AAManualArrows_Update) end
+end)
+CreateSliderRow("AA Arrow Transparency", 0, 90, math.floor((tonumber(Config.AntiAimManualArrowTransparency) or 0) * 100), 8.8075, CombatTab, function(val)
+    Config.AntiAimManualArrowTransparency = math.clamp((tonumber(val) or 0) / 100, 0, 0.9)
+    if AAManualArrows_Update then pcall(AAManualArrows_Update) end
+end)
+AntiAimRandManualBtn, AntiAimRandManualBg, AntiAimRandManualKnob = CreateFeatureRow("AA Random Manual", 8.808, CombatTab)
+CreateSliderRow("AA Random Manual (ms)", 20, 1000, math.floor(tonumber(Config.AntiAimRandomManualMs) or 120), 8.809, CombatTab, function(val)
+    Config.AntiAimRandomManualMs = math.floor(val + 0.5)
 end)
 
 CreateGroupPanel("Trigger / Misc", 8.95, CombatTab)
@@ -11993,7 +12151,7 @@ end, function(v) Config.SilentV2TargetPart = v end, CombatTab)
 SilentV2MultiBtn, SilentV2MultiBg, SilentV2MultiKnob = CreateFeatureRow("Silent Multipoint", 10.848, CombatTab)
 
 do
-    local parts = { "Head", "UpperTorso", "Torso", "HumanoidRootPart", "LowerTorso" }
+    local parts = { "Head", "UpperTorso", "Torso", "HumanoidRootPart", "LowerTorso", "LeftArm", "RightArm", "LeftLeg", "RightLeg" }
     local Expanded = false
     local HeaderRow = Instance.new("TextButton")
     HeaderRow.Name = "SilentMultipointHeader"
@@ -12028,11 +12186,11 @@ do
     ListFrame.Parent = ResolveUIParent(CombatTab)
     pcall(AnxiumListFrameStroke, ListFrame)
     local ListScroll = Instance.new("ScrollingFrame")
-    ListScroll.Size = UDim2.new(1, -8, 1, -8)
-    ListScroll.Position = UDim2.new(0, 4, 0, 4)
+    ListScroll.Size = UDim2.new(1, -12, 1, -8)
+    ListScroll.Position = UDim2.fromOffset(6, 4)
     ListScroll.BackgroundTransparency = 1
     ListScroll.BorderSizePixel = 0
-    ListScroll.ScrollBarThickness = 3
+    ListScroll.ScrollBarThickness = 0
     ListScroll.ScrollBarImageColor3 = Theme.Accent
     ListScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
     ListScroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
@@ -12041,12 +12199,6 @@ do
     lay.SortOrder = Enum.SortOrder.LayoutOrder
     lay.Padding = UDim.new(0, 3)
     lay.Parent = ListScroll
-    local pad = Instance.new("UIPadding")
-    pad.PaddingTop = UDim.new(0, 4)
-    pad.PaddingBottom = UDim.new(0, 4)
-    pad.PaddingLeft = UDim.new(0, 4)
-    pad.PaddingRight = UDim.new(0, 4)
-    pad.Parent = ListScroll
     Cache.MultipointButtons = {}
     local function RefreshHighlight()
         if type(Config.SilentV2Multipoint) ~= "table" then
@@ -12084,7 +12236,7 @@ do
         end)
     end
     RefreshHighlight()
-    local listH = 28 * #parts + 16
+    local listH = #parts * 31 + 12
     HeaderRow.MouseButton1Click:Connect(function()
         Expanded = not Expanded
         if Expanded then
@@ -12180,11 +12332,11 @@ do
     pcall(AnxiumListFrameStroke, ListFrame)
 
     local ListScroll = Instance.new("ScrollingFrame")
-    ListScroll.Size = UDim2.new(1, -8, 1, -8)
-    ListScroll.Position = UDim2.new(0, 4, 0, 4)
+    ListScroll.Size = UDim2.new(1, -12, 1, -8)
+    ListScroll.Position = UDim2.fromOffset(6, 4)
     ListScroll.BackgroundTransparency = 1
     ListScroll.BorderSizePixel = 0
-    ListScroll.ScrollBarThickness = 3
+    ListScroll.ScrollBarThickness = 0
     ListScroll.ScrollBarImageColor3 = Theme.Accent
     ListScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
     ListScroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
@@ -12194,13 +12346,6 @@ do
     ListLayout.Padding = UDim.new(0, 3)
     ListLayout.SortOrder = Enum.SortOrder.LayoutOrder
     ListLayout.Parent = ListScroll
-
-    local ListPad = Instance.new("UIPadding")
-    ListPad.PaddingTop = UDim.new(0, 4)
-    ListPad.PaddingBottom = UDim.new(0, 4)
-    ListPad.PaddingLeft = UDim.new(0, 4)
-    ListPad.PaddingRight = UDim.new(0, 4)
-    ListPad.Parent = ListScroll
 
     Cache.HitSoundButtons = {}
 
@@ -12325,11 +12470,11 @@ do
     pcall(AnxiumListFrameStroke, ListFrame)
 
     local ListScroll = Instance.new("ScrollingFrame")
-    ListScroll.Size = UDim2.new(1, -8, 1, -8)
-    ListScroll.Position = UDim2.new(0, 4, 0, 4)
+    ListScroll.Size = UDim2.new(1, -12, 1, -8)
+    ListScroll.Position = UDim2.fromOffset(6, 4)
     ListScroll.BackgroundTransparency = 1
     ListScroll.BorderSizePixel = 0
-    ListScroll.ScrollBarThickness = 3
+    ListScroll.ScrollBarThickness = 0
     ListScroll.ScrollBarImageColor3 = Theme.Accent
     ListScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
     ListScroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
@@ -12448,20 +12593,24 @@ do
     ListFrame.LayoutOrder = 9.01
     ListFrame.Parent = ResolveUIParent(MovementTab)
     AnxiumListFrameStroke(ListFrame)
+    local ListScroll = Instance.new("ScrollingFrame")
+    ListScroll.Name = "StrafeModeScroll"
+    ListScroll.Size = UDim2.new(1, -12, 1, -8)
+    ListScroll.Position = UDim2.fromOffset(6, 4)
+    ListScroll.BackgroundTransparency = 1
+    ListScroll.BorderSizePixel = 0
+    ListScroll.ScrollBarThickness = 0
+    ListScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+    ListScroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
+    ListScroll.Parent = ListFrame
     local listLay = Instance.new("UIListLayout")
     listLay.SortOrder = Enum.SortOrder.LayoutOrder
-    listLay.Padding = UDim.new(0, 2)
-    listLay.Parent = ListFrame
-    local listPad = Instance.new("UIPadding")
-    listPad.PaddingTop = UDim.new(0, 4)
-    listPad.PaddingBottom = UDim.new(0, 4)
-    listPad.PaddingLeft = UDim.new(0, 4)
-    listPad.PaddingRight = UDim.new(0, 4)
-    listPad.Parent = ListFrame
+    listLay.Padding = UDim.new(0, 3)
+    listLay.Parent = ListScroll
 
     local function refreshHighlight()
         local cur = Config.StrafeMode or "Hybrid"
-        for _, ch in ipairs(ListFrame:GetChildren()) do
+        for _, ch in ipairs(ListScroll:GetChildren()) do
             if ch:IsA("TextButton") then
                 local name = ch:GetAttribute("ModeName") or ch.Text:gsub("^%s+", "")
                 AnxiumListItem_SetSelected(ch, name == cur)
@@ -12472,7 +12621,7 @@ do
 
     for i, modeName in ipairs(modes) do
         local btn = Instance.new("TextButton")
-        btn.Size = UDim2.new(1, -4, 0, 28)
+        btn.Size = UDim2.new(1, 0, 0, 28)
         btn.BackgroundColor3 = Theme.BgTertiary
         btn.BorderSizePixel = 0
         btn.Text = "  " .. modeName
@@ -12483,7 +12632,7 @@ do
         btn.LayoutOrder = i
         btn.AutoButtonColor = true
         btn:SetAttribute("ModeName", modeName)
-        btn.Parent = ListFrame
+        btn.Parent = ListScroll
         btn.MouseButton1Click:Connect(function()
             Config.StrafeMode = modeName
             refreshHighlight()
@@ -12495,7 +12644,7 @@ do
     HeaderRow.MouseButton1Click:Connect(function()
         Expanded = not Expanded
         if Expanded then
-            local h = #modes * 30 + 12
+            local h = #modes * 31 + 12
             AnxiumSetListOpen(ListFrame, true, h, HeaderRow)
             if ArrowLbl:IsA("ImageLabel") then
                 ArrowLbl.Image = "rbxassetid://6031090990"
@@ -12825,27 +12974,20 @@ do
     pcall(AnxiumListFrameStroke, ListFrame)
 
     local ListScroll = Instance.new("ScrollingFrame")
-    ListScroll.Size = UDim2.new(1, -8, 1, -8)
-    ListScroll.Position = UDim2.new(0, 4, 0, 4)
+    ListScroll.Size = UDim2.new(1, -12, 1, -8)
+    ListScroll.Position = UDim2.fromOffset(6, 4)
     ListScroll.BackgroundTransparency = 1
     ListScroll.BorderSizePixel = 0
-    ListScroll.ScrollBarThickness = 4
+    ListScroll.ScrollBarThickness = 0
     ListScroll.ScrollBarImageColor3 = Theme.Accent
     ListScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
     ListScroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
     ListScroll.Parent = ListFrame
 
     local ListLayout = Instance.new("UIListLayout")
-    ListLayout.Padding = UDim.new(0, 4)
+    ListLayout.Padding = UDim.new(0, 3)
     ListLayout.SortOrder = Enum.SortOrder.LayoutOrder
     ListLayout.Parent = ListScroll
-
-    local ListPad = Instance.new("UIPadding")
-    ListPad.PaddingTop = UDim.new(0, 4)
-    ListPad.PaddingBottom = UDim.new(0, 4)
-    ListPad.PaddingLeft = UDim.new(0, 4)
-    ListPad.PaddingRight = UDim.new(0, 4)
-    ListPad.Parent = ListScroll
 
     Cache.AnimPackButtons = {}
 
@@ -12862,7 +13004,7 @@ do
     for i, packName in ipairs(AnxiumAnimList) do
         local btn = Instance.new("TextButton")
         btn.Name = "Pack_" .. packName
-        btn.Size = UDim2.new(1, -4, 0, 28)
+        btn.Size = UDim2.new(1, 0, 0, 28)
         btn.BackgroundColor3 = Theme.BgTertiary
         btn.BorderSizePixel = 0
         btn.Text = "  " .. packName
@@ -12972,9 +13114,17 @@ CreateSliderRow("Menu Transparency", 0, 90, math.floor((tonumber(Config.MenuTran
 end)
 
 MenuSoundsBtn, MenuSoundsBg, MenuSoundsKnob = CreateFeatureRow("Menu Sounds", 3, SettingsTab)
-HideWatermarkBtn, HideWatermarkBg, HideWatermarkKnob = CreateFeatureRow("Hide Watermark", 3.2, SettingsTab)
+HideWatermarkBtn, HideWatermarkBg, HideWatermarkKnob = CreateFeatureRow("Hide Watermark", 5, SettingsTab)
+NotifyToggleBtn, NotifyToggleBg, NotifyToggleKnob = CreateFeatureRow("Notify", 8, SettingsTab)
 pcall(function()
     UpdateSwitch(Config.MenuSoundsEnabled == true, MenuSoundsBg, MenuSoundsKnob)
+    pcall(function()
+        UpdateSwitch(Config.NotifyEnabled ~= false, NotifyToggleBg, NotifyToggleKnob)
+    end)
+NotifyToggleBtn.MouseButton1Click:Connect(function()
+    Config.NotifyEnabled = not (Config.NotifyEnabled ~= false)
+    UpdateSwitch(Config.NotifyEnabled ~= false, NotifyToggleBg, NotifyToggleKnob, "Notify")
+end)
 end)
 MenuSoundsBtn.MouseButton1Click:Connect(function()
     local newState = not (Config.MenuSoundsEnabled == true)
@@ -13017,11 +13167,6 @@ function ApplyAccentColor(color)
     Theme.Accent = color
     Theme.ToggleOn = color
     pcall(function() ColorPickerBtn.BackgroundColor3 = color end)
-    pcall(function()
-        if WatermarkGrad and WatermarkGrad_FromTheme then
-            WatermarkGrad.Color = WatermarkGrad_FromTheme()
-        end
-    end)
 
     pcall(function()
         if TitleLabel then TitleLabel.TextColor3 = Theme.Text end
@@ -13080,6 +13225,26 @@ function ApplyAccentColor(color)
                 end
             end
         end
+        pcall(function()
+            if MenuSoundsBg and MenuSoundsKnob then
+                local on = Config.MenuSoundsEnabled == true
+                MenuSoundsBg.BackgroundColor3 = on and color or Theme.ToggleOff
+                local g = MenuSoundsBg:FindFirstChild("SwitchGlow")
+                if g then
+                    g.Color = color
+                    g.Transparency = on and 0.25 or 0.92
+                    g.Thickness = on and 2 or 1.5
+                end
+            end
+            if HideWatermarkBg and HideWatermarkKnob then
+                local on = Config.HideWatermarkEnabled == true
+                HideWatermarkBg.BackgroundColor3 = on and color or Theme.ToggleOff
+            end
+            if NotifyToggleBg and NotifyToggleKnob then
+                local on = Config.NotifyEnabled ~= false
+                NotifyToggleBg.BackgroundColor3 = on and color or Theme.ToggleOff
+            end
+        end)
         
         pcall(function()
             if ScreenGui then
@@ -13141,6 +13306,15 @@ function ApplyAccentColor(color)
         end
         if ActiveContainer then ActiveContainer.ScrollBarImageColor3 = color end
         if BindListContainer then BindListContainer.ScrollBarImageColor3 = color end
+        pcall(function()
+            if ScreenGui then
+                for _, d in ipairs(ScreenGui:GetDescendants()) do
+                    if d:IsA("ScrollingFrame") then
+                        d.ScrollBarImageColor3 = color
+                    end
+                end
+            end
+        end)
     end)
 
     pcall(function()
@@ -13184,6 +13358,26 @@ function ApplyAccentColor(color)
 
     pcall(function()
         if AnxiumRefreshAllListStrokes then AnxiumRefreshAllListStrokes() end
+    end)
+    pcall(function()
+        if LuaIO_RefreshAuthorColors then LuaIO_RefreshAuthorColors() end
+    end)
+    pcall(function()
+        local refreshes = Cache and {
+            "RefreshBoxStyleList", "RefreshChamsStyleList", "RefreshHealthbarStyleList",
+            "RefreshHealthbarStyleHighlight", "RefreshAAModeList", "RefreshAAManualList",
+            "RefreshHitSoundList", "RefreshHitSoundHighlight", "RefreshHitOnlySoundHighlight",
+            "RefreshStrafeModeList", "RefreshWeaponMaterialList", "RefreshSelfMaterialStyleList",
+            "RefreshAnimList", "RefreshScopeModeList", "RefreshCloneStyleList", "RefreshDeathStyleList",
+            "RefreshMultipointList", "RefreshPriorityList", "RefreshAimPartList", "RefreshSilentV2PartList",
+            "RefreshAimPriorityList", "RefreshSilentPriorityList", "RefreshTracerOriginList",
+            "RefreshDistancePosList", "RefreshWeaponPosList", "RefreshWatermarkPosList",
+            "RefreshWmPosHighlight", "RefreshFakeFpsHighlight",
+        } or {}
+        for _, name in ipairs(refreshes) do
+            local fn = Cache and Cache[name]
+            if typeof(fn) == "function" then pcall(fn) end
+        end
     end)
     pcall(function()
         if AnxiumHudStrokes_UpdateTheme then AnxiumHudStrokes_UpdateTheme() end
@@ -13250,25 +13444,26 @@ end)
 
 do
     local positions = { "Left", "Center", "Right", "BottomLeft", "BottomCenter", "BottomRight" }
+    local Expanded = false
     local HeaderRow = Instance.new("TextButton")
     HeaderRow.Name = "WatermarkPosHeader"
-    HeaderRow.Size = UDim2.new(1, 0, 0, 34)
+    HeaderRow.Size = UDim2.new(0.96, 0, 0, 34)
     HeaderRow.BackgroundColor3 = Theme.Card
     HeaderRow.BorderSizePixel = 0
     HeaderRow.AutoButtonColor = false
     HeaderRow.Text = ""
-    HeaderRow.LayoutOrder = 5
+    HeaderRow.LayoutOrder = 6
     HeaderRow.Parent = ResolveUIParent(SettingsTab)
+    pcall(AnxiumListFrameStroke, HeaderRow)
     local HeaderLbl = Instance.new("TextLabel")
-    HeaderLbl.BackgroundTransparency = 1
-    HeaderLbl.Size = UDim2.new(1, -36, 1, 0)
+    HeaderLbl.Size = UDim2.new(1, -40, 1, 0)
     HeaderLbl.Position = UDim2.fromOffset(12, 0)
+    HeaderLbl.BackgroundTransparency = 1
     HeaderLbl.Font = SelectedFont
-    HeaderLbl.TextSize = 13
+    HeaderLbl.TextSize = 12
     HeaderLbl.TextColor3 = Theme.Text
     HeaderLbl.TextXAlignment = Enum.TextXAlignment.Left
     HeaderLbl.Text = "Watermark Pos  ·  " .. tostring(Config.WatermarkPosition or "Center")
-    Cache.WatermarkPosHeaderLbl = HeaderLbl
     HeaderLbl.Parent = HeaderRow
     Cache.WatermarkPosHeaderLbl = HeaderLbl
     local ArrowLbl = AnxiumMakeListArrow(HeaderRow)
@@ -13276,19 +13471,27 @@ do
     ListFrame.Name = "WatermarkPosList"
     pcall(function() ListFrame.AutomaticSize = Enum.AutomaticSize.None end); ListFrame.Size = UDim2.new(0.96, 0, 0, 0)
     ListFrame.Visible = false
-    ListFrame.BackgroundColor3 = Theme.BgSecondary
+    ListFrame.BackgroundColor3 = Theme.Card
     ListFrame.BorderSizePixel = 0
     ListFrame.ClipsDescendants = true
-    ListFrame.LayoutOrder = 6
-    ListFrame.Visible = false
-    pcall(function() ListFrame.AutomaticSize = Enum.AutomaticSize.None end); ListFrame.Size = UDim2.new(0.96, 0, 0, 0)
+    ListFrame.LayoutOrder = 7
     ListFrame.Parent = ResolveUIParent(SettingsTab)
     pcall(AnxiumListFrameStroke, ListFrame)
+    local ListScroll = Instance.new("ScrollingFrame")
+    ListScroll.Name = "WatermarkPosScroll"
+    ListScroll.Size = UDim2.new(1, -12, 1, -8)
+    ListScroll.Position = UDim2.fromOffset(6, 4)
+    ListScroll.BackgroundTransparency = 1
+    ListScroll.BorderSizePixel = 0
+    ListScroll.ScrollBarThickness = 0
+    ListScroll.ScrollBarImageColor3 = Theme.Accent
+    ListScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+    ListScroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
+    ListScroll.Parent = ListFrame
     local listLay = Instance.new("UIListLayout")
     listLay.SortOrder = Enum.SortOrder.LayoutOrder
-    listLay.Padding = UDim.new(0, 2)
-    listLay.Parent = ListFrame
-    local open = false
+    listLay.Padding = UDim.new(0, 3)
+    listLay.Parent = ListScroll
     Cache.WatermarkPosButtons = {}
     local function RefreshWmPosHighlight()
         local cur = Config.WatermarkPosition or "Center"
@@ -13305,8 +13508,8 @@ do
     Cache.RefreshWatermarkPosList = RefreshWmPosHighlight
     for i, name in ipairs(positions) do
         local btn = Instance.new("TextButton")
-        btn.Size = UDim2.new(1, -8, 0, 28)
-        btn.BackgroundColor3 = Theme.Card
+        btn.Size = UDim2.new(1, 0, 0, 28)
+        btn.BackgroundColor3 = Theme.BgTertiary
         btn.BorderSizePixel = 0
         btn.AutoButtonColor = false
         btn.Font = SelectedFont
@@ -13315,12 +13518,7 @@ do
         btn.TextXAlignment = Enum.TextXAlignment.Left
         btn.Text = "  " .. name
         btn.LayoutOrder = i
-        btn.Parent = ListFrame
-        do
-            local c = Instance.new("UICorner")
-            c.CornerRadius = UDim.new(0, 6)
-            c.Parent = btn
-        end
+        btn.Parent = ListScroll
         Cache.WatermarkPosButtons[name] = btn
         btn.MouseButton1Click:Connect(function()
             Config.WatermarkPosition = name
@@ -13330,17 +13528,11 @@ do
         end)
     end
     RefreshWmPosHighlight()
+    local LIST_H = #positions * 31 + 12
     HeaderRow.MouseButton1Click:Connect(function()
-        open = not open
-        pcall(function()
-            for _, d in ipairs(ScreenGui:GetDescendants()) do
-                if d.Name == "MenuFontList" or (d:IsA("Frame") and d.LayoutOrder == 38.26) then
-                    if d.Visible and d ~= ListFrame then AnxiumSetListOpen(d, false) end
-                end
-            end
-        end)
-        if open then
-            AnxiumSetListOpen(ListFrame, true, #positions * 30 + 6, HeaderRow)
+        Expanded = not Expanded
+        if Expanded then
+            AnxiumSetListOpen(ListFrame, true, LIST_H, HeaderRow)
             AnxiumSetListArrow(ArrowLbl, true)
         else
             AnxiumSetListOpen(ListFrame, false)
@@ -13355,7 +13547,7 @@ do
     Row.BackgroundColor3 = Theme.Card
     Row.BackgroundTransparency = 1
     Row.BorderSizePixel = 0
-    Row.LayoutOrder = 7
+    Row.LayoutOrder = 9
     Row.Parent = ResolveUIParent(SettingsTab)
     pcall(function()
         Row:SetAttribute("AnxiumSearchText", "menu key")
@@ -14069,6 +14261,8 @@ function RefreshAllSwitches()
         { Config.AngelHaloEnabled, AngelHaloBg, AngelHaloKnob },
 
         { Config.ActiveListEnabled, ActiveListBg, ActiveListKnob },
+        { Config.NotifyEnabled ~= false, NotifyToggleBg, NotifyToggleKnob },
+        { Config.MenuSoundsEnabled == true, MenuSoundsBg, MenuSoundsKnob },
         { Config.FakeFpsEnabled, FakeFpsBg, FakeFpsKnob },
         { Config.ChinaHatEnabled, HatBg, HatKnob },
         { Config.FakeLagEnabled, FakeLagBg, FakeLagKnob },
@@ -14121,6 +14315,7 @@ function RefreshAllSwitches()
         { Config.AntiAimManualArrowsEnabled, AAManualArrowsBg, AAManualArrowsKnob },
         { Config.AntiAimResolveEnabled, AntiAimResolveBg, AntiAimResolveKnob },
         { Config.AntiAimRandomPitchEnabled, AntiAimRandPitchBg, AntiAimRandPitchKnob },
+        { Config.AntiAimRandomManualEnabled, AntiAimRandManualBg, AntiAimRandManualKnob },
         { Config.AntiAimRandomYawEnabled, AntiAimRandYawBg, AntiAimRandYawKnob },
         { Config.TriggerbotEnabled, TriggerbotBg, TriggerbotKnob },
         { Config.TriggerbotAutowall, TriggerbotAWBg, TriggerbotAWKnob },
@@ -15348,7 +15543,7 @@ do
     scroll.BackgroundColor3 = Theme.BgTertiary
     scroll.BackgroundTransparency = 0.15
     scroll.BorderSizePixel = 0
-    scroll.ScrollBarThickness = 4
+    scroll.ScrollBarThickness = 0
     scroll.ScrollBarImageColor3 = Theme.Accent
     scroll.CanvasSize = UDim2.new(0, 0, 0, 0)
     scroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
@@ -16343,6 +16538,44 @@ function LuaIO_FormatDateAuthorDisplay(loadedAt, author)
     return rich, true
 end
 
+function LuaIO_RefreshAuthorColors()
+    pcall(function()
+        if not LuaIO or not LuaIO.Scripts then return end
+        if typeof(LuaIO_UpdateRow) == "function" then
+            for name, entry in pairs(LuaIO.Scripts) do
+                if entry then
+                    pcall(LuaIO_UpdateRow, name)
+                end
+            end
+            return
+        end
+        if LuaIO.ListFrame then
+            for _, row in ipairs(LuaIO.ListFrame:GetChildren()) do
+                if row:IsA("Frame") and row.Name == "LuaScriptRow" then
+                    local dateVal = row:FindFirstChild("DateValue")
+                    if dateVal then
+                        local nameLbl = nil
+                        for _, d in ipairs(row:GetChildren()) do
+                            if d:IsA("TextLabel") and d.Name ~= "DateValue" and d.Text and d.Text ~= "" then
+                                nameLbl = d
+                                break
+                            end
+                        end
+                        local name = nameLbl and nameLbl.Text
+                        local entry = name and LuaIO.Scripts[name]
+                        if entry and LuaIO_FormatDateAuthorDisplay then
+                            local dateDisplay, hasAuthor = LuaIO_FormatDateAuthorDisplay(entry.loadedAt, entry.author)
+                            dateVal.RichText = hasAuthor == true
+                            dateVal.Text = dateDisplay
+                            dateVal.TextColor3 = Theme.Accent or Color3.fromRGB(180, 140, 255)
+                        end
+                    end
+                end
+            end
+        end
+    end)
+end
+
 function LuaIO_AddScript(name, source)
     name = LuaIO_SanitizeName(name)
     local isNew = LuaIO.Scripts[name] == nil
@@ -16951,7 +17184,7 @@ do
     scroll.Position = UDim2.fromOffset(0, 0)
     scroll.BackgroundTransparency = 1
     scroll.BorderSizePixel = 0
-    scroll.ScrollBarThickness = 4
+    scroll.ScrollBarThickness = 0
     scroll.ScrollBarImageColor3 = Theme.Accent
     scroll.CanvasSize = UDim2.new(0, 0, 0, 0)
     scroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
@@ -17229,7 +17462,27 @@ end)
 function ShouldSkipEspPlayer(player)
     if not player or player == LocalPlayer then return true end
     if Config.TeamCheckerEnabled and IsTeammate and IsTeammate(player) then
-        return not (Config.TeamEspEnabled == true)
+        if not (Config.TeamEspEnabled == true) then
+            return true
+        end
+    end
+    local maxD = math.clamp(tonumber(Config.EspMaxDistance) or 700, 50, 700)
+    if maxD and maxD > 0 then
+        local myChar = LocalPlayer.Character
+        local myRoot = myChar and (myChar:FindFirstChild("HumanoidRootPart") or myChar.PrimaryPart)
+        local theirChar = player.Character
+        local theirRoot = theirChar and (
+            theirChar:FindFirstChild("HumanoidRootPart")
+            or theirChar:FindFirstChild("Head")
+            or theirChar.PrimaryPart
+        )
+        if myRoot and theirRoot then
+            if (theirRoot.Position - myRoot.Position).Magnitude > maxD then
+                return true
+            end
+        elseif not theirRoot then
+            return true
+        end
     end
     return false
 end
@@ -17749,7 +18002,8 @@ function AAManualArrows_Ensure()
         lbl.TextSize = sz
         lbl.Font = Enum.Font.GothamBold
         lbl.TextColor3 = Color3.fromRGB(200, 200, 200)
-        lbl.TextStrokeTransparency = 0.4
+        lbl.TextTransparency = 0
+        lbl.TextStrokeTransparency = 1
         lbl.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
         lbl.Visible = false
         lbl.Parent = gui
@@ -17770,8 +18024,8 @@ function AAManualArrows_Update()
     end
     local labels = AAManualArrows_Ensure()
     local active = tostring(Config.AntiAimManualDir or "None")
-    local accent = (Theme and Theme.Accent) or Color3.fromRGB(180, 140, 255)
-    local idle = Color3.fromRGB(190, 190, 190)
+    local baseCol = Config.Color_AAManualArrow or Color3.fromRGB(180, 140, 255)
+    local activeCol = Config.Color_AAManualArrowActive or Color3.fromRGB(255, 255, 255)
     local sides = {
         Front = Config.AntiAimManualFrontKey,
         Back = Config.AntiAimManualBackKey,
@@ -17795,11 +18049,15 @@ function AAManualArrows_Update()
             lbl.TextSize = sz
             lbl.Size = UDim2.fromOffset(sz + 8, sz + 8)
             if positions[side] then lbl.Position = positions[side] end
+            local tr = math.clamp(tonumber(Config.AntiAimManualArrowTransparency) or 0, 0, 0.9)
             if active == side then
-                lbl.TextColor3 = accent
+                lbl.TextColor3 = activeCol
+                lbl.TextTransparency = tr
             else
-                lbl.TextColor3 = idle
+                lbl.TextColor3 = baseCol
+                lbl.TextTransparency = tr
             end
+            lbl.TextStrokeTransparency = 1
         end
     end
 end
@@ -17842,6 +18100,33 @@ function AntiAim_Update(dt)
             Cache.AntiAimRandPitchNext = nowT + (jitter / 1000)
         end
         pitchDeg = math.clamp(Cache.AntiAimRandPitchVal or pitchDeg, -75, 75)
+    end
+    if Config.AntiAimRandomManualEnabled == true then
+        local ms = math.clamp(tonumber(Config.AntiAimRandomManualMs) or 120, 20, 2000)
+        local nextT = Cache.AntiAimRandManualNext or 0
+        if nowT >= nextT then
+            local opts = {}
+            local keys = {
+                Front = Config.AntiAimManualFrontKey,
+                Back = Config.AntiAimManualBackKey,
+                Left = Config.AntiAimManualLeftKey,
+                Right = Config.AntiAimManualRightKey,
+            }
+            for side, key in pairs(keys) do
+                if type(key) == "string" and key ~= "" then
+                    opts[#opts + 1] = side
+                end
+            end
+            if #opts == 0 then
+                Cache.AntiAimRandManualNext = nowT + (ms / 1000)
+            else
+                local pick = opts[math.random(1, #opts)]
+                Config.AntiAimManualDir = pick
+                local jitter = ms * (0.7 + math.random() * 0.6)
+                Cache.AntiAimRandManualNext = nowT + (jitter / 1000)
+                if AAManualArrows_Update then pcall(AAManualArrows_Update) end
+            end
+        end
     end
     if Config.AntiAimRandomYawEnabled == true then
         local ms = math.clamp(tonumber(Config.AntiAimRandomYawMs) or 120, 20, 2000)
@@ -18121,7 +18406,7 @@ function IsVisibleToCamera(player, part)
     return result.Instance and result.Instance:IsDescendantOf(char)
 end
 
-BODY_PART_OPTIONS = { "Head", "HumanoidRootPart", "Torso", "UpperTorso", "LowerTorso", "Random", "Closest" }
+BODY_PART_OPTIONS = { "Head", "HumanoidRootPart", "Torso", "UpperTorso", "LowerTorso", "LeftArm", "RightArm", "LeftLeg", "RightLeg", "Random", "Closest" }
 
 function ResolveAimPart(char, mode)
     if not char then return nil end
@@ -18129,12 +18414,23 @@ function ResolveAimPart(char, mode)
     local function pick(name)
         if name == "Torso" then
             return char:FindFirstChild("UpperTorso") or char:FindFirstChild("Torso") or char:FindFirstChild("HumanoidRootPart")
+        elseif name == "LeftArm" then
+            return char:FindFirstChild("LeftUpperArm") or char:FindFirstChild("Left Arm") or char:FindFirstChild("LeftHand")
+        elseif name == "RightArm" then
+            return char:FindFirstChild("RightUpperArm") or char:FindFirstChild("Right Arm") or char:FindFirstChild("RightHand")
+        elseif name == "LeftLeg" then
+            return char:FindFirstChild("LeftUpperLeg") or char:FindFirstChild("Left Leg") or char:FindFirstChild("LeftFoot")
+        elseif name == "RightLeg" then
+            return char:FindFirstChild("RightUpperLeg") or char:FindFirstChild("Right Leg") or char:FindFirstChild("RightFoot")
         end
-        return char:FindFirstChild(name)
+        local p = char:FindFirstChild(name)
+        if p then return p end
+        return nil
     end
+    local bodyPool = { "Head", "HumanoidRootPart", "UpperTorso", "Torso", "LowerTorso", "LeftArm", "RightArm", "LeftLeg", "RightLeg" }
     if mode == "Random" then
         local pool = {}
-        for _, n in ipairs({ "Head", "HumanoidRootPart", "UpperTorso", "Torso", "LowerTorso" }) do
+        for _, n in ipairs(bodyPool) do
             local p = pick(n)
             if p then table.insert(pool, p) end
         end
@@ -18146,7 +18442,7 @@ function ResolveAimPart(char, mode)
         if not cam then return pick("Head") end
         local mouse = UserInputService:GetMouseLocation()
         local best, bestD = nil, math.huge
-        for _, n in ipairs({ "Head", "HumanoidRootPart", "UpperTorso", "Torso", "LowerTorso" }) do
+        for _, n in ipairs(bodyPool) do
             local p = pick(n)
             if p then
                 local sp, onScreen = cam:WorldToViewportPoint(p.Position)
@@ -19124,6 +19420,8 @@ function Healthbar_Hide(data)
             data.Outline.Position = UDim2.fromOffset(-10000, -10000)
             data.Outline.Size = UDim2.fromOffset(0, 0)
         end
+        data.SmoothRatio = nil
+        data.SmoothTime = nil
         if data.Text then
             data.Text.Visible = false
         end
@@ -19159,11 +19457,30 @@ function Healthbar_Update(player, minX, minY, height, hp, maxHp)
     data.Outline.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
     data.Outline.BackgroundTransparency = 0.2
     data.Outline.Visible = true
-    data.Fill.Size = UDim2.new(1, 0, ratio, 0)
+    
+    local targetRatio = ratio
+    local smooth = data.SmoothRatio
+    if type(smooth) ~= "number" then
+        smooth = targetRatio
+    end
+    local now = tick()
+    local lastT = data.SmoothTime or now
+    local dt = math.clamp(now - lastT, 0, 0.05)
+    data.SmoothTime = now
+    
+    local speed = 10
+    local alpha = 1 - math.exp(-speed * dt)
+    if alpha < 0.05 then alpha = 0.12 end
+    smooth = smooth + (targetRatio - smooth) * alpha
+    if math.abs(targetRatio - smooth) < 0.0015 then
+        smooth = targetRatio
+    end
+    data.SmoothRatio = smooth
+    data.Fill.Size = UDim2.new(1, 0, smooth, 0)
     data.Fill.AnchorPoint = Vector2.new(0, 1)
     data.Fill.Position = UDim2.new(0, 0, 1, 0)
     data.Fill.Visible = true
-    data.LastRatio = ratio
+    data.LastRatio = targetRatio
     local style = Config.HealthbarStyle or "Gradient"
     
     local c1 = Config.Color_Healthbar or Config.Color_HealthbarTop or Theme.Accent or Color3.fromRGB(180, 140, 255)
@@ -19188,7 +19505,7 @@ function Healthbar_Update(player, minX, minY, height, hp, maxHp)
     local floored = math.floor((tonumber(hp) or 0) + 0.5)
     if data.Text then
         data.Text.Text = tostring(floored)
-        data.Text.Position = UDim2.new(0, -4, 1 - ratio, 0)
+        data.Text.Position = UDim2.new(0, -4, 1 - smooth, 0)
         data.Text.Visible = true
         data.LastFloor = floored
         pcall(function()
@@ -20090,25 +20407,29 @@ RunService.RenderStepped:Connect(function(dt)
                 if char then
                     liveHum = (GetCharHumanoid and GetCharHumanoid(char)) or char:FindFirstChildOfClass("Humanoid") or hum
                 end
-                local hp, maxHp = 0, 100
-                local hasHp = false
-                if char then
-                    local aHp = char:GetAttribute("Health")
-                    local aMax = char:GetAttribute("MaxHealth")
-                    if aHp ~= nil then
-                        hp = tonumber(aHp) or 0
-                        maxHp = tonumber(aMax) or 100
+                local hp, maxHp, dead = 0, 100, true
+                if ResolvePlayerHealth then
+                    hp, maxHp, dead = ResolvePlayerHealth(char, liveHum, player)
+                else
+                    local hasHp = false
+                    if char then
+                        local aHp = char:GetAttribute("Health")
+                        local aMax = char:GetAttribute("MaxHealth")
+                        if aHp ~= nil then
+                            hp = tonumber(aHp) or 0
+                            maxHp = tonumber(aMax) or 100
+                            hasHp = true
+                        end
+                    end
+                    if not hasHp and liveHum then
+                        hp = tonumber(liveHum.Health) or 0
+                        maxHp = tonumber(liveHum.MaxHealth) or 100
                         hasHp = true
                     end
-                end
-                if not hasHp and liveHum then
-                    hp = tonumber(liveHum.Health) or 0
-                    maxHp = tonumber(liveHum.MaxHealth) or 100
-                    hasHp = true
+                    dead = (not hasHp) or hp <= 0 or (char and char:GetAttribute("Dead") == true)
                 end
                 if maxHp <= 0 then maxHp = 100 end
-                local isDeadAttr = char and (char:GetAttribute("Dead") == true)
-                if hasHp and hp > 0 and not isDeadAttr then
+                if not dead and hp > 0 then
                     healthbarDrawn[player] = true
                     Healthbar_Update(player, minX, minY, height, hp, maxHp)
                 else
@@ -20127,7 +20448,8 @@ RunService.RenderStepped:Connect(function(dt)
             if ok then
                 local ch = plr.Character
                 local hum = ch and ch:FindFirstChildOfClass("Humanoid")
-                if not ch or not hum or hum.Health <= 0 then ok = false end
+                local _, _, dead = ResolvePlayerHealth(ch, hum, plr)
+                if dead then ok = false end
             end
             if not ok then
                 HB_HardHide(hb)
@@ -21521,6 +21843,11 @@ AntiAimRandPitchBtn.MouseButton1Click:Connect(function()
     Config.AntiAimRandomPitchEnabled = not Config.AntiAimRandomPitchEnabled
     UpdateSwitch(Config.AntiAimRandomPitchEnabled, AntiAimRandPitchBg, AntiAimRandPitchKnob, "AA Random Pitch")
     Cache.AntiAimRandPitchNext = 0
+end)
+AntiAimRandManualBtn.MouseButton1Click:Connect(function()
+    Config.AntiAimRandomManualEnabled = not Config.AntiAimRandomManualEnabled
+    UpdateSwitch(Config.AntiAimRandomManualEnabled, AntiAimRandManualBg, AntiAimRandManualKnob, "AA Random Manual")
+    Cache.AntiAimRandManualNext = 0
 end)
 AntiAimRandYawBtn.MouseButton1Click:Connect(function()
     Config.AntiAimRandomYawEnabled = not Config.AntiAimRandomYawEnabled
@@ -23403,26 +23730,140 @@ function SpawnDamageNumber(worldPos, amount)
     end)
 end
 
-function ResolvePlayerHealth(char, hum)
-    if not char then return 0, 100, true end
-    if char:GetAttribute("Dead") == true then
-        return 0, tonumber(char:GetAttribute("MaxHealth")) or 100, true
-    end
-    local aHp = char:GetAttribute("Health")
-    local aMax = char:GetAttribute("MaxHealth")
-    if aHp ~= nil then
-        local hp = tonumber(aHp) or 0
-        local maxHp = tonumber(aMax) or 100
+function ResolvePlayerHealth(char, hum, player)
+    local function fromNums(hp, maxHp, forceDead)
+        hp = tonumber(hp) or 0
+        maxHp = tonumber(maxHp) or 100
         if maxHp <= 0 then maxHp = 100 end
-        return hp, maxHp, hp <= 0
+        local dead = forceDead == true or hp <= 0
+        return hp, maxHp, dead
+    end
+
+    if not player and char then
+        pcall(function()
+            player = Players:GetPlayerFromCharacter(char)
+        end)
+    end
+
+    -- Player attributes (Defusal / custom FPS): Health, Alive, Team on Player instance
+    if player then
+        local teamAttr = nil
+        pcall(function() teamAttr = player:GetAttribute("Team") end)
+        if teamAttr == "Spectator" then
+            return fromNums(0, 100, true)
+        end
+        local aliveAttr = nil
+        pcall(function() aliveAttr = player:GetAttribute("Alive") end)
+        if aliveAttr == false then
+            local pMax = player:GetAttribute("MaxHealth") or player:GetAttribute("MaxHP")
+            return fromNums(0, pMax or (hum and hum.MaxHealth) or 100, true)
+        end
+        local pHp = player:GetAttribute("Health")
+            or player:GetAttribute("HP")
+            or player:GetAttribute("hp")
+            or player:GetAttribute("HitPoints")
+        local pMax = player:GetAttribute("MaxHealth")
+            or player:GetAttribute("MaxHP")
+            or player:GetAttribute("maxhp")
+            or player:GetAttribute("MaxHitPoints")
+        if pHp ~= nil then
+            local dead = (aliveAttr == false) or (tonumber(pHp) or 0) <= 0
+            return fromNums(pHp, pMax or (hum and hum.MaxHealth) or 100, dead)
+        end
+    end
+
+    if not char then
+        return 0, 100, true
+    end
+    if char:GetAttribute("Dead") == true then
+        return fromNums(0, char:GetAttribute("MaxHealth") or (hum and hum.MaxHealth) or 100, true)
+    end
+    local aHp = char:GetAttribute("Health") or char:GetAttribute("HP") or char:GetAttribute("hp")
+    local aMax = char:GetAttribute("MaxHealth") or char:GetAttribute("MaxHP") or char:GetAttribute("maxhp")
+    if aHp ~= nil then
+        return fromNums(aHp, aMax or (hum and hum.MaxHealth) or 100)
     end
     if hum then
+        local ok, dead = pcall(function() return hum.Health <= 0 or hum:GetState() == Enum.HumanoidStateType.Dead end)
         local hp = tonumber(hum.Health) or 0
         local maxHp = tonumber(hum.MaxHealth) or 100
         if maxHp <= 0 then maxHp = 100 end
-        return hp, maxHp, hp <= 0 or hum.Health <= 0
+        return hp, maxHp, (ok and dead) or hp <= 0
+    end
+
+    local names = { "Health", "HP", "Hp", "health", "HitPoints", "hitpoints" }
+    local maxNames = { "MaxHealth", "MaxHP", "MaxHp", "maxhealth", "MaxHitPoints" }
+    local function findVal(root, list)
+        if not root then return nil end
+        for _, n in ipairs(list) do
+            local v = root:FindFirstChild(n)
+            if v and (v:IsA("NumberValue") or v:IsA("IntValue") or v:IsA("DoubleConstrainedValue") or v:IsA("IntConstrainedValue")) then
+                return tonumber(v.Value)
+            end
+        end
+        return nil
+    end
+    local folders = { char, char:FindFirstChild("Values"), char:FindFirstChild("Stats"), char:FindFirstChild("Status"), char:FindFirstChild("Info") }
+    local hp, maxHp
+    for _, folder in ipairs(folders) do
+        if hp == nil then hp = findVal(folder, names) end
+        if maxHp == nil then maxHp = findVal(folder, maxNames) end
+    end
+    if hp ~= nil then
+        return fromNums(hp, maxHp or 100)
     end
     return 0, 100, true
+end
+
+function Anxium_IsLikelyMyHit(player, now)
+    if not player or player == LocalPlayer then return false end
+    now = now or tick()
+    local cache = GetCache() or Cache
+    if not cache then return false end
+    if cache.AimLockTarget == player then return true end
+    if cache.SilentV2Target == player then return true end
+    if cache.LastShotTarget == player and (now - (cache.LastShotTime or 0)) <= 3.25 then return true end
+    local recent = cache.RecentDamageTargets and cache.RecentDamageTargets[player]
+    if recent and (now - recent) <= 3.25 then return true end
+    if cache.LastHitPartPlayer == player and cache.LastHitPartTime and (now - cache.LastHitPartTime) <= 2.0 then
+        return true
+    end
+    
+    local shotFresh = (cache.LastShotTime and (now - cache.LastShotTime) <= 1.35) or false
+    if shotFresh then
+        local under = nil
+        pcall(function()
+            if typeof(CaptureCrosshairTarget) == "function" then
+                
+            end
+            if typeof(Triggerbot_GetTargetUnderCrosshair) == "function" then
+                under = Triggerbot_GetTargetUnderCrosshair()
+            end
+        end)
+        if under == player then return true end
+        if typeof(GetClosestPlayerInFOV) == "function" then
+            local ok, got = pcall(GetClosestPlayerInFOV)
+            if ok and got == player then return true end
+        end
+        if cache.AimLockTarget == player or cache.SilentV2Target == player then return true end
+    end
+    return false
+end
+
+function Anxium_ResolveHitPart(player, char)
+    local now = tick()
+    local cache = GetCache() or Cache
+    if cache and cache.LastHitPartPlayer == player and cache.LastHitPartName and cache.LastHitPartTime and (now - cache.LastHitPartTime) < 1.8 then
+        return cache.LastHitPartName
+    end
+    if cache and cache.SilentV2Target == player and cache.SilentV2Part then
+        return NormalizeHitPartName(cache.SilentV2Part)
+    end
+    if typeof(CaptureCrosshairHitPart) == "function" then
+        local p = CaptureCrosshairHitPart(player)
+        if p then return p end
+    end
+    return "Body"
 end
 
 function OnPlayerTookDamage(player, char, prevHp, newHp, maxHp)
@@ -23431,31 +23872,43 @@ function OnPlayerTookDamage(player, char, prevHp, newHp, maxHp)
     local cache = GetCache() or Cache
     if not cfg or not cache then return end
     local dmg = (prevHp or 0) - (newHp or 0)
-    if dmg < 0.4 then return end
+    if dmg < 0.35 then return end
     local now = tick()
 
-    local prevRecent = cache.RecentDamageTargets and cache.RecentDamageTargets[player]
-    local shooting = false
-    pcall(function()
-        shooting = UserInputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton1)
-            or UserInputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton2)
-    end)
-    local isMineHit = (cache.AimLockTarget == player)
-        or (cache.SilentV2Target == player)
-        or (cache.LastShotTarget == player and (now - (cache.LastShotTime or 0)) < 2.5)
-        or (prevRecent and (now - prevRecent) < 2.5)
-        or shooting
-        or ((cache.LastShotTime or 0) > 0 and (now - (cache.LastShotTime or 0)) < 0.85)
+    
+    cache._HitEventCd = cache._HitEventCd or {}
+    local lastEv = cache._HitEventCd[player] or 0
+    if (now - lastEv) < 0.045 then return end
+    cache._HitEventCd[player] = now
+
+    local isMineHit = Anxium_IsLikelyMyHit(player, now)
+    if not isMineHit then
+        
+        local shotFresh = cache.LastShotTime and (now - cache.LastShotTime) <= 0.9
+        if shotFresh and (cache.AimLockTarget == player or cache.SilentV2Target == player) then
+            isMineHit = true
+        end
+    end
 
     if cfg.HitSoundEnabled and isMineHit and PlayHitSound then
         pcall(PlayHitSound)
     end
 
     cache.RecentDamageTargets = cache.RecentDamageTargets or {}
-    cache.RecentDamageTargets[player] = now
     if isMineHit then
+        cache.RecentDamageTargets[player] = now
         cache.LastShotTarget = player
         cache.LastShotTime = now
+        
+        if cfg.HitLogsEnabled and ShowHitLog then
+            cache.HitLogCooldown = cache.HitLogCooldown or {}
+            local part = Anxium_ResolveHitPart(player, char)
+            local cdKey = tostring(player.UserId) .. ":" .. tostring(part)
+            if (cache.HitLogCooldown[cdKey] or 0) + 0.1 < now then
+                cache.HitLogCooldown[cdKey] = now
+                pcall(ShowHitLog, player.DisplayName or player.Name, part, dmg)
+            end
+        end
     end
 
     local head = char and (char:FindFirstChild("Head") or char:FindFirstChild("HumanoidRootPart") or char.PrimaryPart)
@@ -23503,21 +23956,20 @@ end
 function OnPlayerMaybeKilled(player, char, hum)
     if not player or player == LocalPlayer then return end
     local cache = GetCache() or Cache
-    local key = hum or char
+    local key = hum or player
     if not key then return end
     cache.KillHandledHum = cache.KillHandledHum or {}
     if cache.KillHandledHum[key] then return end
+    
+    local uidKey = "uid:" .. tostring(player.UserId)
+    if cache.KillHandledHum[uidKey] then return end
     cache.KillHandledHum[key] = true
+    cache.KillHandledHum[uidKey] = true
     if OnVictimDied then
-        pcall(OnVictimDied, player, hum or char)
+        pcall(OnVictimDied, player, hum)
     else
-        
         local now = tick()
-        local recent = cache.RecentDamageTargets and cache.RecentDamageTargets[player]
-        local isMine = recent and (now - recent) < 3.5
-            or cache.LastShotTarget == player and (now - (cache.LastShotTime or 0)) < 3.5
-            or cache.AimLockTarget == player
-            or cache.SilentV2Target == player
+        local isMine = Anxium_IsLikelyMyHit(player, now)
         if isMine then
             if Config.KillLogsEnabled and ShowKillLog then
                 pcall(ShowKillLog, LocalPlayer.DisplayName or LocalPlayer.Name, player.DisplayName or player.Name)
@@ -23534,44 +23986,63 @@ end
 
 function HookPlayerDamageVisuals(player)
     if player == LocalPlayer then return end
+    local function applyHp(char, hum, newHp, maxHp)
+        local cache = GetCache() or Cache
+        if not cache then return end
+        local prev = cache.LastKnownHP[player]
+        if prev == nil then
+            cache.LastKnownHP[player] = newHp
+            return
+        end
+        cache.LastKnownHP[player] = newHp
+        if newHp < (prev - 0.2) then
+            OnPlayerTookDamage(player, char, prev, newHp, maxHp)
+        end
+        if newHp <= 0 then
+            OnPlayerMaybeKilled(player, char, hum)
+        end
+    end
     local function hook(char)
         if not char then return end
         local hum = char:FindFirstChildOfClass("Humanoid") or char:FindFirstChild("Humanoid")
         local cache = GetCache() or Cache
-        local hp, maxHp = ResolvePlayerHealth(char, hum)
+        local hp, maxHp = ResolvePlayerHealth(char, hum, player)
         cache.LastKnownHP[player] = hp
+        cache.KillHandledHum = cache.KillHandledHum or {}
+        cache.KillHandledHum["uid:" .. tostring(player.UserId)] = nil
 
         if hum then
             pcall(function()
                 hum.HealthChanged:Connect(function(newHp)
-                    local prev = cache.LastKnownHP[player]
-                    if prev == nil then prev = newHp end
-                    cache.LastKnownHP[player] = newHp
-                    if newHp < prev then
-                        OnPlayerTookDamage(player, char, prev, newHp, hum.MaxHealth)
-                    end
-                    if newHp <= 0 then
-                        OnPlayerMaybeKilled(player, char, hum)
-                    end
+                    local nhp, nmax = ResolvePlayerHealth(char, hum, player)
+                    if newHp ~= nil then nhp = tonumber(newHp) or nhp end
+                    applyHp(char, hum, nhp, nmax)
+                end)
+                pcall(function()
+                    hum:GetPropertyChangedSignal("Health"):Connect(function()
+                        local nhp, nmax = ResolvePlayerHealth(char, hum, player)
+                        applyHp(char, hum, nhp, nmax)
+                    end)
                 end)
                 hum.Died:Connect(function()
                     OnPlayerMaybeKilled(player, char, hum)
                 end)
+                hum.StateChanged:Connect(function(_, newState)
+                    if newState == Enum.HumanoidStateType.Dead then
+                        OnPlayerMaybeKilled(player, char, hum)
+                    end
+                end)
             end)
         end
-        
+
         pcall(function()
             char:GetAttributeChangedSignal("Health"):Connect(function()
-                local nhp, nmax = ResolvePlayerHealth(char, hum)
-                local prev = cache.LastKnownHP[player]
-                if prev == nil then prev = nhp end
-                cache.LastKnownHP[player] = nhp
-                if nhp < prev then
-                    OnPlayerTookDamage(player, char, prev, nhp, nmax)
-                end
-                if nhp <= 0 then
-                    OnPlayerMaybeKilled(player, char, hum)
-                end
+                local nhp, nmax = ResolvePlayerHealth(char, hum, player)
+                applyHp(char, hum, nhp, nmax)
+            end)
+            char:GetAttributeChangedSignal("HP"):Connect(function()
+                local nhp, nmax = ResolvePlayerHealth(char, hum, player)
+                applyHp(char, hum, nhp, nmax)
             end)
             char:GetAttributeChangedSignal("Dead"):Connect(function()
                 if char:GetAttribute("Dead") == true then
@@ -23579,10 +24050,91 @@ function HookPlayerDamageVisuals(player)
                 end
             end)
         end)
+
+        
+        local function bindValue(v)
+            if not v then return end
+            if not (v:IsA("NumberValue") or v:IsA("IntValue")) then return end
+            local n = string.lower(tostring(v.Name))
+            if not (n == "health" or n == "hp" or n == "hitpoints") then return end
+            pcall(function()
+                v.Changed:Connect(function()
+                    local nhp, nmax = ResolvePlayerHealth(char, hum, player)
+                    applyHp(char, hum, nhp, nmax)
+                end)
+            end)
+        end
+        pcall(function()
+            for _, d in ipairs(char:GetDescendants()) do
+                bindValue(d)
+            end
+            char.DescendantAdded:Connect(function(d)
+                task.defer(function() bindValue(d) end)
+            end)
+        end)
     end
     if player.Character then task.spawn(hook, player.Character) end
     player.CharacterAdded:Connect(function(c)
-        task.delay(0.15, function() if player.Character == c then hook(c) end end)
+        task.delay(0.12, function() if player.Character == c then hook(c) end end)
+    end)
+
+    -- Player-level Health / Alive attributes (Defusal-style custom FPS)
+    pcall(function()
+        local wasAlive = true
+        pcall(function()
+            local a = player:GetAttribute("Alive")
+            local h = player:GetAttribute("Health")
+            if a == false then
+                wasAlive = false
+            elseif h ~= nil and tonumber(h) <= 0 then
+                wasAlive = false
+            end
+        end)
+        local function onPlayerHpAttr()
+            local char = player.Character
+            local hum = char and char:FindFirstChildOfClass("Humanoid")
+            local nhp, nmax, dead = ResolvePlayerHealth(char, hum, player)
+            local cache = GetCache() or Cache
+            if cache then
+                cache.LastKnownHP = cache.LastKnownHP or {}
+                local prev = cache.LastKnownHP[player]
+                if prev ~= nil and nhp < prev - 0.35 then
+                    cache.RecentDamageTargets = cache.RecentDamageTargets or {}
+                    cache.RecentDamageTargets[player] = tick()
+                    pcall(OnPlayerTookDamage, player, char, prev, nhp, nmax)
+                end
+                cache.LastKnownHP[player] = nhp
+            end
+            if dead or nhp <= 0 then
+                if wasAlive then
+                    wasAlive = false
+                    -- Attribute death: force kill pipeline for logs/sounds
+                    pcall(OnPlayerMaybeKilled, player, char, hum or player)
+                    pcall(OnVictimDied, player, hum or player)
+                end
+            else
+                if not wasAlive then
+                    wasAlive = true
+                    if cache then
+                        cache.KillHandledHum = cache.KillHandledHum or {}
+                        local uidKey = "uid:" .. tostring(player.UserId)
+                        cache.KillHandledHum[uidKey] = nil
+                        cache.KillHandledHum["fx:" .. uidKey] = nil
+                        if hum then cache.KillHandledHum[hum] = nil end
+                        cache.KillHandledHum[player] = nil
+                        if cache.KillSoundPlayedFor then
+                            cache.KillSoundPlayedFor[player] = nil
+                        end
+                    end
+                end
+            end
+        end
+        for _, attrName in ipairs({ "Health", "HP", "hp", "HitPoints", "Alive", "MaxHealth", "MaxHP" }) do
+            pcall(function()
+                player:GetAttributeChangedSignal(attrName):Connect(onPlayerHpAttr)
+            end)
+        end
+        task.defer(onPlayerHpAttr)
     end)
 end
 
@@ -23602,7 +24154,8 @@ if not Cache._UniversalCombatPoll then
                 local cfg = GetCfg() or Config
                 local cache = GetCache() or Cache
                 if not cfg or not cache then return end
-                if not (cfg.CustomFireSoundEnabled or cfg.KillLogsEnabled or cfg.DamageNumbersEnabled or cfg.KillFlashEnabled) then
+                if not (cfg.CustomFireSoundEnabled or cfg.KillLogsEnabled or cfg.DamageNumbersEnabled or cfg.KillFlashEnabled
+                    or cfg.HitSoundEnabled or cfg.HitLogsEnabled or cfg.HealthbarEspEnabled) then
                     return
                 end
                 for _, player in ipairs(CachedPlayerList or Players:GetPlayers()) do
@@ -23610,7 +24163,7 @@ if not Cache._UniversalCombatPoll then
                     local char = player.Character
                     if not char then continue end
                     local hum = char:FindFirstChildOfClass("Humanoid")
-                    local hp, maxHp, dead = ResolvePlayerHealth(char, hum)
+                    local hp, maxHp, dead = ResolvePlayerHealth(char, hum, player)
                     local prev = cache.LastKnownHP[player]
                     if prev == nil then
                         cache.LastKnownHP[player] = hp
@@ -24906,43 +25459,89 @@ function GetKillerFromHumanoid(humanoid)
     return nil, nil
 end
 
-function AnxiumLog_AttachLifeBar(card, holdSec)
+function AnxiumLog_SetBorderVisible(card, visible)
     if not card then return end
-    holdSec = tonumber(holdSec) or 2.8
-    
-    local barH = 3
-    local bottomPad = 5
-    local baseH = card.Size.Y.Offset
-    if baseH < 40 then
-        card.Size = UDim2.new(card.Size.X.Scale, card.Size.X.Offset, 0, baseH + bottomPad)
+    local target = visible and 0 or 1
+    for _, d in ipairs(card:GetDescendants()) do
+        if d:IsA("UIStroke") then
+            d.Transparency = target
+        elseif d:IsA("Frame") then
+            local n = tostring(d.Name)
+            if n:find("HudBorderGap", 1, true) == 1
+                or n:find("HudEdge", 1, true) == 1
+                or n:find("HudInnerEdge", 1, true) == 1 then
+                d.BackgroundTransparency = target
+            end
+        end
     end
-    
+end
+
+function AnxiumLog_TweenBorder(card, ti, visible)
+    if not card then return end
+    local target = visible and 0 or 1
     pcall(function()
-        for _, ch in ipairs(card:GetChildren()) do
-            if ch:IsA("ImageLabel") and ch.Name ~= "LogLifeBar" then
-                
+        for _, d in ipairs(card:GetDescendants()) do
+            if d:IsA("UIStroke") then
+                TweenService:Create(d, ti, { Transparency = target }):Play()
+            elseif d:IsA("Frame") then
+                local n = tostring(d.Name)
+                if n:find("HudBorderGap", 1, true) == 1
+                    or n:find("HudEdge", 1, true) == 1
+                    or n:find("HudInnerEdge", 1, true) == 1 then
+                    TweenService:Create(d, ti, { BackgroundTransparency = target }):Play()
+                end
             end
         end
     end)
+end
+
+function AnxiumLog_PlayAppear(card)
+    if not card then return end
+    
+    
+    
+    card.GroupTransparency = 1
+    local tiIn = TweenInfo.new(0.28, Enum.EasingStyle.Quart, Enum.EasingDirection.Out)
+    pcall(function()
+        TweenService:Create(card, tiIn, { GroupTransparency = 0 }):Play()
+    end)
+end
+
+function AnxiumLog_AttachLifeBar(card, holdSec, accentCol)
+    if not card then return end
+    holdSec = tonumber(holdSec) or 2.8
+    accentCol = accentCol or Color3.fromRGB(120, 220, 140)
+    if typeof(accentCol) ~= "Color3" then
+        accentCol = Color3.fromRGB(120, 220, 140)
+    end
+
+    local barH = 3
+    local baseH = card.Size.Y.Offset
+    if baseH < 42 then
+        card.Size = UDim2.new(card.Size.X.Scale, card.Size.X.Offset, 0, math.max(baseH, 40) + 4)
+    end
+
     local track = Instance.new("Frame")
     track.Name = "LogLifeTrack"
     track.AnchorPoint = Vector2.new(0, 1)
-    track.Position = UDim2.new(0, 0, 1, 0)
-    track.Size = UDim2.new(1, 0, 0, barH)
-    track.BackgroundColor3 = Color3.fromRGB(18, 28, 20)
-    track.BackgroundTransparency = 0.35
+    track.Position = UDim2.new(0, 4, 1, -3)
+    track.Size = UDim2.new(1, -8, 0, barH)
+    track.BackgroundColor3 = Color3.fromRGB(8, 10, 12)
+    track.BackgroundTransparency = 0.15
     track.BorderSizePixel = 0
     track.ZIndex = (card.ZIndex or 51) + 2
     track.ClipsDescendants = true
     track.Parent = card
+
     local bar = Instance.new("Frame")
     bar.Name = "LogLifeBar"
     bar.Size = UDim2.new(0, 0, 1, 0)
     bar.Position = UDim2.new(0, 0, 0, 0)
-    bar.BackgroundColor3 = Color3.fromRGB(22, 90, 40)
+    bar.BackgroundColor3 = accentCol
     bar.BorderSizePixel = 0
     bar.ZIndex = track.ZIndex + 1
     bar.Parent = track
+
     pcall(function()
         local tiFill = TweenInfo.new(holdSec, Enum.EasingStyle.Linear, Enum.EasingDirection.Out)
         local tw = TweenService:Create(bar, tiFill, { Size = UDim2.new(1, 0, 1, 0) })
@@ -24950,21 +25549,13 @@ function AnxiumLog_AttachLifeBar(card, holdSec)
         tw.Completed:Connect(function()
             if not card or not card.Parent then return end
             pcall(function()
-                local tiOut = TweenInfo.new(0.32, Enum.EasingStyle.Quart, Enum.EasingDirection.In)
-                TweenService:Create(card, tiOut, { BackgroundTransparency = 1 }):Play()
-                TweenService:Create(track, tiOut, { BackgroundTransparency = 1 }):Play()
-                TweenService:Create(bar, tiOut, { BackgroundTransparency = 1 }):Play()
-                for _, d in ipairs(card:GetDescendants()) do
-                    if d:IsA("TextLabel") then
-                        TweenService:Create(d, tiOut, { TextTransparency = 1 }):Play()
-                    elseif d:IsA("ImageLabel") then
-                        TweenService:Create(d, tiOut, { ImageTransparency = 1 }):Play()
-                    elseif d:IsA("UIStroke") then
-                        TweenService:Create(d, tiOut, { Transparency = 1 }):Play()
-                    end
-                end
+                
+                
+                
+                local tiOut = TweenInfo.new(0.30, Enum.EasingStyle.Quart, Enum.EasingDirection.In)
+                TweenService:Create(card, tiOut, { GroupTransparency = 1 }):Play()
             end)
-            task.delay(0.34, function()
+            task.delay(0.31, function()
                 if card and card.Parent then
                     pcall(function() card:Destroy() end)
                 end
@@ -24978,9 +25569,14 @@ function EnsureKillLogContainer()
         return Cache.KillLogContainer
     end
     local parent = ScreenGui
-    if not parent then
+    if not parent or not parent.Parent then
         pcall(function()
-            if gethui then parent = gethui() end
+            if typeof(gethui) == "function" then parent = gethui() end
+        end)
+    end
+    if not parent or not parent.Parent then
+        pcall(function()
+            parent = LocalPlayer:FindFirstChildOfClass("PlayerGui")
         end)
     end
     if not parent then return nil end
@@ -25013,33 +25609,27 @@ function ShowKillLog(killerName, victimName)
     if not box then return end
     Cache.KillLogOrder = (Cache.KillLogOrder or 0) + 1
     local order = Cache.KillLogOrder
-    local card = Instance.new("Frame")
+    local card = Instance.new("CanvasGroup")
     card.Name = "KillLog"
     card.Size = UDim2.new(0, 380, 0, 40)
     card.BackgroundColor3 = Color3.fromRGB(12, 14, 18)
-    card.BackgroundTransparency = 0.22
+    card.BackgroundTransparency = 0
     card.BorderSizePixel = 0
+    card.GroupTransparency = 1
     card.LayoutOrder = order
     card.ZIndex = 51
     card.Parent = box
-    local st = Instance.new("UIStroke")
-    st.Color = Theme.Accent or Color3.fromRGB(160, 120, 255)
-    st.Thickness = 1
-    st.Transparency = 0.45
-    st.Parent = card
-    pcall(function() TrackThemeAccent(st, "Color") end)
-    local icon = Instance.new("ImageLabel")
-    icon.BackgroundTransparency = 1
-    icon.Size = UDim2.fromOffset(20, 20)
-    icon.Position = UDim2.new(0, 10, 0.5, -10)
-    icon.Image = "rbxassetid://112102474509324"
-    icon.ScaleType = Enum.ScaleType.Fit
-    icon.ZIndex = 52
-    icon.Parent = card
+    pcall(function()
+        if AnxiumAttachLogCardBorder then
+            AnxiumAttachLogCardBorder(card)
+        elseif AnxiumAttachMenuStyleBorder then
+            AnxiumAttachMenuStyleBorder(card)
+        end
+    end)
     local textHolder = Instance.new("Frame")
     textHolder.BackgroundTransparency = 1
-    textHolder.Position = UDim2.fromOffset(36, 0)
-    textHolder.Size = UDim2.new(1, -46, 1, 0)
+    textHolder.Position = UDim2.fromOffset(14, 0)
+    textHolder.Size = UDim2.new(1, -24, 1, 0)
     textHolder.ZIndex = 52
     textHolder.Parent = card
     local lay = Instance.new("UIListLayout")
@@ -25049,60 +25639,36 @@ function ShowKillLog(killerName, victimName)
     lay.SortOrder = Enum.SortOrder.LayoutOrder
     lay.Padding = UDim.new(0, 5)
     lay.Parent = textHolder
-    local accent = Theme.Accent or Color3.fromRGB(160, 120, 255)
-    local font = SelectedFont or Enum.Font.GothamBold
+    local accent = (Config and Config.Color_KillLog) or Color3.fromRGB(180, 140, 255)
     local function makeLabel(txt, col, orderN)
         local l = Instance.new("TextLabel")
         l.BackgroundTransparency = 1
         l.AutomaticSize = Enum.AutomaticSize.X
         l.Size = UDim2.new(0, 0, 1, 0)
-        l.Font = font
-        l.TextSize = 13
+        l.TextSize = 15
         l.TextColor3 = col
         l.Text = txt
         l.TextXAlignment = Enum.TextXAlignment.Left
         l.LayoutOrder = orderN
         l.ZIndex = 53
         l.Parent = textHolder
+        pcall(function()
+            l:SetAttribute("AnxiumLockFont", true)
+            if ApplyEspNameFontToLabel then
+                ApplyEspNameFontToLabel(l, 15)
+            else
+                l.Font = SelectedFont or Enum.Font.Code
+            end
+        end)
         return l
     end
     local kLbl = makeLabel(killerName, accent, 1)
-    pcall(function() TrackThemeAccent(kLbl, "TextColor3") end)
     makeLabel("killed", Color3.fromRGB(200, 200, 210), 2)
     local vLbl = makeLabel(victimName, accent, 3)
-    pcall(function() TrackThemeAccent(vLbl, "TextColor3") end)
-    card.BackgroundTransparency = 1
-    for _, d in ipairs(card:GetDescendants()) do
-        if d:IsA("TextLabel") then d.TextTransparency = 1 end
-        if d:IsA("ImageLabel") then d.ImageTransparency = 1 end
-        if d:IsA("UIStroke") then d.Transparency = 1 end
-    end
     pcall(function()
-        local tiIn = TweenInfo.new(0.28, Enum.EasingStyle.Quart, Enum.EasingDirection.Out)
-        TweenService:Create(card, tiIn, { BackgroundTransparency = 0.22 }):Play()
-        for _, d in ipairs(card:GetDescendants()) do
-            if d:IsA("TextLabel") then
-                TweenService:Create(d, tiIn, { TextTransparency = 0 }):Play()
-            elseif d:IsA("ImageLabel") then
-                TweenService:Create(d, tiIn, { ImageTransparency = 0 }):Play()
-            elseif d:IsA("UIStroke") then
-                TweenService:Create(d, tiIn, { Transparency = 0.45 }):Play()
-            end
-        end
+        AnxiumLog_AttachLifeBar(card, 3.0, accent)
+        AnxiumLog_PlayAppear(card)
     end)
-    AnxiumLog_AttachLifeBar(card, 3.0)
-    
-    local kids = {}
-    for _, ch in ipairs(box:GetChildren()) do
-        if ch:IsA("Frame") and ch.Name == "KillLog" then
-            kids[#kids + 1] = ch
-        end
-    end
-    table.sort(kids, function(a, b) return a.LayoutOrder < b.LayoutOrder end)
-    while #kids > 5 do
-        local old = table.remove(kids, 1)
-        pcall(function() old:Destroy() end)
-    end
 end
 
 function ShowHitLog(victimName, bodyPart, damage)
@@ -25115,27 +25681,27 @@ function ShowHitLog(victimName, bodyPart, damage)
     if not box then return end
     Cache.KillLogOrder = (Cache.KillLogOrder or 0) + 1
     local order = Cache.KillLogOrder
-    local card = Instance.new("Frame")
+    local card = Instance.new("CanvasGroup")
     card.Name = "HitLog"
     card.Size = UDim2.new(0, 380, 0, 40)
     card.BackgroundColor3 = Color3.fromRGB(12, 14, 18)
-    card.BackgroundTransparency = 0.22
+    card.BackgroundTransparency = 0
     card.BorderSizePixel = 0
+    card.GroupTransparency = 1
     card.LayoutOrder = order
     card.ZIndex = 51
     card.Parent = box
-    local icon = Instance.new("ImageLabel")
-    icon.BackgroundTransparency = 1
-    icon.Size = UDim2.fromOffset(20, 20)
-    icon.Position = UDim2.new(0, 10, 0.5, -10)
-    icon.Image = "rbxassetid://112102474509324"
-    icon.ScaleType = Enum.ScaleType.Fit
-    icon.ZIndex = 52
-    icon.Parent = card
+    pcall(function()
+        if AnxiumAttachLogCardBorder then
+            AnxiumAttachLogCardBorder(card)
+        elseif AnxiumAttachMenuStyleBorder then
+            AnxiumAttachMenuStyleBorder(card)
+        end
+    end)
     local textHolder = Instance.new("Frame")
     textHolder.BackgroundTransparency = 1
-    textHolder.Position = UDim2.fromOffset(36, 0)
-    textHolder.Size = UDim2.new(1, -46, 1, 0)
+    textHolder.Position = UDim2.fromOffset(14, 0)
+    textHolder.Size = UDim2.new(1, -24, 1, 0)
     textHolder.ZIndex = 52
     textHolder.Parent = card
     local lay = Instance.new("UIListLayout")
@@ -25145,50 +25711,40 @@ function ShowHitLog(victimName, bodyPart, damage)
     lay.SortOrder = Enum.SortOrder.LayoutOrder
     lay.Padding = UDim.new(0, 5)
     lay.Parent = textHolder
-    local accent = Theme.Accent or Color3.fromRGB(160, 120, 255)
-    local font = SelectedFont or Enum.Font.GothamBold
+    local accent = (Config and Config.Color_HitLog) or Color3.fromRGB(180, 140, 255)
     local function makeLabel(txt, col, orderN)
         local l = Instance.new("TextLabel")
         l.BackgroundTransparency = 1
         l.AutomaticSize = Enum.AutomaticSize.X
         l.Size = UDim2.new(0, 0, 1, 0)
-        l.Font = font
-        l.TextSize = 13
+        l.TextSize = 15
         l.TextColor3 = col
         l.Text = txt
         l.TextXAlignment = Enum.TextXAlignment.Left
         l.LayoutOrder = orderN
         l.ZIndex = 53
         l.Parent = textHolder
+        pcall(function()
+            l:SetAttribute("AnxiumLockFont", true)
+            if ApplyEspNameFontToLabel then
+                ApplyEspNameFontToLabel(l, 15)
+            else
+                l.Font = SelectedFont or Enum.Font.Code
+            end
+        end)
         return l
     end
     local vLbl = makeLabel(victimName, accent, 1)
-    pcall(function() TrackThemeAccent(vLbl, "TextColor3") end)
     makeLabel("hit", Color3.fromRGB(200, 200, 210), 2)
     local pLbl = makeLabel(bodyPart, accent, 3)
-    pcall(function() TrackThemeAccent(pLbl, "TextColor3") end)
     if dmgNum and dmgNum > 0 then
         makeLabel("-" .. tostring(dmgNum), Color3.fromRGB(200, 200, 210), 4)
-        local dLbl = makeLabel("dmg", accent, 5)
-        pcall(function() TrackThemeAccent(dLbl, "TextColor3") end)
-    end
-    card.BackgroundTransparency = 1
-    for _, d in ipairs(card:GetDescendants()) do
-        if d:IsA("TextLabel") then d.TextTransparency = 1 end
-        if d:IsA("ImageLabel") then d.ImageTransparency = 1 end
+        makeLabel("dmg", accent, 5)
     end
     pcall(function()
-        local tiIn = TweenInfo.new(0.28, Enum.EasingStyle.Quart, Enum.EasingDirection.Out)
-        TweenService:Create(card, tiIn, { BackgroundTransparency = 0.22 }):Play()
-        for _, d in ipairs(card:GetDescendants()) do
-            if d:IsA("TextLabel") then
-                TweenService:Create(d, tiIn, { TextTransparency = 0 }):Play()
-            elseif d:IsA("ImageLabel") then
-                TweenService:Create(d, tiIn, { ImageTransparency = 0 }):Play()
-            end
-        end
+        AnxiumLog_AttachLifeBar(card, 2.6, accent)
+        AnxiumLog_PlayAppear(card)
     end)
-    AnxiumLog_AttachLifeBar(card, 2.6)
 end
 
 function SpawnKillLightning(atPos)
@@ -25282,8 +25838,13 @@ end
 function OnVictimDied(victimPlayer, humanoid)
     if not victimPlayer or victimPlayer == LocalPlayer then return end
     local key = humanoid or victimPlayer
-    if Cache.KillHandledHum[key] then return end
+    local uidKey = "uid:" .. tostring(victimPlayer.UserId)
+    Cache.KillHandledHum = Cache.KillHandledHum or {}
+
+    if Cache.KillHandledHum["fx:" .. uidKey] then return end
+    Cache.KillHandledHum["fx:" .. uidKey] = true
     Cache.KillHandledHum[key] = true
+    Cache.KillHandledHum[uidKey] = true
 
     local function onMyKill()
         pcall(TryPlayKillSound, victimPlayer)
@@ -25312,7 +25873,7 @@ function OnVictimDied(victimPlayer, humanoid)
         end)
     end
 
-    task.delay(0.1, function()
+    task.delay(0.05, function()
         local killerName = nil
         if humanoid and typeof(humanoid) == "Instance" and humanoid:IsA("Humanoid") then
             local _, kn = GetKillerFromHumanoid(humanoid)
@@ -25325,14 +25886,30 @@ function OnVictimDied(victimPlayer, humanoid)
             end
         end
         local now = tick()
-        local recentShot = (now - (Cache.LastShotTime or 0)) < 3.5
-        local recentHit = Cache.RecentDamageTargets
-            and Cache.RecentDamageTargets[victimPlayer]
-            and (now - Cache.RecentDamageTargets[victimPlayer]) < 3.5
-        local aimed = Cache.LastShotTarget == victimPlayer
-            or Cache.AimLockTarget == victimPlayer
-            or Cache.SilentV2Target == victimPlayer
-        if not killerName and (recentHit or (recentShot and aimed)) then
+        local mine = Anxium_IsLikelyMyHit(victimPlayer, now) == true
+
+        -- Attribute-based HP games often have no Creator tag on Humanoid.
+        -- Fall back to recent aim/shot/damage markers.
+        if not mine then
+            local cache = Cache
+            if cache then
+                if cache.AimLockTarget == victimPlayer then mine = true end
+                if cache.SilentV2Target == victimPlayer then mine = true end
+                if cache.LastShotTarget == victimPlayer and cache.LastShotTime and (now - cache.LastShotTime) <= 4.0 then
+                    mine = true
+                end
+                local recent = cache.RecentDamageTargets and cache.RecentDamageTargets[victimPlayer]
+                if recent and (now - recent) <= 4.0 then mine = true end
+                if cache.LastShotTime and (now - cache.LastShotTime) <= 1.8 then
+                    if typeof(GetClosestPlayerInFOV) == "function" then
+                        local ok, got = pcall(GetClosestPlayerInFOV)
+                        if ok and got == victimPlayer then mine = true end
+                    end
+                end
+            end
+        end
+
+        if not killerName and mine then
             killerName = LocalPlayer.DisplayName or LocalPlayer.Name
         end
 
@@ -25350,8 +25927,8 @@ function OnVictimDied(victimPlayer, humanoid)
             onMyKill()
             return
         end
-        if enemyTag then return end
-        if recentHit or (recentShot and aimed) then
+        if enemyTag and not mine then return end
+        if mine then
             onMyKill()
         end
     end)
@@ -25438,6 +26015,46 @@ function HookPlayerForKillSound(player)
                 hookChar(char)
             end
         end)
+    end)
+
+    pcall(function()
+        local wasAlive = true
+        pcall(function()
+            local a = player:GetAttribute("Alive")
+            local h = player:GetAttribute("Health")
+            if a == false or (h ~= nil and tonumber(h) <= 0) then
+                wasAlive = false
+            end
+        end)
+        local function onAttrDeath()
+            local char = player.Character
+            local hum = char and char:FindFirstChildOfClass("Humanoid")
+            local nhp, _, dead = ResolvePlayerHealth(char, hum, player)
+            if dead or nhp <= 0 then
+                if wasAlive then
+                    wasAlive = false
+                    local now = tick()
+                    local prev = Cache.LastKnownHP and Cache.LastKnownHP[player]
+                    if prev and nhp < prev then
+                        Cache.RecentDamageTargets = Cache.RecentDamageTargets or {}
+                        Cache.RecentDamageTargets[player] = now
+                    end
+                    OnVictimDied(player, hum or player)
+                end
+            else
+                wasAlive = true
+                local uidKey = "uid:" .. tostring(player.UserId)
+                Cache.KillHandledHum = Cache.KillHandledHum or {}
+                Cache.KillHandledHum[uidKey] = nil
+                Cache.KillHandledHum["fx:" .. uidKey] = nil
+                if Cache.KillSoundPlayedFor then Cache.KillSoundPlayedFor[player] = nil end
+            end
+        end
+        for _, attrName in ipairs({ "Health", "HP", "Alive", "HitPoints" }) do
+            pcall(function()
+                player:GetAttributeChangedSignal(attrName):Connect(onAttrDeath)
+            end)
+        end
     end)
 end
 
@@ -26003,7 +26620,7 @@ end)
         return char:FindFirstChild("Head") or GetRoot(char)
     end
 
-    local _mpOrder = { "Head", "UpperTorso", "Torso", "HumanoidRootPart", "LowerTorso" }
+    local _mpOrder = { "Head", "UpperTorso", "Torso", "HumanoidRootPart", "LowerTorso", "LeftArm", "RightArm", "LeftLeg", "RightLeg" }
     local function ResolveNamedPart(char, name)
         if not char or not name then return nil end
         if name == "Torso" then
@@ -26012,6 +26629,14 @@ end)
             return char:FindFirstChild("LowerTorso") or char:FindFirstChild("Torso") or GetRoot(char)
         elseif name == "HumanoidRootPart" then
             return GetRoot(char)
+        elseif name == "LeftArm" then
+            return char:FindFirstChild("LeftUpperArm") or char:FindFirstChild("Left Arm") or char:FindFirstChild("LeftHand") or char:FindFirstChild("LeftLowerArm")
+        elseif name == "RightArm" then
+            return char:FindFirstChild("RightUpperArm") or char:FindFirstChild("Right Arm") or char:FindFirstChild("RightHand") or char:FindFirstChild("RightLowerArm")
+        elseif name == "LeftLeg" then
+            return char:FindFirstChild("LeftUpperLeg") or char:FindFirstChild("Left Leg") or char:FindFirstChild("LeftFoot") or char:FindFirstChild("LeftLowerLeg")
+        elseif name == "RightLeg" then
+            return char:FindFirstChild("RightUpperLeg") or char:FindFirstChild("Right Leg") or char:FindFirstChild("RightFoot") or char:FindFirstChild("RightLowerLeg")
         end
         local p = char:FindFirstChild(name)
         if p and p:IsA("BasePart") then return p end
@@ -26024,11 +26649,32 @@ end)
             local mp = Config.SilentV2Multipoint
             if type(mp) ~= "table" then mp = {} end
             local out = {}
+            local function push(part)
+                if part and part:IsA("BasePart") then
+                    for i = 1, #out do
+                        if out[i] == part then return end
+                    end
+                    out[#out + 1] = part
+                end
+            end
             for i = 1, #_mpOrder do
                 local n = _mpOrder[i]
                 if mp[n] == true then
-                    local p = ResolveNamedPart(char, n)
-                    if p then out[#out + 1] = p end
+                    push(ResolveNamedPart(char, n))
+                    
+                    if n == "LeftArm" then
+                        push(char:FindFirstChild("LeftLowerArm"))
+                        push(char:FindFirstChild("LeftHand"))
+                    elseif n == "RightArm" then
+                        push(char:FindFirstChild("RightLowerArm"))
+                        push(char:FindFirstChild("RightHand"))
+                    elseif n == "LeftLeg" then
+                        push(char:FindFirstChild("LeftLowerLeg"))
+                        push(char:FindFirstChild("LeftFoot"))
+                    elseif n == "RightLeg" then
+                        push(char:FindFirstChild("RightLowerLeg"))
+                        push(char:FindFirstChild("RightFoot"))
+                    end
                 end
             end
             if #out > 0 then return out end
@@ -27648,6 +28294,10 @@ function TargetDot_Hide()
 end
 
 function TargetDot_GetClosestHrp()
+    if typeof(GetVisualAimTargetPart) == "function" then
+        local part = GetVisualAimTargetPart()
+        if part then return part end
+    end
     if typeof(GetVisualAimTargetHrp) == "function" then
         local hrp = GetVisualAimTargetHrp()
         if hrp then return hrp end
@@ -27667,7 +28317,7 @@ function TargetDot_Ensure(adornee)
     bill.LightInfluence = 0
     bill.MaxDistance = 900
     bill.Size = UDim2.fromOffset(28, 28)
-    bill.StudsOffset = Vector3.new(0, 0.25, 0)
+    bill.StudsOffset = Vector3.new(0, 0, 0)
     bill.Adornee = adornee
     bill.Parent = adornee
     
@@ -27920,8 +28570,8 @@ end
 pcall(function()
     task.defer(function()
         Cache.MenuUiReady = true
-pcall(function()
-    if AnxiumHudStrokes_UpdateTheme then AnxiumHudStrokes_UpdateTheme() end
-end) 
+        pcall(function()
+            if AnxiumHudStrokes_UpdateTheme then AnxiumHudStrokes_UpdateTheme() end
+        end)
     end)
 end)
