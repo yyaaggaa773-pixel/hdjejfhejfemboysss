@@ -16391,7 +16391,7 @@ function LuaIO_SaveIndex()
         local e = LuaIO.Scripts[n]
         meta[#meta + 1] = {
             name = n,
-            loadedAt = (e and e.loadedAt) or os.time(),
+            loadedAt = (e and tonumber(e.loadedAt)) or 0,
             author = (e and e.author) or "",
         }
     end
@@ -16424,17 +16424,26 @@ function LuaIO_LoadIndex()
     local ok, arr = pcall(function() return HttpService:JSONDecode(raw) end)
     if not ok or type(arr) ~= "table" then return end
     for _, item in ipairs(arr) do
-        local name, loadedAt, author = nil, os.time(), ""
+        local name, loadedAt, author = nil, 0, ""
         if type(item) == "string" then
             name = item
         elseif type(item) == "table" then
             name = item.name or item[1]
-            loadedAt = tonumber(item.loadedAt) or os.time()
+            loadedAt = tonumber(item.loadedAt) or 0
             author = tostring(item.author or "")
         end
         if not name then continue end
         name = LuaIO_SanitizeName(name)
-        if not LuaIO.Scripts[name] then
+        if LuaIO.Scripts[name] then
+            local e = LuaIO.Scripts[name]
+            local ts = tonumber(item and item.loadedAt) or tonumber(loadedAt)
+            if ts and ts > 0 then
+                e.loadedAt = ts
+            end
+            if author and author ~= "" then
+                e.author = author
+            end
+        else
             local src = nil
             pcall(function()
                 if readfile then src = readfile(LuaIO.Folder .. "/" .. name) end
@@ -16443,13 +16452,15 @@ function LuaIO_LoadIndex()
                 if author == "" and LuaIO_ParseAuthorFromSource then
                     author = LuaIO_ParseAuthorFromSource(src) or ""
                 end
+                local ts = tonumber(loadedAt)
+                if not ts or ts <= 0 then ts = os.time() end
                 LuaIO.Scripts[name] = {
                     name = name,
                     source = src,
                     running = false,
                     stop = false,
                     thread = nil,
-                    loadedAt = loadedAt,
+                    loadedAt = ts,
                     author = author,
                 }
                 LuaIO.Order[#LuaIO.Order + 1] = name
@@ -16551,8 +16562,10 @@ function LuaIO_AddScript(name, source)
     name = LuaIO_SanitizeName(name)
     local isNew = LuaIO.Scripts[name] == nil
     local prev = LuaIO.Scripts[name]
-    local loadedAt = (prev and prev.loadedAt) or os.time()
-    if isNew then loadedAt = os.time() end
+    local loadedAt = (prev and tonumber(prev.loadedAt)) or nil
+    if isNew or not loadedAt or loadedAt <= 0 then
+        loadedAt = os.time()
+    end
     local parsedAuthor = LuaIO_ParseAuthorFromSource(source)
     local author = parsedAuthor
     if author == "" and prev and prev.author and prev.author ~= "" then
@@ -17122,6 +17135,7 @@ do
     rLbl.Parent = refreshBtn
     pcall(function() TrackThemeAccent(refreshBtn, "BackgroundColor3") end)
     refreshBtn.MouseButton1Click:Connect(function()
+        pcall(LuaIO_LoadIndex)
         pcall(LuaIO_ScanLocalFolder)
         pcall(LuaIO_RebuildListUI)
         Notify("Scripts", "List refreshed from AnxiumHub/scripts")
@@ -17171,6 +17185,7 @@ do
     pad.PaddingRight = UDim.new(0, 0)
     pad.Parent = scroll
     LuaIO.ListFrame = scroll
+    pcall(LuaIO_LoadIndex)
     pcall(LuaIO_ScanLocalFolder)
     pcall(LuaIO_RebuildListUI)
 end
